@@ -3,7 +3,7 @@
 # ----------------------- #
 
 url: http://TsaiKoga.github.com
-title: TsaiKoga's Octopress Blog
+title: TsaiKoga Blog
 subtitle: A blogging framework for hackers.
 author: TsaiKoga
 simple_search: http://google.com/search
@@ -90,7 +90,7 @@ delicious_user:
 delicious_count: 3
 
 # Disqus Comments
-disqus_short_name:
+disqus_short_name: tsaikogablog
 disqus_show_comment_count: false
 
 # Google Analytics
