@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://TsaiKoga.github.io/sitemap.xml 
+Sitemap: http://TsaiKoga.github.com/sitemap.xml 
