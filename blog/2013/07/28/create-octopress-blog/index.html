@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>TsaiKoga Blog</title>
+  <title>create octopress blog - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
 
   
@@ -20,7 +20,7 @@ cd blog 查看Gemfile文件：
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
@@ -77,15 +77,12 @@ cd blog 查看Gemfile文件：
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/07/28/create-octopress-blog/">Create Octopress Blog</a></h1>
+      <h1 class="entry-title">Create Octopress Blog</h1>
     
     
       <p class="meta">
@@ -108,7 +105,7 @@ cd blog 查看Gemfile文件：
   </header>
 
 
-  <div class="entry-content"><h4>克隆octopress项目</h4>
+<div class="entry-content"><h4>克隆octopress项目</h4>
 
 <pre><code>git clone git://github.com/imathis/octopress.git blog
 cd blog
@@ -196,18 +193,57 @@ git push origin source
 可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
 在</em>config.yml中加入你申请的disqus的short_name</p></blockquote>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">TsaiKoga</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2013-07-28T22:51:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
   
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/" data-via="" data-counturl="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/" >Tweet</a>
+  
+  
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -228,6 +264,7 @@ git push origin source
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -242,7 +279,10 @@ git push origin source
       var disqus_shortname = 'tsaikogablog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
