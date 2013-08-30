@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: web | TsaiKoga Blog]]></title>
+  <link href="http://TsaiKoga.github.com/blog/categories/web/atom.xml" rel="self"/>
+  <link href="http://TsaiKoga.github.com/"/>
+  <updated>2013-08-30T22:14:10+08:00</updated>
+  <id>http://TsaiKoga.github.com/</id>
+  <author>
+    <name><![CDATA[TsaiKoga]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Scroll to top]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
+    <updated>2013-08-30T21:57:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top</id>
+    <content type="html"><![CDATA[<h1>Scroll to top</h1>
+
+<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
+具体操作如下：</p>
+
+<ol>
+<li><p>在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: fixed（表明标签会随着页面处在同一位置）,overflow: hidden</p></li>
+<li><p>接着设置js</p></li>
+</ol>
+
+
+<blockquote><ol>
+<li>设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让&lt;a>标签显示。否则，隐藏。</li>
+<li>单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：  $(&lsquo;html, body&rsquo;).animate({scrollTop: 0}, 300)</li>
+</ol>
+</blockquote>
+
+<p>example: (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
+
+<pre><code>    $(document).ready -&gt; 
+        $("a.go_top").click () -&gt; 
+            $('html, body').animate({scrollTop: 0}, 300)
+            return false
+
+        $(window).bind 'scroll resize', -&gt; 
+            scroll_from_top = $(window).scrollTop()
+            if scroll_from_top &gt;= 1
+                $('a.go_top').show()
+            else
+                $('a.go_top').hide()
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

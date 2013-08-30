@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>redcarpet和pygments结合进行markdown显示 - TsaiKoga Blog</title>
+  <title>Scroll to top - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
   <link rel="author" href="humans.txt">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -13,7 +13,8 @@
   
     
   
-  <meta name="description" content="redcarpet 用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下： 1.首先是在gemfile中加入redcarpet. 2.安装redcarpet gem install redcarpet 3.以前可直接在要显示的view中加入如下代码: &lt;%= &hellip;">
+  <meta name="description" content="Scroll to top 许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
+具体操作如下： 在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a> &hellip;">
   
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -21,20 +22,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/">
   <link href="/favicon.png" rel="icon">
   <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
   <meta name="og:type" content="website" />
   <meta name="og:site_name" content="TsaiKoga Blog" />
-  <meta name="og:title" content="redcarpet和pygments结合进行markdown显示" />
-  <meta name="og:description" content="redcarpet 用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下： 1.首先是在gemfile中加入redcarpet. 2.安装redcarpet gem install redcarpet 3.以前可直接在要显示的view中加入如下代码: &lt;%= &hellip;" />
-  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/"/>
-  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/">
+  <meta name="og:title" content="Scroll to top" />
+  <meta name="og:description" content="Scroll to top 许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
+具体操作如下： 在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a> &hellip;" />
+  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
+  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/">
   
-  <meta name="subject" content="gem"/>
-  <meta name="category" content="gem"/>
+  <meta name="subject" content="coffeescriptweb"/>
+  <meta name="category" content="coffeescriptweb"/>
   
   <meta name="distribution" content="global">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
@@ -88,7 +90,7 @@
 
   <header>
     
-      <h1 class="entry-title">Redcarpet和pygments结合进行markdown显示</h1>
+      <h1 class="entry-title">Scroll to Top</h1>
     
     
       <p class="meta">
@@ -113,13 +115,13 @@
   
 
 
-<time datetime="2013-08-29T22:23:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2013</time> - 
+<time datetime="2013-08-30T21:57:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time> - 
         
 
 posted in
 <span class="categories">
   
-    <a class='category' href='/blog/categories/gem/'>gem</a>
+    <a class='category' href='/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/categories/web/'>web</a>
   
 </span>
 
@@ -130,87 +132,37 @@ posted in
   </header>
 
 
-  <div class="entry-content"><h2>redcarpet</h2>
+  <div class="entry-content"><h1>Scroll to top</h1>
 
-<p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
-
-<p>1.首先是在gemfile中加入redcarpet.</p>
-
-<p>2.安装redcarpet</p>
-
-<pre><code>    gem install redcarpet
-</code></pre>
-
-<p>3.以前可直接在要显示的view中加入如下代码:</p>
-
-<pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
-</code></pre>
-
-<p>现在现在辅助方法中写如下代码：</p>
-
-<pre><code>def markdown(text)
-        require 'redcarpet'
-        render = Redcarpet::Render::HTML
-        options = {
-            autolink: true,
-            filter_html: true,
-            fenced_code_blocks: true,
-    no_intra_emphasis: true
-        }
-        markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
-        markdown.render(text).html_safe
-    end
-</code></pre>
-
-<p>4.在view中加入显示markdown的代码:</p>
-
-<pre><code>&lt;%= raw(markdown.render(@post.content).html_safe) %&gt;
-</code></pre>
-
-<h2>pygments</h2>
-
-<p>可以和redcarpet很好的结合，用于语法高亮设置。
-具体代码如下：</p>
-
-<pre><code>    def markdown(text)
-            require 'redcarpet'
-            render = HTMLwithPygments
-            options = {
-                    autolink: true, 
-                    filter_html: true, 
-                    prettify: true,
-                    fenced_code_blocks: true,
-                    no_intra_emphasis: true
-            }
-            markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
-            markdown.render(text).html_safe
-    end
-
-    class HTMLwithPygments &lt; Redcarpet::Render::HTML
-            require 'pygments'
-            def block_code(code, language)
-                    Pygments.highlight(code, :lexer =&gt; language, :options =&gt; {:linenos =&gt; true})
-            end
-    end
-</code></pre>
-
-<blockquote><h3>注意：</h3>
+<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
+具体操作如下：</p>
 
 <ol>
-<li>辅助方法要引入文件redcarpet和pygments。</li>
-<li>hard_wrap必须Redcarpet::Render::HTML实例化时进行配置。</li>
-<li>必须有fenced_code_blocks才能将代码块放入代码框中。</li>
+<li><p>在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: fixed（表明标签会随着页面处在同一位置）,overflow: hidden</p></li>
+<li><p>接着设置js</p></li>
+</ol>
+
+
+<blockquote><ol>
+<li>设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让&lt;a>标签显示。否则，隐藏。</li>
+<li>单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：  $(&lsquo;html, body&rsquo;).animate({scrollTop: 0}, 300)</li>
 </ol>
 </blockquote>
 
-<p>参考：</p>
+<p>example: (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
 
-<ol>
-<li><p><a href="https://github.com/vmg/redcarpet">github上的redcarpet</a></p></li>
-<li><p><a href="https://github.com/tmm1/pygments.rb">github上的pygments</a></p></li>
-<li><p><a href="http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments">视频参考</a></p></li>
-</ol>
+<pre><code>    $(document).ready -&gt; 
+        $("a.go_top").click () -&gt; 
+            $('html, body').animate({scrollTop: 0}, 300)
+            return false
 
+        $(window).bind 'scroll resize', -&gt; 
+            scroll_from_top = $(window).scrollTop()
+            if scroll_from_top &gt;= 1
+                $('a.go_top').show()
+            else
+                $('a.go_top').hide()
+</code></pre>
 </div>
 
 
@@ -237,13 +189,13 @@ posted in
   
 
 
-<time datetime="2013-08-29T22:23:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2013</time> - 
+<time datetime="2013-08-30T21:57:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time> - 
       
 
 posted in
 <span class="categories">
   
-    <a class='category' href='/blog/categories/gem/'>gem</a>
+    <a class='category' href='/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/categories/web/'>web</a>
   
 </span>
 
@@ -254,19 +206,19 @@ posted in
 	<div class="share">
 		<ul>
 			<li>
-  <a href="https://twitter.com/intent/tweet?text=redcarpet和pygments结合进行markdown显示 by @&url=http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Share redcarpet和pygments结合进行markdown显示 on Twitter">
+  <a href="https://twitter.com/intent/tweet?text=Scroll to top by @&url=http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/" title="Share Scroll to top on Twitter">
     <img src="/images/social/twitter.png" />
   </a>
 </li>
 
 			<li>
-  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Share redcarpet和pygments结合进行markdown显示 on Facebook">
+  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/" title="Share Scroll to top on Facebook">
     <img src="/images/social/facebook.png" />
   </a>
 </li>
 
 			<li>
-  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Share redcarpet和pygments结合进行markdown显示 on Google Plus">
+  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/" title="Share Scroll to top on Google Plus">
     <img src="/images/social/google.png" />
   </a>
 </li>
@@ -277,10 +229,8 @@ posted in
 
     
     
-      <a class="pull-left" href="/blog/2013/07/28/create-octopress-blog/" title="Previous Post: create octopress blog">&laquo; create octopress blog</a>
+      <a class="pull-left" href="/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Previous Post: redcarpet和pygments结合进行markdown显示">&laquo; redcarpet和pygments结合进行markdown显示</a>
     
-    
-      <a class="pull-right" href="/blog/2013/08/30/scroll-to-top/" title="Next Post: Scroll to top">Scroll to top &raquo;</a>
     
   </footer>
 
@@ -377,8 +327,8 @@ posted in
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/';
-        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/';
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/';
         var disqus_script = 'embed.js';
       
     (function () {
