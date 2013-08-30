@@ -1,12 +1,11 @@
 
-
 <!DOCTYPE html>
 <!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
 <!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>TsaiKoga Blog</title>
+  <title>redcarpet和pygments结合进行markdown显示 - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
   <link rel="author" href="humans.txt">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -14,7 +13,7 @@
   
     
   
-  <meta name="description" content=" ">
+  <meta name="description" content="redcarpet 用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下： 1.首先是在gemfile中加入redcarpet. 2.安装redcarpet gem install redcarpet 3.以前可直接在要显示的view中加入如下代码: &lt;%= &hellip;">
   
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -22,17 +21,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com/">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/">
   <link href="/favicon.png" rel="icon">
   <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
   <meta name="og:type" content="website" />
   <meta name="og:site_name" content="TsaiKoga Blog" />
-  <meta name="og:title" content="TsaiKoga Blog" />
-  <meta name="og:description" content=" " />
-  <meta name="og:url" content="http://TsaiKoga.github.com/index.html"/>
-  <meta name="url" content="http://TsaiKoga.github.com/index.html">
+  <meta name="og:title" content="redcarpet和pygments结合进行markdown显示" />
+  <meta name="og:description" content="redcarpet 用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下： 1.首先是在gemfile中加入redcarpet. 2.安装redcarpet gem install redcarpet 3.以前可直接在要显示的view中加入如下代码: &lt;%= &hellip;" />
+  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/"/>
+  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/">
+  
+  <meta name="subject" content="gem"/>
+  <meta name="category" content="gem"/>
   
   <meta name="distribution" content="global">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
@@ -56,62 +58,37 @@
 </head>
 
 <body   >
-  <div id="front-wrapper">
-  <div id="hero">
-    <div id="hero-inner" class="container">
-      <div class="span10 offset1">
-  <h1>
-    TsaiKoga Blog
-  </h1>
-  <h2>A Chinese Programmer&#8217;s Blog</h2>
-</div>
-
-    </div>
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/">TsaiKoga Blog</a>
+    <ul class="nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/archives">Archives</a></li>
+    </ul>
+    <ul class="nav" data-subscription="rss">
+      <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+      
+    </ul>
+      
+    <form class="navbar-form" action="http://google.com/search" method="get">
+      <fieldset role="search">
+        <input type="hidden" name="q" value="site:TsaiKoga.github.com" />
+        <input class="span2" type="text" name="q" results="0" placeholder="Search"/>
+      </fieldset>
+    </form>
+      
+    
   </div>
-  <section id="sub-hero">
+</div>
+</nav>
+  <div class="wrapper_single">
     <div class="container">
-      <div class="row">
-  <div class="span4">
-    <h2>about me</h2>
-<p>A little something about me.</p>
-
-  </div>
-  <div class="span6">
-    
-
-  </div>
-  <div class="span2">
-    <h2>found on</h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-</div>
-
-    </div>
-  </section>
-  <div class="container">
-    <div class="row" id="post-container">
-    
-    
-    
-      <article class="span4">
+      <article class="span8 offset2" role="article">
         <div class="article-format">
 
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/">Redcarpet和pygments结合进行markdown显示</a></h1>
+      <h1 class="entry-title">Redcarpet和pygments结合进行markdown显示</h1>
     
     
       <p class="meta">
@@ -235,25 +212,11 @@ posted in
 </ol>
 
 </div>
-  
-  
 
 
-</div>
-
-      </article>
-    
-    
-      <article class="span4">
-        <div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/28/create-octopress-blog/">Create Octopress Blog</a></h1>
-    
-    
-      <p class="meta">
-        
+  <footer>
+    <p class="meta">
+      
   
 
 
@@ -262,7 +225,7 @@ posted in
   
 
  - 
-        
+      
 
 
 
@@ -274,8 +237,8 @@ posted in
   
 
 
-<time datetime="2013-07-28T22:51:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time> - 
-        
+<time datetime="2013-08-29T22:23:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2013</time> - 
+      
 
 posted in
 <span class="categories">
@@ -285,122 +248,52 @@ posted in
 </span>
 
 
+    </p>
+    
+      
+	<div class="share">
+		<ul>
+			<li>
+  <a href="https://twitter.com/intent/tweet?text=redcarpet和pygments结合进行markdown显示 by @&url=http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Share redcarpet和pygments结合进行markdown显示 on Twitter">
+    <img src="/images/social/twitter.png" />
+  </a>
+</li>
+
+			<li>
+  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Share redcarpet和pygments结合进行markdown显示 on Facebook">
+    <img src="/images/social/facebook.png" />
+  </a>
+</li>
+
+			<li>
+  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Share redcarpet和pygments结合进行markdown显示 on Google Plus">
+    <img src="/images/social/google.png" />
+  </a>
+</li>
+
+		</ul>
+	</div>
+
+
+    
+    
+      <a class="pull-left" href="/blog/2013/07/28/create-octopress-blog/" title="Previous Post: create octopress blog">&laquo; create octopress blog</a>
+    
+    
+  </footer>
+
+</div>
+
         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>克隆octopress项目</h4>
-
-<pre><code>git clone git://github.com/imathis/octopress.git blog
-cd blog
-</code></pre>
-
-<p>查看Gemfile文件：
-稍作修改，如：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
-
-<pre><code>vim Gemfile
-</code></pre>
-
-<p>之后执行:</p>
-
-<pre><code>bundle install
-</code></pre>
-
-<p>接着要做的事是rakefile文件的，查看：</p>
-
-<pre><code>vim Rakefile    # 里面有许多rake任务
-</code></pre>
-
-<p>我们执行其中的:</p>
-
-<pre><code>rake install # 复制theme/中的sass/和source/文件夹到blog/下
-</code></pre>
-
-<p>查看网页效果：</p>
-
-<pre><code>rake preview
-</code></pre>
-
-<p>他会生成public文件夹</p>
-
-<h4>创建仓库：名字要以用户名为头，区分大小写。(username.github.io)</h4>
-
-<p>本地执行:</p>
-
-<pre><code>rake setup_github_pages
-</code></pre>
-
-<p>当要填入url时，不要填入.git，这样生成的页面才在.com上,把public生成好的文件变成版本推送到远程仓库github。
-说到在远程仓库做开发，就是将开发分支source覆盖原有的master分支。</p>
-
-<pre><code>git checkout source
-git push origin source
-</code></pre>
-
-<h4>如果想在source分支下有_deploy文件夹，只要</h4>
-
-<pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
-</code></pre>
-
-<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为<em>deploy/,
-修改</em>config.yml文件中的内容:一定要改url和/tsaikoga.github.com一样，</p>
-
-<p>执行：</p>
-
-<pre><code>rake generate
-</code></pre>
-
-<p>再执行：</p>
-
-<pre><code>rake deploy
-</code></pre>
-
-<p>部署到远程仓库，到网址刷新看看。</p>
-
-<hr />
-
-<h4>附加功能：</h4>
-
-<p>注册一个google analytics帐号：
-生成tracking_id:</p>
-
-<h4>新建一个博客：</h4>
-
-<pre><code>rake new_post["Hello TsaiKoga"]
-</code></pre>
-
-<p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
-
-<h4>做评论，可以基于第三方插件：disqus</h4>
-
-<p>扯开一下话题：</p>
-
-<blockquote><p>Disqus的主要目标是通过提供功能强大的第三评论系统，将当前不同网站的相对孤立、隔绝的评论系统，连接成具有社会化特性的大网，用户使用Disqus，在不同网站上评论，无需重复注册账号，只需使用Disqus账号或者<em>第三方平台账号</em>，即可方便的进行评论，且所有评论都会存储、保存在Disqus账号后台，方便随时查看、回顾。</p></blockquote>
-
-<p>可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
-在</em>config.yml中加入你申请的disqus的short_name</p>
+          <div class="article-format">
+            <h1>Comments</h1>
+            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  
-  
-
-
-</div>
-
+          </div>
+        
       </article>
-    
     </div>
-      <div class="row">
-        <ul class="pager">
-          
-          
-        </ul>
-      </div>
   </div>
-</div>
-
-
   <div id="footer-widgets">
   <div class="container">
     <div class="row">
@@ -477,7 +370,10 @@ git push origin source
       var disqus_shortname = 'tsaikogablog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

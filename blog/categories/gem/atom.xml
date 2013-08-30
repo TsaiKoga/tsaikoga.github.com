@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gem | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/gem/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-07-30T20:38:18+08:00</updated>
+  <updated>2013-08-30T21:26:10+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,95 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[redcarpet和pygments结合进行markdown显示]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/"/>
+    <updated>2013-08-29T22:23:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi</id>
+    <content type="html"><![CDATA[<h2>redcarpet</h2>
+
+<p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
+
+<p>1.首先是在gemfile中加入redcarpet.</p>
+
+<p>2.安装redcarpet</p>
+
+<pre><code>    gem install redcarpet
+</code></pre>
+
+<p>3.以前可直接在要显示的view中加入如下代码:</p>
+
+<pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
+</code></pre>
+
+<p>现在现在辅助方法中写如下代码：</p>
+
+<pre><code>def markdown(text)
+        require 'redcarpet'
+        render = Redcarpet::Render::HTML
+        options = {
+            autolink: true,
+            filter_html: true,
+            fenced_code_blocks: true,
+    no_intra_emphasis: true
+        }
+        markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
+        markdown.render(text).html_safe
+    end
+</code></pre>
+
+<p>4.在view中加入显示markdown的代码:</p>
+
+<pre><code>&lt;%= raw(markdown.render(@post.content).html_safe) %&gt;
+</code></pre>
+
+<h2>pygments</h2>
+
+<p>可以和redcarpet很好的结合，用于语法高亮设置。
+具体代码如下：</p>
+
+<pre><code>    def markdown(text)
+            require 'redcarpet'
+            render = HTMLwithPygments
+            options = {
+                    autolink: true, 
+                    filter_html: true, 
+                    prettify: true,
+                    fenced_code_blocks: true,
+                    no_intra_emphasis: true
+            }
+            markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
+            markdown.render(text).html_safe
+    end
+
+    class HTMLwithPygments &lt; Redcarpet::Render::HTML
+            require 'pygments'
+            def block_code(code, language)
+                    Pygments.highlight(code, :lexer =&gt; language, :options =&gt; {:linenos =&gt; true})
+            end
+    end
+</code></pre>
+
+<blockquote><h3>注意：</h3>
+
+<ol>
+<li>辅助方法要引入文件redcarpet和pygments。</li>
+<li>hard_wrap必须Redcarpet::Render::HTML实例化时进行配置。</li>
+<li>必须有fenced_code_blocks才能将代码块放入代码框中。</li>
+</ol>
+</blockquote>
+
+<p>参考：</p>
+
+<ol>
+<li><p><a href="https://github.com/vmg/redcarpet">github上的redcarpet</a></p></li>
+<li><p><a href="https://github.com/tmm1/pygments.rb">github上的pygments</a></p></li>
+<li><p><a href="http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments">视频参考</a></p></li>
+</ol>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[create octopress blog]]></title>
