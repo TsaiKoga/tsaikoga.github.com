@@ -6,7 +6,7 @@ comments: true
 categories: [gem]
 ---
 ## redcarpet
-
+----------------------------------------------------
 用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：
 
 1.首先是在gemfile中加入redcarpet.
@@ -36,6 +36,7 @@ categories: [gem]
     <%= raw(markdown.render(@post.content).html_safe) %>
 
 ## pygments
+---------------------------------------------------
 
 可以和redcarpet很好的结合，用于语法高亮设置。
 具体代码如下：

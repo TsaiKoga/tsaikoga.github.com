@@ -5,8 +5,6 @@ date: 2013-08-30 21:57
 comments: true
 categories: [coffeescript, web]
 ---
-Scroll to top
-==============
 
 许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
 具体操作如下：
@@ -18,7 +16,7 @@ Scroll to top
 > 1. 设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让\<a\>标签显示。否则，隐藏。
 > 2. 单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：	$('html, body').animate({scrollTop: 0}, 300)
 
-example: (标签\<a class="go_top"\>)
+**example:** (标签\<a class="go_top"\>)
 
 		$(document).ready -> 
 			$("a.go_top").click () -> 
