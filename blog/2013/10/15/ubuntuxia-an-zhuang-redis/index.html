@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Scroll to top - TsaiKoga Blog</title>
+  <title>Ubuntu下安装redis - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
   <link rel="author" href="humans.txt">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -13,8 +13,7 @@
   
     
   
-  <meta name="description" content="许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
-具体操作如下： 在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: &hellip;">
+  <meta name="description" content="安装步骤： 安装并编译redis: wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz # 下载压缩包 tar -zxf redis-2.2.13.tar.gz # 解压该压缩包 cd redis-2.2.13 make # 编译 &hellip;">
   
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -22,21 +21,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">
   <link href="/favicon.png" rel="icon">
   <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
   <meta name="og:type" content="website" />
   <meta name="og:site_name" content="TsaiKoga Blog" />
-  <meta name="og:title" content="Scroll to top" />
-  <meta name="og:description" content="许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
-具体操作如下： 在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: &hellip;" />
-  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
-  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/">
+  <meta name="og:title" content="Ubuntu下安装redis" />
+  <meta name="og:description" content="安装步骤： 安装并编译redis: wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz # 下载压缩包 tar -zxf redis-2.2.13.tar.gz # 解压该压缩包 cd redis-2.2.13 make # 编译 &hellip;" />
+  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/"/>
+  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">
   
-  <meta name="subject" content="coffeescriptweb"/>
-  <meta name="category" content="coffeescriptweb"/>
+  <meta name="subject" content="nosql"/>
+  <meta name="category" content="nosql"/>
   
   <meta name="distribution" content="global">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
@@ -90,7 +88,7 @@
 
   <header>
     
-      <h1 class="entry-title">Scroll to Top</h1>
+      <h1 class="entry-title">Ubuntu下安装redis</h1>
     
     
       <p class="meta">
@@ -115,13 +113,13 @@
   
 
 
-<time datetime="2013-08-30T21:57:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time> - 
+<time datetime="2013-10-15T10:02:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
         
 
 posted in
 <span class="categories">
   
-    <a class='category' href='/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/categories/web/'>web</a>
+    <a class='category' href='/blog/categories/nosql/'>nosql</a>
   
 </span>
 
@@ -132,34 +130,68 @@ posted in
   </header>
 
 
-  <div class="entry-content"><p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
-具体操作如下：</p>
+  <div class="entry-content"><h4>安装步骤：</h4>
+
+<hr />
 
 <ol>
-<li><p>在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: fixed（表明标签会随着页面处在同一位置）,overflow: hidden</p></li>
-<li><p>接着设置js</p></li>
+<li><p><strong>安装并编译redis:</strong></p>
+
+<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
+ tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
+ cd redis-2.2.13
+ make                              # 编译
+ sudo make install               # 安装redis
+</code></pre></li>
 </ol>
 
 
-<blockquote><ol>
-<li>设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让&lt;a>标签显示。否则，隐藏。</li>
-<li>单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：  $(&lsquo;html, body&rsquo;).animate({scrollTop: 0}, 300)</li>
+<blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
+
+<p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
+
+<ol>
+<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
+
+<pre><code> cp redis.conf /etc/
+</code></pre></li>
+<li><p><strong>启动服务并验证：</strong></p>
+
+<pre><code> redis-server /etc/redis.conf
+</code></pre></li>
+<li><p><strong>查看是否成功启动：</strong></p>
+
+<pre><code> ps -ef | grep redis
+</code></pre></li>
+<li><p><strong>测试set方法和get方法：</strong></p>
+
+<pre><code> $redis-cli
+ redis&gt; set foo bar
+ OK
+ redis&gt; get foo
+ "bar"
+</code></pre></li>
 </ol>
-</blockquote>
 
-<p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
 
-<pre><code>    $(document).ready -&gt; 
-        $("a.go_top").click () -&gt; 
-            $('html, body').animate({scrollTop: 0}, 300)
-            return false
+<hr />
 
-        $(window).bind 'scroll resize', -&gt; 
-            scroll_from_top = $(window).scrollTop()
-            if scroll_from_top &gt;= 1
-                $('a.go_top').show()
-            else
-                $('a.go_top').hide()
+<h3>其他设置：</h3>
+
+<h4>设置开机自动启动，关机自动关闭：</h4>
+
+<pre><code>    sudo update-rc.d redis-server defaults
+</code></pre>
+
+<h4>初始化用户和日志路径：</h4>
+
+<p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
+
+<pre><code>sudo useradd redis
+sudo mkdir -p /var/lib/redis
+sudo mkdir -p /var/log/redis
+sudo chown redis.redis /var/lib/redis
+sudo chown redis.redis /var/log/redis
 </code></pre>
 </div>
 
@@ -187,13 +219,13 @@ posted in
   
 
 
-<time datetime="2013-08-30T21:57:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time> - 
+<time datetime="2013-10-15T10:02:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
       
 
 posted in
 <span class="categories">
   
-    <a class='category' href='/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/categories/web/'>web</a>
+    <a class='category' href='/blog/categories/nosql/'>nosql</a>
   
 </span>
 
@@ -204,19 +236,19 @@ posted in
 	<div class="share">
 		<ul>
 			<li>
-  <a href="https://twitter.com/intent/tweet?text=Scroll to top by @&url=http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/" title="Share Scroll to top on Twitter">
+  <a href="https://twitter.com/intent/tweet?text=Ubuntu下安装redis by @&url=http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/" title="Share Ubuntu下安装redis on Twitter">
     <img src="/images/social/twitter.png" />
   </a>
 </li>
 
 			<li>
-  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/" title="Share Scroll to top on Facebook">
+  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/" title="Share Ubuntu下安装redis on Facebook">
     <img src="/images/social/facebook.png" />
   </a>
 </li>
 
 			<li>
-  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/" title="Share Scroll to top on Google Plus">
+  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/" title="Share Ubuntu下安装redis on Google Plus">
     <img src="/images/social/google.png" />
   </a>
 </li>
@@ -227,10 +259,10 @@ posted in
 
     
     
-      <a class="pull-left" href="/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Previous Post: redcarpet和pygments结合进行markdown显示">&laquo; redcarpet和pygments结合进行markdown显示</a>
+      <a class="pull-left" href="/blog/2013/08/30/scroll-to-top/" title="Previous Post: Scroll to top">&laquo; Scroll to top</a>
     
     
-      <a class="pull-right" href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/" title="Next Post: Ubuntu下安装redis">Ubuntu下安装redis &raquo;</a>
+      <a class="pull-right" href="/blog/2013/10/15/nosqljian-jie/" title="Next Post: Nosql简介">Nosql简介 &raquo;</a>
     
   </footer>
 
@@ -335,8 +367,8 @@ posted in
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/';
-        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/';
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/';
         var disqus_script = 'embed.js';
       
     (function () {

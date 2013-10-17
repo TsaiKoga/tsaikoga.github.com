@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
+  <title><![CDATA[Category: nosql | TsaiKoga Blog]]></title>
+  <link href="http://TsaiKoga.github.com/blog/categories/nosql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
   <updated>2013-10-17T22:40:24+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
@@ -75,7 +75,7 @@
 
 <p>  NoSQL的官方网上显示现在的Nosql数据库有122种之多。其中存在着“key-value存储”、“文档型数据库”、“列存储数据库”等种类</p>
 
-<p><img src="http://TsaiKoga.github.com/images/posts/2013-10-17/nosql.gif" title="多种nosql数据库" alt="无法显示图片" /></p>
+<p><img src="/images/posts/2013-10-17/nosql.gif" title="多种nosql数据库" alt="无法显示图片" /></p>
 
 <ul>
 <li><p>key-value存储：
@@ -157,7 +157,7 @@
 
 <blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
 
-<p><img src="http://TsaiKoga.github.com/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
+<p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
 
 <ol>
 <li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
@@ -202,234 +202,6 @@ sudo mkdir -p /var/log/redis
 sudo chown redis.redis /var/lib/redis
 sudo chown redis.redis /var/log/redis
 </code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Scroll to top]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
-    <updated>2013-08-30T21:57:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top</id>
-    <content type="html"><![CDATA[<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
-具体操作如下：</p>
-
-<ol>
-<li><p>在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: fixed（表明标签会随着页面处在同一位置）,overflow: hidden</p></li>
-<li><p>接着设置js</p></li>
-</ol>
-
-
-<blockquote><ol>
-<li>设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让&lt;a>标签显示。否则，隐藏。</li>
-<li>单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：  $(&lsquo;html, body&rsquo;).animate({scrollTop: 0}, 300)</li>
-</ol>
-</blockquote>
-
-<p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
-
-<pre><code>    $(document).ready -&gt; 
-        $("a.go_top").click () -&gt; 
-            $('html, body').animate({scrollTop: 0}, 300)
-            return false
-
-        $(window).bind 'scroll resize', -&gt; 
-            scroll_from_top = $(window).scrollTop()
-            if scroll_from_top &gt;= 1
-                $('a.go_top').show()
-            else
-                $('a.go_top').hide()
-</code></pre>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[redcarpet和pygments结合进行markdown显示]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/"/>
-    <updated>2013-08-29T22:23:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi</id>
-    <content type="html"><![CDATA[<h2>redcarpet</h2>
-
-<hr />
-
-<p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
-
-<p>1.首先是在gemfile中加入redcarpet.</p>
-
-<p>2.安装redcarpet</p>
-
-<pre><code>    gem install redcarpet
-</code></pre>
-
-<p>3.以前可直接在要显示的view中加入如下代码:</p>
-
-<pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
-</code></pre>
-
-<p>现在现在辅助方法中写如下代码：</p>
-
-<pre><code>def markdown(text)
-        require 'redcarpet'
-        render = Redcarpet::Render::HTML
-        options = {
-            autolink: true,
-            filter_html: true,
-            fenced_code_blocks: true,
-    no_intra_emphasis: true
-        }
-        markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
-        markdown.render(text).html_safe
-    end
-</code></pre>
-
-<p>4.在view中加入显示markdown的代码:</p>
-
-<pre><code>&lt;%= raw(markdown.render(@post.content).html_safe) %&gt;
-</code></pre>
-
-<h2>pygments</h2>
-
-<hr />
-
-<p>可以和redcarpet很好的结合，用于语法高亮设置。
-具体代码如下：</p>
-
-<pre><code>    def markdown(text)
-            require 'redcarpet'
-            render = HTMLwithPygments
-            options = {
-                    autolink: true, 
-                    filter_html: true, 
-                    prettify: true,
-                    fenced_code_blocks: true,
-                    no_intra_emphasis: true
-            }
-            markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
-            markdown.render(text).html_safe
-    end
-
-    class HTMLwithPygments &lt; Redcarpet::Render::HTML
-            require 'pygments'
-            def block_code(code, language)
-                    Pygments.highlight(code, :lexer =&gt; language, :options =&gt; {:linenos =&gt; true})
-            end
-    end
-</code></pre>
-
-<blockquote><h3>注意：</h3>
-
-<ol>
-<li>辅助方法要引入文件redcarpet和pygments。</li>
-<li>hard_wrap必须Redcarpet::Render::HTML实例化时进行配置。</li>
-<li>必须有fenced_code_blocks才能将代码块放入代码框中。</li>
-</ol>
-</blockquote>
-
-<p>参考：</p>
-
-<ol>
-<li><p><a href="https://github.com/vmg/redcarpet">github上的redcarpet</a></p></li>
-<li><p><a href="https://github.com/tmm1/pygments.rb">github上的pygments</a></p></li>
-<li><p><a href="http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments">视频参考</a></p></li>
-</ol>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[create octopress blog]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/"/>
-    <updated>2013-07-28T22:51:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog</id>
-    <content type="html"><![CDATA[<h4>克隆octopress项目</h4>
-
-<pre><code>git clone git://github.com/imathis/octopress.git blog
-cd blog
-</code></pre>
-
-<p>查看Gemfile文件：
-稍作修改，如：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
-
-<pre><code>vim Gemfile
-</code></pre>
-
-<p>之后执行:</p>
-
-<pre><code>bundle install
-</code></pre>
-
-<p>接着要做的事是rakefile文件的，查看：</p>
-
-<pre><code>vim Rakefile    # 里面有许多rake任务
-</code></pre>
-
-<p>我们执行其中的:</p>
-
-<pre><code>rake install # 复制theme/中的sass/和source/文件夹到blog/下
-</code></pre>
-
-<p>查看网页效果：</p>
-
-<pre><code>rake preview
-</code></pre>
-
-<p>他会生成public文件夹</p>
-
-<h4>创建仓库：名字要以用户名为头，区分大小写。(username.github.io)</h4>
-
-<p>本地执行:</p>
-
-<pre><code>rake setup_github_pages
-</code></pre>
-
-<p>当要填入url时，不要填入.git，这样生成的页面才在.com上,把public生成好的文件变成版本推送到远程仓库github。
-说到在远程仓库做开发，就是将开发分支source覆盖原有的master分支。</p>
-
-<pre><code>git checkout source
-git push origin source
-</code></pre>
-
-<h4>如果想在source分支下有_deploy文件夹，只要</h4>
-
-<pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
-</code></pre>
-
-<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为<em>deploy/,
-修改</em>config.yml文件中的内容:一定要改url和/tsaikoga.github.com一样，</p>
-
-<p>执行：</p>
-
-<pre><code>rake generate
-</code></pre>
-
-<p>再执行：</p>
-
-<pre><code>rake deploy
-</code></pre>
-
-<p>部署到远程仓库，到网址刷新看看。</p>
-
-<hr />
-
-<h4>附加功能：</h4>
-
-<p>注册一个google analytics帐号：
-生成tracking_id:</p>
-
-<h4>新建一个博客：</h4>
-
-<pre><code>rake new_post["Hello TsaiKoga"]
-</code></pre>
-
-<p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
-
-<h4>做评论，可以基于第三方插件：disqus</h4>
-
-<p>扯开一下话题：</p>
-
-<blockquote><p>Disqus的主要目标是通过提供功能强大的第三评论系统，将当前不同网站的相对孤立、隔绝的评论系统，连接成具有社会化特性的大网，用户使用Disqus，在不同网站上评论，无需重复注册账号，只需使用Disqus账号或者<em>第三方平台账号</em>，即可方便的进行评论，且所有评论都会存储、保存在Disqus账号后台，方便随时查看、回顾。</p></blockquote>
-
-<p>可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
-在</em>config.yml中加入你申请的disqus的short_name</p>
 ]]></content>
   </entry>
   

@@ -111,6 +111,296 @@
 
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/10/15/nosqljian-jie/">Nosql简介</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-15T13:21:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
+        
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nosql/'>nosql</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>背景：</h4>
+
+<p>  众所周知，随着社交网络，网络视频，网络游戏的使用，网络资料量呈现爆炸性增长；这时，大数据时代出现。
+业界总结出大数据的<strong>四个特点(4V)：Volumn(数据体量大), Velocity(价值密度低), Variety(类型繁多), Veracity(处理速度快)</strong>。</p>
+
+<p>  普通关系数据库不合适处理这样庞大的数据。为了弥补关系型数据库的不足，各种各样的NoSQL数据库应运而生。</p>
+
+<blockquote><p>接下来说说关系数据库的不足：</p>
+
+<p>  因为它毕竟是一个通用型的数据库，并不能完全适应所有的用途。具体来说它并不擅长以下处理：</p>
+
+<ol>
+<li>大量数据的写入处理</li>
+<li>为有数据更新的表做索引或表结构（schema）变更</li>
+<li>字段不固定时应用</li>
+<li>对简单查询需要快速返回结果的处理</li>
+</ol>
+</blockquote>
+
+<hr />
+
+<h4>为什么使用Nosql：</h4>
+
+<p>  Nosql是“<strong>Not Only SQL</strong>”的缩写,它的意义是：适用关系型数据库的时候就使用关系型数据库，不适用的时候也没有必要非使用关系型数据库不可，可以考虑使用更加合适的数据存储。
+不像关系型数据库，相对地，NoSQL数据库只应用在<strong>特定领域</strong>，基本上不进行复杂的处理，但它恰恰弥补了之前所列举的关系型数据库的不足之处。</p>
+
+<p> <strong>优点：</strong></p>
+
+<ol>
+<li><p>易于分散和处理：</p>
+
+<blockquote><p>关系型数据库并不擅长大量数据的写入处理。
+原本关系型数据库就是<strong>以JOIN为前提</strong>的，就是说，各个数据之间存在关联是关系型数据库得名的主要原因。
+为了进行JOIN处理，关系型数据库不得不把<strong>数据存储在同一个服务器内</strong>，这不利于数据的分散。</p>
+
+<p>NoSQL数据库原本就<strong>不支持JOIN处理</strong>，各个<strong>数据都是独立设计</strong>的，很容易把数据分散到多个服务器上。
+由于数据被分散到了多个服务器上，减少了每个服务器上的数据量，即使要进行大量数据的写入操作，处理起来也更加容易。同理，数据的读入操作当然也同样容易。</p></blockquote></li>
+<li><p>提升性能和增大规模：</p>
+
+<blockquote><p>想要使服务器能够轻松地处理更大量的数据：</p>
+
+<ol>
+<li><strong>提升性能：</strong>提升性能指的就是通过提升现行服务器自身的性能来提高处理能力。程序方面也不需要进行变更，但需要一些费用。若要购买<strong>性能翻倍</strong>的服务器。</li>
+<li><strong>增大规模：</strong>使用<strong>多台廉价的服务器</strong>来提高处理能力。它需要对程序进行变更，但由于使用廉价的服务器，可以控制成本。另外，以后只要依葫芦画瓢增加廉价服务器的数量就可以了。</li>
+</ol>
+</blockquote></li>
+</ol>
+
+
+<p>注意： <em>NoSQL数据库基本上来说为了“使大量数据的写入处理更加容易（让增加服务器数量更容易）”而设计的。但实际上NoSQL数据库还有各种各样的特点，如果能够恰当地利用这些特点将会是非常有帮助。</em></p>
+
+<hr />
+
+<h3>Nosql数据库：</h3>
+
+<p>  NoSQL的官方网上显示现在的Nosql数据库有122种之多。其中存在着“key-value存储”、“文档型数据库”、“列存储数据库”等种类</p>
+
+<p><img src="/images/posts/2013-10-17/nosql.gif" title="多种nosql数据库" alt="无法显示图片" /></p>
+
+<ul>
+<li><p>key-value存储：
+<strong>最常见的NoSQL数据库</strong>，它的数据是以<strong>key-value的形式</strong>存储的。虽然它的处理速度非常快，但是基本上只能通过key的完全一致查询获取数据。根据数据的保存方式可以分为临时性、永久性和两者兼具三种。</p>
+
+<ol>
+<li><p>临时性：memcached属于这种类型。把所有数据都保存在<strong>内存中</strong></p>
+
+<blockquote><ol>
+<li> 在内存中保存数据</li>
+<li>可以进行非常快速的保存和读取处理</li>
+<li>数据有可能丢失</li>
+</ol>
+</blockquote></li>
+<li><p> 永久性：Tokyo Tyrant、Flare、ROMA等属于这种类型。是把数据保存在<strong>硬盘上</strong>。</p>
+
+<blockquote><ol>
+<li>在硬盘上保存数据</li>
+<li>可以进行非常快速的保存和读取处理（但无法与memcached相比）</li>
+<li>数据不会丢失</li>
+</ol>
+</blockquote></li>
+<li><p> 两者兼具： Redis属于这种类型。</p>
+
+<blockquote><p>Redis<strong>首先把数据保存到内存</strong>中，在满足<strong>特定条件</strong>（默认是15分钟一次以上，5分钟内10个以上，1分钟内10000个以上的key发生变更）的时候将数据<strong>写入到硬盘</strong>中。
+这样既确保了内存中数据的处理速度，又可以通过写入硬盘来保证数据的永久性。这种类型的数据库特别适合于处理数组类型的数据。</p>
+
+<ul>
+<li>同时在内存和硬盘上保存数据</li>
+<li>可以进行非常快速的保存和读取处理</li>
+<li>保存在硬盘上的数据不会消失（可以恢复）</li>
+<li>适合于处理数组类型的数据</li>
+</ul>
+</blockquote></li>
+</ol>
+</li>
+<li><p>面向文档的数据库：
+  MongoDB、CouchDB属于这种类型。</p>
+
+<p>  不定义表结构：面向文档的数据库具有以下特征：即使<strong>不定义表结构，也可以像定义了表结构一样使用</strong>。
+  关系型数据库在<strong>变更表结构时</strong>比较费事，而且为了保持一致性还需修改程序。然而NoSQL数据库则可省去这些麻烦（通常程序都是正确的），确实是方便快捷。
+  可以使用<strong>复杂的查询条件</strong>：面向文档的数据库可以通过复杂的查询条件来获取数据。虽然不具备事务处理和JOIN这些关系型数据库所具有的处理能力，但除此以外的其他处理基本上都能实现。这是非常容易使用的NoSQL数据库。</p>
+
+<blockquote><ol>
+<li>不需要定义表结构</li>
+<li>可以利用复杂的查询条件（不具备事务处理和JOIN）</li>
+</ol>
+</blockquote></li>
+<li><p>面向列的数据库：Cassandra、Hbase、HyperTable属于这种类型。</p>
+
+<blockquote><p>普通的关系型数据库都是以<strong>行为单位</strong>来存储数据的，面向列的数据库是<strong>以列为单位</strong>来存储数据的。</p></blockquote></li>
+</ul>
+
+
+<p><em>注意：NoSQL不是为了替代SQL而出现的，它是一种替补方案，而不是解决方案的首选。</em></p>
+</div>
+  
+  
+
+
+</div>
+
+      </article>
+    
+    
+      <article class="span4">
+        <div class="article-format">
+
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">Ubuntu下安装redis</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-15T10:02:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
+        
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nosql/'>nosql</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>安装步骤：</h4>
+
+<hr />
+
+<ol>
+<li><p><strong>安装并编译redis:</strong></p>
+
+<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
+ tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
+ cd redis-2.2.13
+ make                              # 编译
+ sudo make install               # 安装redis
+</code></pre></li>
+</ol>
+
+
+<blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
+
+<p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
+
+<ol>
+<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
+
+<pre><code> cp redis.conf /etc/
+</code></pre></li>
+<li><p><strong>启动服务并验证：</strong></p>
+
+<pre><code> redis-server /etc/redis.conf
+</code></pre></li>
+<li><p><strong>查看是否成功启动：</strong></p>
+
+<pre><code> ps -ef | grep redis
+</code></pre></li>
+<li><p><strong>测试set方法和get方法：</strong></p>
+
+<pre><code> $redis-cli
+ redis&gt; set foo bar
+ OK
+ redis&gt; get foo
+ "bar"
+</code></pre></li>
+</ol>
+
+
+<hr />
+
+<h3>其他设置：</h3>
+
+<h4>设置开机自动启动，关机自动关闭：</h4>
+
+<pre><code>    sudo update-rc.d redis-server defaults
+</code></pre>
+
+<h4>初始化用户和日志路径：</h4>
+
+<p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
+
+<pre><code>sudo useradd redis
+sudo mkdir -p /var/lib/redis
+sudo mkdir -p /var/log/redis
+sudo chown redis.redis /var/lib/redis
+sudo chown redis.redis /var/log/redis
+</code></pre>
+</div>
+  
+  
+
+
+</div>
+
+      </article>
+    
+    
+      <article class="span4">
+        <div class="article-format">
+
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/08/30/scroll-to-top/">Scroll to Top</a></h1>
     
     
@@ -153,9 +443,7 @@ posted in
   </header>
 
 
-  <div class="entry-content"><h1>Scroll to top</h1>
-
-<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
+  <div class="entry-content"><p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
 具体操作如下：</p>
 
 <ol>
@@ -170,7 +458,7 @@ posted in
 </ol>
 </blockquote>
 
-<p>example: (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
+<p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
 
 <pre><code>    $(document).ready -&gt; 
         $("a.go_top").click () -&gt; 
@@ -243,6 +531,8 @@ posted in
 
   <div class="entry-content"><h2>redcarpet</h2>
 
+<hr />
+
 <p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
 
 <p>1.首先是在gemfile中加入redcarpet.</p>
@@ -279,6 +569,8 @@ posted in
 </code></pre>
 
 <h2>pygments</h2>
+
+<hr />
 
 <p>可以和redcarpet很好的结合，用于语法高亮设置。
 具体代码如下：</p>
@@ -495,6 +787,14 @@ git push origin source
   <div class="span3">
     <h2>recent posts</h2>
     <ul class="recent_posts">
+      
+        <li>
+          <a href="/blog/2013/10/15/nosqljian-jie/">Nosql简介</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">Ubuntu下安装redis</a>
+        </li>
       
         <li>
           <a href="/blog/2013/08/30/scroll-to-top/">Scroll to top</a>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gem | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/gem/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-08-30T22:14:10+08:00</updated>
+  <updated>2013-10-17T22:40:24+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -19,6 +19,8 @@
     <updated>2013-08-29T22:23:00+08:00</updated>
     <id>http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi</id>
     <content type="html"><![CDATA[<h2>redcarpet</h2>
+
+<hr />
 
 <p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
 
@@ -56,6 +58,8 @@
 </code></pre>
 
 <h2>pygments</h2>
+
+<hr />
 
 <p>可以和redcarpet很好的结合，用于语法高亮设置。
 具体代码如下：</p>

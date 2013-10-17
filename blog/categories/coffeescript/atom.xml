@@ -4,7 +4,7 @@
   <title><![CDATA[Category: coffeescript | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/coffeescript/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-08-30T22:14:10+08:00</updated>
+  <updated>2013-10-17T22:40:24+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -18,9 +18,7 @@
     <link href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
     <updated>2013-08-30T21:57:00+08:00</updated>
     <id>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top</id>
-    <content type="html"><![CDATA[<h1>Scroll to top</h1>
-
-<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
+    <content type="html"><![CDATA[<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
 具体操作如下：</p>
 
 <ol>
@@ -35,7 +33,7 @@
 </ol>
 </blockquote>
 
-<p>example: (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
+<p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
 
 <pre><code>    $(document).ready -&gt; 
         $("a.go_top").click () -&gt; 
