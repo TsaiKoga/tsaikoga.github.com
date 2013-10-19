@@ -1,12 +1,11 @@
 
-
 <!DOCTYPE html>
 <!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
 <!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>TsaiKoga Blog</title>
+  <title>使用hosts文件上facebook等网站 - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
   <link rel="author" href="humans.txt">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -14,7 +13,8 @@
   
     
   
-  <meta name="description" content=" ">
+  <meta name="description" content="原因： hosts文件是本地域名解析文件, 系统在访问互联网时先在本机hosts文件中查找对应的域名解析（即把你输入的域名变成对应服务器IP地址），
+如果没有再去相应的dns服务器查找，网通，电信的dns服务器可能屏蔽facebook等网站的解析， &hellip;">
   
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
@@ -22,17 +22,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">
   <link href="/favicon.png" rel="icon">
   <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
   <meta name="og:type" content="website" />
   <meta name="og:site_name" content="TsaiKoga Blog" />
-  <meta name="og:title" content="TsaiKoga Blog" />
-  <meta name="og:description" content=" " />
-  <meta name="og:url" content="http://TsaiKoga.github.com/blog/index.html"/>
-  <meta name="url" content="http://TsaiKoga.github.com/blog/index.html">
+  <meta name="og:title" content="使用hosts文件上facebook等网站" />
+  <meta name="og:description" content="原因： hosts文件是本地域名解析文件, 系统在访问互联网时先在本机hosts文件中查找对应的域名解析（即把你输入的域名变成对应服务器IP地址），
+如果没有再去相应的dns服务器查找，网通，电信的dns服务器可能屏蔽facebook等网站的解析， &hellip;" />
+  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/"/>
+  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">
+  
+  <meta name="subject" content=""/>
+  <meta name="category" content=""/>
   
   <meta name="distribution" content="global">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
@@ -56,14 +60,37 @@
 </head>
 
 <body   >
-  
-
-
-    <article class="post"><div class="article-format">
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/">TsaiKoga Blog</a>
+    <ul class="nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/archives">Archives</a></li>
+    </ul>
+    <ul class="nav" data-subscription="rss">
+      <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+      
+    </ul>
+      
+    <form class="navbar-form" action="http://google.com/search" method="get">
+      <fieldset role="search">
+        <input type="hidden" name="q" value="site:TsaiKoga.github.com" />
+        <input class="span2" type="text" name="q" results="0" placeholder="Search"/>
+      </fieldset>
+    </form>
+      
+    
+  </div>
+</div>
+</nav>
+  <div class="wrapper_single">
+    <div class="container">
+      <article class="span8 offset2" role="article">
+        <div class="article-format">
 
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">使用hosts文件上facebook等网站</a></h1>
+      <h1 class="entry-title">使用hosts文件上facebook等网站</h1>
     
     
       <p class="meta">
@@ -870,23 +897,11 @@ Ubuntu hosts文件位置: /etc/hosts
 
 <blockquote><p><strong>注意</strong>：当然，也可以自己找ip;方法：<strong>ping</strong>对应的网站，获取相应的ip，能通就可以用&hellip;</p></blockquote>
 </div>
-  
-  
 
 
-</div>
-</article>
-
-
-    <article class="post"><div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/15/nosqljian-jie/">Nosql简介</a></h1>
-    
-    
-      <p class="meta">
-        
+  <footer>
+    <p class="meta">
+      
   
 
 
@@ -895,7 +910,7 @@ Ubuntu hosts文件位置: /etc/hosts
   
 
  - 
-        
+      
 
 
 
@@ -907,636 +922,56 @@ Ubuntu hosts文件位置: /etc/hosts
   
 
 
-<time datetime="2013-10-15T13:21:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/nosql/'>nosql</a>
-  
-</span>
+<time datetime="2013-10-19T20:52:00+08:00" pubdate data-updated="true">Oct 19<span>th</span>, 2013</time> - 
+      
 
 
-        
-      </p>
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><h4>背景：</h4>
-
-<p>  众所周知，随着社交网络，网络视频，网络游戏的使用，网络资料量呈现爆炸性增长；这时，大数据时代出现。
-业界总结出大数据的<strong>四个特点(4V)：Volumn(数据体量大), Velocity(价值密度低), Variety(类型繁多), Veracity(处理速度快)</strong>。</p>
-
-<p>  普通关系数据库不合适处理这样庞大的数据。为了弥补关系型数据库的不足，各种各样的NoSQL数据库应运而生。</p>
-
-<blockquote><p>接下来说说关系数据库的不足：</p>
-
-<p>  因为它毕竟是一个通用型的数据库，并不能完全适应所有的用途。具体来说它并不擅长以下处理：</p>
-
-<ol>
-<li>大量数据的写入处理</li>
-<li>为有数据更新的表做索引或表结构（schema）变更</li>
-<li>字段不固定时应用</li>
-<li>对简单查询需要快速返回结果的处理</li>
-</ol>
-</blockquote>
-
-<hr />
-
-<h4>为什么使用Nosql：</h4>
-
-<p>  Nosql是“<strong>Not Only SQL</strong>”的缩写,它的意义是：适用关系型数据库的时候就使用关系型数据库，不适用的时候也没有必要非使用关系型数据库不可，可以考虑使用更加合适的数据存储。
-不像关系型数据库，相对地，NoSQL数据库只应用在<strong>特定领域</strong>，基本上不进行复杂的处理，但它恰恰弥补了之前所列举的关系型数据库的不足之处。</p>
-
-<p> <strong>优点：</strong></p>
-
-<ol>
-<li><p>易于分散和处理：</p>
-
-<blockquote><p>关系型数据库并不擅长大量数据的写入处理。
-原本关系型数据库就是<strong>以JOIN为前提</strong>的，就是说，各个数据之间存在关联是关系型数据库得名的主要原因。
-为了进行JOIN处理，关系型数据库不得不把<strong>数据存储在同一个服务器内</strong>，这不利于数据的分散。</p>
-
-<p>NoSQL数据库原本就<strong>不支持JOIN处理</strong>，各个<strong>数据都是独立设计</strong>的，很容易把数据分散到多个服务器上。
-由于数据被分散到了多个服务器上，减少了每个服务器上的数据量，即使要进行大量数据的写入操作，处理起来也更加容易。同理，数据的读入操作当然也同样容易。</p></blockquote></li>
-<li><p>提升性能和增大规模：</p>
-
-<blockquote><p>想要使服务器能够轻松地处理更大量的数据：</p>
-
-<ol>
-<li><strong>提升性能：</strong>提升性能指的就是通过提升现行服务器自身的性能来提高处理能力。程序方面也不需要进行变更，但需要一些费用。若要购买<strong>性能翻倍</strong>的服务器。</li>
-<li><strong>增大规模：</strong>使用<strong>多台廉价的服务器</strong>来提高处理能力。它需要对程序进行变更，但由于使用廉价的服务器，可以控制成本。另外，以后只要依葫芦画瓢增加廉价服务器的数量就可以了。</li>
-</ol>
-</blockquote></li>
-</ol>
-
-
-<p>注意： <em>NoSQL数据库基本上来说为了“使大量数据的写入处理更加容易（让增加服务器数量更容易）”而设计的。但实际上NoSQL数据库还有各种各样的特点，如果能够恰当地利用这些特点将会是非常有帮助。</em></p>
-
-<hr />
-
-<h3>Nosql数据库：</h3>
-
-<p>  NoSQL的官方网上显示现在的Nosql数据库有122种之多。其中存在着“key-value存储”、“文档型数据库”、“列存储数据库”等种类</p>
-
-<p><img src="/images/posts/2013-10-17/nosql.gif" title="多种nosql数据库" alt="无法显示图片" /></p>
-
-<ul>
-<li><p>key-value存储：
-<strong>最常见的NoSQL数据库</strong>，它的数据是以<strong>key-value的形式</strong>存储的。虽然它的处理速度非常快，但是基本上只能通过key的完全一致查询获取数据。根据数据的保存方式可以分为临时性、永久性和两者兼具三种。</p>
-
-<ol>
-<li><p>临时性：memcached属于这种类型。把所有数据都保存在<strong>内存中</strong></p>
-
-<blockquote><ol>
-<li> 在内存中保存数据</li>
-<li>可以进行非常快速的保存和读取处理</li>
-<li>数据有可能丢失</li>
-</ol>
-</blockquote></li>
-<li><p> 永久性：Tokyo Tyrant、Flare、ROMA等属于这种类型。是把数据保存在<strong>硬盘上</strong>。</p>
-
-<blockquote><ol>
-<li>在硬盘上保存数据</li>
-<li>可以进行非常快速的保存和读取处理（但无法与memcached相比）</li>
-<li>数据不会丢失</li>
-</ol>
-</blockquote></li>
-<li><p> 两者兼具： Redis属于这种类型。</p>
-
-<blockquote><p>Redis<strong>首先把数据保存到内存</strong>中，在满足<strong>特定条件</strong>（默认是15分钟一次以上，5分钟内10个以上，1分钟内10000个以上的key发生变更）的时候将数据<strong>写入到硬盘</strong>中。
-这样既确保了内存中数据的处理速度，又可以通过写入硬盘来保证数据的永久性。这种类型的数据库特别适合于处理数组类型的数据。</p>
-
-<ul>
-<li>同时在内存和硬盘上保存数据</li>
-<li>可以进行非常快速的保存和读取处理</li>
-<li>保存在硬盘上的数据不会消失（可以恢复）</li>
-<li>适合于处理数组类型的数据</li>
-</ul>
-</blockquote></li>
-</ol>
+      
+	<div class="share">
+		<ul>
+			<li>
+  <a href="https://twitter.com/intent/tweet?text=使用hosts文件上facebook等网站 by @&url=http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Share 使用hosts文件上facebook等网站 on Twitter">
+    <img src="/images/social/twitter.png" />
+  </a>
 </li>
-<li><p>面向文档的数据库：
-  MongoDB、CouchDB属于这种类型。</p>
 
-<p>  不定义表结构：面向文档的数据库具有以下特征：即使<strong>不定义表结构，也可以像定义了表结构一样使用</strong>。
-  关系型数据库在<strong>变更表结构时</strong>比较费事，而且为了保持一致性还需修改程序。然而NoSQL数据库则可省去这些麻烦（通常程序都是正确的），确实是方便快捷。
-  可以使用<strong>复杂的查询条件</strong>：面向文档的数据库可以通过复杂的查询条件来获取数据。虽然不具备事务处理和JOIN这些关系型数据库所具有的处理能力，但除此以外的其他处理基本上都能实现。这是非常容易使用的NoSQL数据库。</p>
+			<li>
+  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Share 使用hosts文件上facebook等网站 on Facebook">
+    <img src="/images/social/facebook.png" />
+  </a>
+</li>
 
-<blockquote><ol>
-<li>不需要定义表结构</li>
-<li>可以利用复杂的查询条件（不具备事务处理和JOIN）</li>
-</ol>
-</blockquote></li>
-<li><p>面向列的数据库：Cassandra、Hbase、HyperTable属于这种类型。</p>
+			<li>
+  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Share 使用hosts文件上facebook等网站 on Google Plus">
+    <img src="/images/social/google.png" />
+  </a>
+</li>
 
-<blockquote><p>普通的关系型数据库都是以<strong>行为单位</strong>来存储数据的，面向列的数据库是<strong>以列为单位</strong>来存储数据的。</p></blockquote></li>
-</ul>
-
-
-<p><em>注意：NoSQL不是为了替代SQL而出现的，它是一种替补方案，而不是解决方案的首选。</em></p>
-</div>
-  
-  
+		</ul>
+	</div>
 
 
-</div>
-</article>
-
-
-    <article class="post"><div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">Ubuntu下安装redis</a></h1>
     
     
-      <p class="meta">
-        
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-15T10:02:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/nosql/'>nosql</a>
-  
-</span>
-
-
-        
-      </p>
+      <a class="pull-left" href="/blog/2013/10/15/nosqljian-jie/" title="Previous Post: Nosql简介">&laquo; Nosql简介</a>
     
-  </header>
-
-
-  <div class="entry-content"><h4>安装步骤：</h4>
-
-<hr />
-
-<ol>
-<li><p><strong>安装并编译redis:</strong></p>
-
-<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
- tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
- cd redis-2.2.13
- make                              # 编译
- sudo make install               # 安装redis
-</code></pre></li>
-</ol>
-
-
-<blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
-
-<p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
-
-<ol>
-<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
-
-<pre><code> cp redis.conf /etc/
-</code></pre></li>
-<li><p><strong>启动服务并验证：</strong></p>
-
-<pre><code> redis-server /etc/redis.conf
-</code></pre></li>
-<li><p><strong>查看是否成功启动：</strong></p>
-
-<pre><code> ps -ef | grep redis
-</code></pre></li>
-<li><p><strong>测试set方法和get方法：</strong></p>
-
-<pre><code> $redis-cli
- redis&gt; set foo bar
- OK
- redis&gt; get foo
- "bar"
-</code></pre></li>
-</ol>
-
-
-<hr />
-
-<h3>其他设置：</h3>
-
-<h4>设置开机自动启动，关机自动关闭：</h4>
-
-<pre><code>    sudo update-rc.d redis-server defaults
-</code></pre>
-
-<h4>初始化用户和日志路径：</h4>
-
-<p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
-
-<pre><code>sudo useradd redis
-sudo mkdir -p /var/lib/redis
-sudo mkdir -p /var/log/redis
-sudo chown redis.redis /var/lib/redis
-sudo chown redis.redis /var/log/redis
-</code></pre>
-</div>
-  
-  
-
+    
+  </footer>
 
 </div>
-</article>
-
-
-    <article class="post"><div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/30/scroll-to-top/">Scroll to Top</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-30T21:57:00+08:00" pubdate data-updated="true">Aug 30<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/coffeescript/'>coffeescript</a>, <a class='category' href='/blog/categories/web/'>web</a>
-  
-</span>
-
 
         
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
-具体操作如下：</p>
-
-<ol>
-<li><p>在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: fixed（表明标签会随着页面处在同一位置）,overflow: hidden</p></li>
-<li><p>接着设置js</p></li>
-</ol>
-
-
-<blockquote><ol>
-<li>设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让&lt;a>标签显示。否则，隐藏。</li>
-<li>单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：  $(&lsquo;html, body&rsquo;).animate({scrollTop: 0}, 300)</li>
-</ol>
-</blockquote>
-
-<p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
-
-<pre><code>    $(document).ready -&gt; 
-        $("a.go_top").click () -&gt; 
-            $('html, body').animate({scrollTop: 0}, 300)
-            return false
-
-        $(window).bind 'scroll resize', -&gt; 
-            scroll_from_top = $(window).scrollTop()
-            if scroll_from_top &gt;= 1
-                $('a.go_top').show()
-            else
-                $('a.go_top').hide()
-</code></pre>
+          <div class="article-format">
+            <h1>Comments</h1>
+            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  
-  
-
-
-</div>
-</article>
-
-
-    <article class="post"><div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/">Redcarpet和pygments结合进行markdown显示</a></h1>
-    
-    
-      <p class="meta">
+          </div>
         
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-29T22:23:00+08:00" pubdate data-updated="true">Aug 29<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/gem/'>gem</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>redcarpet</h2>
-
-<hr />
-
-<p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
-
-<p>1.首先是在gemfile中加入redcarpet.</p>
-
-<p>2.安装redcarpet</p>
-
-<pre><code>    gem install redcarpet
-</code></pre>
-
-<p>3.以前可直接在要显示的view中加入如下代码:</p>
-
-<pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
-</code></pre>
-
-<p>现在现在辅助方法中写如下代码：</p>
-
-<pre><code>def markdown(text)
-        require 'redcarpet'
-        render = Redcarpet::Render::HTML
-        options = {
-            autolink: true,
-            filter_html: true,
-            fenced_code_blocks: true,
-    no_intra_emphasis: true
-        }
-        markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
-        markdown.render(text).html_safe
-    end
-</code></pre>
-
-<p>4.在view中加入显示markdown的代码:</p>
-
-<pre><code>&lt;%= raw(markdown.render(@post.content).html_safe) %&gt;
-</code></pre>
-
-<h2>pygments</h2>
-
-<hr />
-
-<p>可以和redcarpet很好的结合，用于语法高亮设置。
-具体代码如下：</p>
-
-<pre><code>    def markdown(text)
-            require 'redcarpet'
-            render = HTMLwithPygments
-            options = {
-                    autolink: true, 
-                    filter_html: true, 
-                    prettify: true,
-                    fenced_code_blocks: true,
-                    no_intra_emphasis: true
-            }
-            markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
-            markdown.render(text).html_safe
-    end
-
-    class HTMLwithPygments &lt; Redcarpet::Render::HTML
-            require 'pygments'
-            def block_code(code, language)
-                    Pygments.highlight(code, :lexer =&gt; language, :options =&gt; {:linenos =&gt; true})
-            end
-    end
-</code></pre>
-
-<blockquote><h3>注意：</h3>
-
-<ol>
-<li>辅助方法要引入文件redcarpet和pygments。</li>
-<li>hard_wrap必须Redcarpet::Render::HTML实例化时进行配置。</li>
-<li>必须有fenced_code_blocks才能将代码块放入代码框中。</li>
-</ol>
-</blockquote>
-
-<p>参考：</p>
-
-<ol>
-<li><p><a href="https://github.com/vmg/redcarpet">github上的redcarpet</a></p></li>
-<li><p><a href="https://github.com/tmm1/pygments.rb">github上的pygments</a></p></li>
-<li><p><a href="http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments">视频参考</a></p></li>
-</ol>
-
-</div>
-  
-  
-
-
-</div>
-</article>
-
-
-    <article class="post"><div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/07/28/create-octopress-blog/">Create Octopress Blog</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-28T22:51:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/gem/'>gem</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>克隆octopress项目</h4>
-
-<pre><code>git clone git://github.com/imathis/octopress.git blog
-cd blog
-</code></pre>
-
-<p>查看Gemfile文件：
-稍作修改，如：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
-
-<pre><code>vim Gemfile
-</code></pre>
-
-<p>之后执行:</p>
-
-<pre><code>bundle install
-</code></pre>
-
-<p>接着要做的事是rakefile文件的，查看：</p>
-
-<pre><code>vim Rakefile    # 里面有许多rake任务
-</code></pre>
-
-<p>我们执行其中的:</p>
-
-<pre><code>rake install # 复制theme/中的sass/和source/文件夹到blog/下
-</code></pre>
-
-<p>查看网页效果：</p>
-
-<pre><code>rake preview
-</code></pre>
-
-<p>他会生成public文件夹</p>
-
-<h4>创建仓库：名字要以用户名为头，区分大小写。(username.github.io)</h4>
-
-<p>本地执行:</p>
-
-<pre><code>rake setup_github_pages
-</code></pre>
-
-<p>当要填入url时，不要填入.git，这样生成的页面才在.com上,把public生成好的文件变成版本推送到远程仓库github。
-说到在远程仓库做开发，就是将开发分支source覆盖原有的master分支。</p>
-
-<pre><code>git checkout source
-git push origin source
-</code></pre>
-
-<h4>如果想在source分支下有_deploy文件夹，只要</h4>
-
-<pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
-</code></pre>
-
-<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为<em>deploy/,
-修改</em>config.yml文件中的内容:一定要改url和/tsaikoga.github.com一样，</p>
-
-<p>执行：</p>
-
-<pre><code>rake generate
-</code></pre>
-
-<p>再执行：</p>
-
-<pre><code>rake deploy
-</code></pre>
-
-<p>部署到远程仓库，到网址刷新看看。</p>
-
-<hr />
-
-<h4>附加功能：</h4>
-
-<p>注册一个google analytics帐号：
-生成tracking_id:</p>
-
-<h4>新建一个博客：</h4>
-
-<pre><code>rake new_post["Hello TsaiKoga"]
-</code></pre>
-
-<p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
-
-<h4>做评论，可以基于第三方插件：disqus</h4>
-
-<p>扯开一下话题：</p>
-
-<blockquote><p>Disqus的主要目标是通过提供功能强大的第三评论系统，将当前不同网站的相对孤立、隔绝的评论系统，连接成具有社会化特性的大网，用户使用Disqus，在不同网站上评论，无需重复注册账号，只需使用Disqus账号或者<em>第三方平台账号</em>，即可方便的进行评论，且所有评论都会存储、保存在Disqus账号后台，方便随时查看、回顾。</p></blockquote>
-
-<p>可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
-在</em>config.yml中加入你申请的disqus的short_name</p>
-</div>
-  
-  
-
-
-</div>
-</article>
-
-<nav id="pagenavi">
-    
-    
-</nav>
-
+      </article>
+    </div>
+  </div>
   <div id="footer-widgets">
   <div class="container">
     <div class="row">
@@ -1625,7 +1060,10 @@ git push origin source
       var disqus_shortname = 'tsaikogablog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
