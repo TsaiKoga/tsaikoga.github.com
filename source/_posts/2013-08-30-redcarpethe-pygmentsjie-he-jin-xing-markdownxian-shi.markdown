@@ -18,7 +18,7 @@ categories: [gem]
 
     <%= Redcarpet::Markdown.new(render, :extension => {})%>
 
-现在现在辅助方法中写如下代码：
+现在在辅助方法中写如下代码：
     def markdown(text)
 			require 'redcarpet'
 			render = Redcarpet::Render::HTML

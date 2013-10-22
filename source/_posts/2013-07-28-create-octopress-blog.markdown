@@ -16,39 +16,42 @@ categories: gem
 之后执行:
     bundle install
 
-接着要做的事是rakefile文件的，查看：
+接着要做的事是查看rakefile文件的：
     vim Rakefile	# 里面有许多rake任务
 
 我们执行其中的:
-    rake install # 复制theme/中的sass/和source/文件夹到blog/下
+    rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"blog/"文件夹下
 
-查看网页效果：
+**查看网页效果：**
     rake preview
 
 他会生成public文件夹
+
+--------------------------------------------------------------------
+
 ####创建仓库：名字要以用户名为头，区分大小写。\(username.github.io\)
 本地执行:
     rake setup_github_pages
 
-当要填入url时，不要填入.git，这样生成的页面才在.com上,把public生成好的文件变成版本推送到远程仓库github。
-说到在远程仓库做开发，就是将开发分支source覆盖原有的master分支。
-    git checkout source
-    git push origin source
+在github上新建一个octopress仓库，当要填入url时，不要填入".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
+说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支"。
+    git checkout source				# 切到开发分支source上
+    git push origin source		# 推送到远程仓库
 
 
-####如果想在source分支下有_deploy文件夹，只要
+####如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要
     git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
 
 重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/, 
-修改_config.yml文件中的内容:一定要改url和/tsaikoga.github.com一样，
+修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，
 
 执行：
     rake generate
 
-再执行：
+再执行以下名令，**部署到远程仓库**：
     rake deploy
 
-部署到远程仓库，到网址刷新看看。
+最后到网址刷新看看。
 ******************************** 
 ####附加功能：
 注册一个google analytics帐号：

@@ -3,7 +3,7 @@ layout: post
 title: "使用hosts文件上facebook等网站"
 date: 2013-10-19 20:52
 comments: true
-categories: []
+categories: [net]
 ---
 
 ###原因：###
