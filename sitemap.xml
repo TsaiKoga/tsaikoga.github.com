@@ -2,13 +2,13 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/</loc>
-        <lastmod>2013-08-30T21:24:02+08:00</lastmod>
+        <lastmod>2013-10-22T14:03:51+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/
         </loc>
-        <lastmod>2013-10-15T13:25:56+08:00</lastmod>
+        <lastmod>2013-10-22T14:09:05+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/</loc>
@@ -26,22 +26,26 @@
         <loc>
             http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/
         </loc>
-        <lastmod>2013-10-19T21:17:57+08:00</lastmod>
+        <lastmod>2013-10-22T09:50:41+08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/</loc>
+        <lastmod>2013-10-22T14:19:10+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/archives/</loc>
-        <lastmod>2013-10-19T21:17:57+08:00</lastmod>
+        <lastmod>2013-10-22T14:19:10+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/archives/</loc>
-        <lastmod>2013-10-19T21:17:57+08:00</lastmod>
+        <lastmod>2013-10-22T14:19:10+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/</loc>
-        <lastmod>2013-10-19T21:17:57+08:00</lastmod>
+        <lastmod>2013-10-22T14:19:10+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/</loc>
-        <lastmod>2013-10-19T21:17:57+08:00</lastmod>
+        <lastmod>2013-10-22T14:19:10+08:00</lastmod>
     </url>
 </urlset>

@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-19T21:19:00+08:00</updated>
+  <updated>2013-10-22T14:20:55+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,120 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Linux的文件系统]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/"/>
+    <updated>2013-10-22T09:49:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu</id>
+    <content type="html"><![CDATA[<hr />
+
+<h3>文件系统：</h3>
+
+<p>我们都知道Linux的文件系统层次结构是一棵树，以&#8221;/&ldquo;表示的为最上层的目录。</p>
+
+<p><strong>example:</strong></p>
+
+<p>Ubuntu文件系统示意图：</p>
+
+<p><img src="http://TsaiKoga.github.com/images/posts/2013-10-22/ubuntu_file_system.png" title="Ubuntu文件系统" alt="无法显示图片" /></p>
+
+<hr />
+
+<h4>定义:</h4>
+
+<blockquote><p><strong>文件:</strong> 是文件系统中存储数据的一个命名<strong>对象</strong>。即使是一个<strong>空文件</strong>，它也包含<strong>用户数据</strong>，仍然为操作系统提供其他信息。</p>
+
+<p><strong>目录:</strong> 其中包含许多文件项目的一类<strong>特殊文件</strong>。支持文件系统的层次结构。系统中每个文件都登记在一个目录中。</p>
+
+<p><strong>子目录：</strong> 被包含在另一个目录中的目录。除了root目录以外，所有的目录都是子目录，并且有他们的父目录。<strong>root目录就作为自己的父目录</strong>。</p>
+
+<p><strong>文件名：</strong> 用来标志文件的字符串，保存在一个<strong>目录文件项</strong>中。</p></blockquote>
+
+<hr />
+
+<h4>文件结构：</h4>
+
+<p>文件的成分：无论文件是一个程序，一个文档，一个数据库，还是一个目录，操作系统都会赋予它如下所示的同样的结构：</p>
+
+<ul>
+<li><p><strong>文件索引</strong>：又称<strong>I节点</strong>，是文件系统结构中包含<strong>相应文件信息</strong>的<strong>一个记录</strong>。这些信息包括文件权限、文件主、文件大小等。</p></li>
+<li><p><strong>数据</strong>： 文件的实际内容，可以是空，可以非常大，并且有自己的结构。</p>
+
+<p>文件名规范：</p>
+
+<blockquote><p>（1）除了写先<strong>（“/”）和空字符（ASCII字符“\0”）</strong>以外，文件名可以包含任意的ASCII字符，因为这两个字符被核心<strong>当作标识路径名的特殊字符</strong>来解释。</p>
+
+<p>（2）Linux<strong>区分大小写</strong>。</p>
+
+<p>（3）以<strong>圆点（.）开头</strong>的文件为<strong>隐含文件</strong>。</p></blockquote></li>
+</ul>
+
+
+<hr />
+
+<h4>文件类型：</h4>
+
+<ul>
+<li><strong>普通文件：</strong></li>
+</ul>
+
+
+<p>普通文件也称规范文件，包含<strong>各种长度的字符串</strong>。核心对这些<strong>数据没有进行结构化</strong>，只是作为<strong>有序的字符序列</strong>把它提交给应用程序。应用程序<strong>自己组织和解释</strong>这些数据。</p>
+
+<blockquote><p>(1)<strong>文本文件</strong>：有ASCII字符构成。</p>
+
+<p>(2)<strong>数据文件</strong>：来自<strong>应用程序</strong>的<strong>数字型和文本型数据</strong>组成，例如：电子表格，数据库及字处理文档。</p>
+
+<p>(3)<strong>可执行的二进制文件</strong>：有机器指令和数据构成。</p></blockquote>
+
+<p><em>命令：指定文件的类型（可将多个文件作为参数）</em></p>
+
+<pre><code>$ file 文件名 [文件名...]
+</code></pre>
+
+<ul>
+<li><strong>目录文件：</strong></li>
+</ul>
+
+
+<p>目录文件也<strong>包含数据</strong>，但与普通文件的差别是：核心对这些数据进行<strong>结构处理</strong>，即它是<strong>有成对的“I节点号/文件名”</strong>构成的<strong>列表</strong>。</p>
+
+<blockquote><ul>
+<li><p>I节点号是检索I节点表的下标，<strong>I节点中存放有文件的状态信息</strong>。</p></li>
+<li><p>每个目录的<strong>第一项都表示目录本身</strong>，用“点（.）”作文它的文件名，每个目录的<strong>第二项的名字用“点点（..）”表示</strong>。这就是当你输入ls显示第一二项是.和..的原因。</p></li>
+<li><p>当文件<strong>添加</strong>到一个目录时，改目录的<strong>尺寸会加大，以便容纳新文件名</strong>。当<strong>删除文件</strong>时，目录的尺寸<strong>并不会减小</strong>，而是核心对<strong>该目录项上做特殊标识</strong>，一边下次添加一个文件时<strong>重新使用</strong>它。ls不会列出这些未被使用的项。</p></li>
+</ul>
+</blockquote>
+
+<ul>
+<li><strong>设备文件</strong></li>
+</ul>
+
+
+<p>是一种特别文件，除了在其文件I节点中存放属性信息外，不包含任何数据。系统利用他们来标记各个设备驱动器，核心使用它们与硬件设备通信。</p>
+
+<blockquote><ul>
+<li><p>字符设备：最常用的设备文件，允许I/O传送任意大小的数据，取决于设备本身的容量。使用这种接口的设备：终端，打印机及鼠标。</p></li>
+<li><p>块设备：利用核心缓冲区的自动缓存机制。缓存区进行I/O传送总是已KB为单位。使用这种接口的设备包括硬盘，软盘和RAM盘。</p></li>
+</ul>
+</blockquote>
+
+<p>tty可显示设备文件：</p>
+
+<pre><code>$ tty   #=&gt; /dev/pts/1
+</code></pre>
+
+<p><em>注意： 设备文件存放在&#8221;/dev/&ldquo;目录下</em></p>
+
+<hr />
+
+<ul>
+<li><strong>符号链接文件：</strong> 存放的<strong>数据</strong>是文件系统<strong>通向文件的路径</strong>。当使用符号链接文件时，核心<strong>自动访问所保存这个路径</strong>。</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用hosts文件上facebook等网站]]></title>
@@ -1044,7 +1158,7 @@ sudo chown redis.redis /var/log/redis
 <pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
 </code></pre>
 
-<p>现在现在辅助方法中写如下代码：</p>
+<p>现在在辅助方法中写如下代码：</p>
 
 <pre><code>def markdown(text)
         require 'redcarpet'
@@ -1136,14 +1250,14 @@ cd blog
 <pre><code>bundle install
 </code></pre>
 
-<p>接着要做的事是rakefile文件的，查看：</p>
+<p>接着要做的事是查看rakefile文件的：</p>
 
 <pre><code>vim Rakefile    # 里面有许多rake任务
 </code></pre>
 
 <p>我们执行其中的:</p>
 
-<pre><code>rake install # 复制theme/中的sass/和source/文件夹到blog/下
+<pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"blog/"文件夹下
 </code></pre>
 
 <p>查看网页效果：</p>

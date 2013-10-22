@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gem | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/gem/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-19T21:19:00+08:00</updated>
+  <updated>2013-10-22T14:20:55+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -36,7 +36,7 @@
 <pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
 </code></pre>
 
-<p>现在现在辅助方法中写如下代码：</p>
+<p>现在在辅助方法中写如下代码：</p>
 
 <pre><code>def markdown(text)
         require 'redcarpet'
@@ -128,14 +128,14 @@ cd blog
 <pre><code>bundle install
 </code></pre>
 
-<p>接着要做的事是rakefile文件的，查看：</p>
+<p>接着要做的事是查看rakefile文件的：</p>
 
 <pre><code>vim Rakefile    # 里面有许多rake任务
 </code></pre>
 
 <p>我们执行其中的:</p>
 
-<pre><code>rake install # 复制theme/中的sass/和source/文件夹到blog/下
+<pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"blog/"文件夹下
 </code></pre>
 
 <p>查看网页效果：</p>
