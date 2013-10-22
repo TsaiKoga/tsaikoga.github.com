@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-22T15:21:25+08:00</updated>
+  <updated>2013-10-22T22:37:18+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,159 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rails表的关联]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian/"/>
+    <updated>2013-10-22T21:47:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian</id>
+    <content type="html"><![CDATA[<p>一段时间没有用到表的关联，回想如何使用时，知识却模糊不清，所以将它记下以便以后查看。
+Rails中表的关联主要有三种：单表继承,多态关联,自引用。</p>
+
+<p>个人觉得：</p>
+
+<ul>
+<li><p><strong>单表继承</strong>是通过增加<strong>冗余字段</strong>来<strong>减少表的数量</strong>。</p></li>
+<li><p><strong>多态关联</strong>是通过建立<strong>虚拟表</strong>来<strong>减少关联数</strong>（belongs_to）和<strong>字段</strong>（外键），方便于以后又有表要关联。</p></li>
+<li><p><strong>自引用</strong>也是利用<strong>冗余</strong>而共用<strong>一张表</strong>。</p></li>
+</ul>
+
+
+<p>共同特点：</p>
+
+<blockquote><p>都需要增加type字段，即增加冗余字段。</p></blockquote>
+
+<p>差别：</p>
+
+<blockquote><p>多态可以让子类有自己的行为特征（通过type字段呈现&#8221;多重形态&#8221;）。
+单表继承必须拥有共同属性。
+自引用必须牺牲一些字段（不需用到的字段的值为null）。</p></blockquote>
+
+<hr />
+
+<h3>详述</h3>
+
+<h4>单表继承：</h4>
+
+<p>一个继承体系<strong>所有类映射到同一张数据库表</strong>，这张表包含<strong>所有类拥有的属性</strong>。记住：所有属性哦，他们可以为null值（:null=>true，即null是可有可无的）。
+它通过一个<strong>附加字段type来确认当前记录的对象</strong>属于什么<strong>类型</strong>&mdash;&mdash;ActiveRecord约定。</p>
+
+<p>顾名思义，单表就是一张表，那么怎么呈现多种表的形态呢。当其他表引用它时，可以给予其他名字，但是要声明它实际是那张表(belongs_to :manager, :class_name => &ldquo;Person&rdquo;)，举例：</p>
+
+<p>person.rb:</p>
+
+<pre><code>Class Person &lt; ActiveRecord::Base
+        belongs_to XXX
+end
+</code></pre>
+
+<p>manager.rb:(继承Person类)</p>
+
+<pre><code>Class Manager &lt; Person
+end
+</code></pre>
+
+<p>rails console:</p>
+
+<pre><code>XXX.first.manager
+</code></pre>
+
+<p>mysql:</p>
+
+<pre><code>select people.* from people where people.type in ("Manager") and people.id=1
+</code></pre>
+
+<hr />
+
+<h4>多态关联：</h4>
+
+<p>通过建立虚拟表，通过虚拟表（先通过<strong>类型找到关联表</strong>，再通过<strong>外键找到对应的记录</strong>）访问。</p>
+
+<p><strong>举例：</strong></p>
+
+<p>假设我們已经有了Article与Photo这两个Model，然后我们希望这两个Model都可以被留言。不用多态关联的话，你得分別建立ArticleComment和PhotoComment的model。或者一个comment中要有两个外键：article_id和photo_id，虽然用多态也是两个字段，但当表多了就可以看出多态的好处。</p>
+
+<p>现有个场景，有两个model：person和album，需要添加一个图片来做为其头像/封面。添加一个image model，按照以往需要对这几个model做以下关联设置：</p>
+
+<p>没用多态关联前：不复杂，但是麻烦，如果<strong>以后加个book model之类</strong>的，也需要有个图做封面的，那又要<strong>改image model里的关联和migration</strong>了，一点都不DRY。</p>
+
+<pre><code>class Person &lt; ActiveRecord::Base
+  has_one :image, :dependent =&gt; :destroy
+end
+
+  class Album &lt; ActiveRecord::Base
+         has_one :image, :dependent =&gt; :destroy
+  end
+
+  class Image &lt; ActiveRecord::Base
+     belongs_to :person
+         belongs_to :album
+end
+</code></pre>
+
+<p>相应的image的migration要添加上关联字段：</p>
+
+<pre><code>t.column :person_id, :integer, :null =&gt; false, :default =&gt; 0
+    t.column :album_id, :integer, :null =&gt; false, :default =&gt; 0
+</code></pre>
+
+<p>使用多态关联后：</p>
+
+<pre><code>    class Person &lt; ActiveRecord::Base
+        has_one :image, :as =&gt; :iconable, :dependent =&gt; :destroy
+    end
+    class Album &lt; ActiveRecord::Base
+        has_one :image, :as =&gt; :iconable, :dependent =&gt; :destroy
+    end
+    class Image &lt; ActiveRecord::Base
+        belongs_to :iconable, :polymorphic =&gt; true
+    end
+</code></pre>
+
+<p>Person和Album有了<strong>共同的一个虚拟的名字</strong>叫做iconable,image表就可以直接用外键iconable_id关联它,</p>
+
+<p><strong>使用方法：</strong></p>
+
+<p>添加：</p>
+
+<pre><code>    @person = Person.new(params[:person])
+    @person.build_image(params[:image])
+    @person.save
+</code></pre>
+
+<p>读取：</p>
+
+<pre><code>    @person.image
+</code></pre>
+
+<p>image 的属主：</p>
+
+<pre><code>    @person.iconable
+</code></pre>
+
+<hr />
+
+<h4>自引用：</h4>
+
+<p>自引用就是<strong>一条记录可能引用同一张表的另一条记录</strong>：公司员工都有主管，主管也是员工。使用:class_name 和foregin_key加上has_many/has_one和belongs_to.</p>
+
+<pre><code>class Employee &lt; ActiveRecord::Base
+    belongs_to :manager,
+      :class_name =&gt; "Employee",
+      :foregin_key =&gt; "manager_id"
+    belongs_to :mentor,
+        :class_name =&gt; "Employee",
+        :foregin_key =&gt; "mentor_id"
+    has_many ：mentored_employees,
+      :class_name =&gt; "Employee",
+      :foreign_key =&gt; "mentor_id"
+    has_many ：managed_employees,
+      :class_name =&gt; "Employee",
+      :foreign_key =&gt; "manager_id"
+end
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Vim配置]]></title>
