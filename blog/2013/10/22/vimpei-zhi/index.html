@@ -1,0 +1,463 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Vim配置 - TsaiKoga Blog</title>
+  <meta name="author" content="TsaiKoga">
+  <link rel="author" href="humans.txt">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  
+    
+  
+  <meta name="description" content="说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。 .vimrc配置文件 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用: set nocompatible " 关闭 vi 兼容模式 syntax on " 自动语法高亮 &hellip;">
+  
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/">
+  <link href="/favicon.png" rel="icon">
+  <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+  <meta name="og:type" content="website" />
+  <meta name="og:site_name" content="TsaiKoga Blog" />
+  <meta name="og:title" content="Vim配置" />
+  <meta name="og:description" content="说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。 .vimrc配置文件 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用: set nocompatible " 关闭 vi 兼容模式 syntax on " 自动语法高亮 &hellip;" />
+  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/"/>
+  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/">
+  
+  <meta name="subject" content="vim"/>
+  <meta name="category" content="vim"/>
+  
+  <meta name="distribution" content="global">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42786505-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/">TsaiKoga Blog</a>
+    <ul class="nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/archives">Archives</a></li>
+    </ul>
+    <ul class="nav" data-subscription="rss">
+      <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+      
+    </ul>
+      
+    <form class="navbar-form" action="http://google.com/search" method="get">
+      <fieldset role="search">
+        <input type="hidden" name="q" value="site:TsaiKoga.github.com" />
+        <input class="span2" type="text" name="q" results="0" placeholder="Search"/>
+      </fieldset>
+    </form>
+      
+    
+  </div>
+</div>
+</nav>
+  <div class="wrapper_single">
+    <div class="container">
+      <article class="span8 offset2" role="article">
+        <div class="article-format">
+
+  <header>
+    
+      <h1 class="entry-title">Vim配置</h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-22T14:24:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2013</time> - 
+        
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/vim/'>vim</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。</p>
+
+<p><img src="/images/posts/2013-10-22/vim.jpg" title="Vim图" alt="图片无法显示" /></p>
+
+<h4>.vimrc配置文件</h4>
+
+<p>以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:</p>
+
+<pre><code>set nocompatible            " 关闭 vi 兼容模式
+    syntax on                   " 自动语法高亮
+    colorscheme molokai         " 设定配色方案
+    set number                  " 显示行号
+    set cursorline              " 突出显示当前行
+    set ruler                   " 打开状态栏标尺
+    set shiftwidth=4            " 设定 &lt;&lt; 和 &gt;&gt; 命令移动时的宽度为 4
+    set softtabstop=4           " 使得按退格键时可以一次删掉 4 个空格
+    set tabstop=4               " 设定 tab 长度为 4
+    set nobackup                " 覆盖文件时不备份
+    set autochdir               " 自动切换当前目录为当前文件所在的目录
+    filetype plugin indent on   " 开启插件
+    set backupcopy=yes          " 设置备份时的行为为覆盖
+    set ignorecase smartcase    " 搜索时忽略大小写，但在有一个或以上大写字母时仍保持对大小写敏感
+    set nowrapscan              " 禁止在搜索到文件两端时重新搜索
+    set incsearch               " 输入搜索内容时就显示搜索结果
+    set hlsearch                " 搜索时高亮显示被找到的文本
+    set noerrorbells            " 关闭错误信息响铃
+    set novisualbell            " 关闭使用可视响铃代替呼叫
+    set t_vb=                   " 置空错误铃声的终端代码
+    " set showmatch               " 插入括号时，短暂地跳转到匹配的对应括号
+    " set matchtime=2             " 短暂跳转到匹配括号的时间
+    set magic                   " 设置魔术
+    set hidden                  " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
+    set guioptions-=T           " 隐藏工具栏  （等号前后不能空格）
+    set guioptions-=m           " 隐藏菜单栏
+    set smartindent             " 开启新行时使用智能自动缩进
+    set backspace=indent,eol,start
+                                                            " 不设定在插入状态无法用退格键和 Delete 键删除回车符
+    set cmdheight=1             " 设定命令行的行数为 1
+    set laststatus=2            " 显示状态栏 (默认值为 1, 无法显示状态栏)
+    set statusline=\ %&lt;%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&amp;fileformat}\ %{&amp;encoding}\ %c:%l/%L%)\ 
+                                                            " 设置在状态行显示的信息
+    set foldenable              " 开始折叠
+    set foldmethod=syntax       " 设置语法折叠
+
+    "窗口分割时,进行切换的按键热键需要连接两次,比如从下方窗口移动
+    "光标到上方窗口,需要&lt;c-w&gt;&lt;c-w&gt;k,非常麻烦,现在重映射为&lt;c-k&gt;,切换的
+    "时候会变得非常方便.
+    nnoremap &lt;C-h&gt; &lt;C-w&gt;h
+    nnoremap &lt;C-j&gt; &lt;C-w&gt;j
+    nnoremap &lt;C-k&gt; &lt;C-w&gt;k
+    nnoremap &lt;C-l&gt; &lt;C-w&gt;l
+</code></pre>
+
+<p>接下来是括号补全：</p>
+
+<pre><code>    inoremap (  ()&lt;Esc&gt;i                " inoremap表示输入模式下的匹配,当有"("时，匹配")"并退出重新进入"i编辑模式"
+    inoremap [  []&lt;Esc&gt;i
+    inoremap {  {}&lt;Esc&gt;i
+    autocmd Syntax html,vim inoremap &lt; &lt;lt&gt;&gt;&lt;Esc&gt;i | inoremap &gt; &lt;c-r&gt;=ClosePair('&gt;')&lt;CR&gt;
+    inoremap ) &lt;c-r&gt;=ClosePair(')')&lt;CR&gt;
+    inoremap ] &lt;c-r&gt;=ClosePair(']')&lt;CR&gt;
+    inoremap } &lt;c-r&gt;=CloseBracket()&lt;CR&gt;
+    inoremap " &lt;c-r&gt;=QuoteDelim('"')&lt;CR&gt;
+    inoremap ' &lt;c-r&gt;=QuoteDelim("'")&lt;CR&gt;
+
+    function ClosePair(char)
+        if getline('.')[col('.') - 1] == a:char
+            return "\&lt;Right&gt;"
+        else
+            return a:char
+        endif
+    endf
+
+    function CloseBracket()
+        if match(getline('.' + 1), '\s*}') &lt; 0
+            return "\&lt;CR&gt;}"
+        else
+            return "\&lt;Esc&gt;j0f}a"
+        endif
+    endf
+
+    function QuoteDelim(char)
+        let line = getline('.')
+        let col = col('.')
+        if line[col-2] == "\\"
+            "Inserting a quoted quotation mark into string
+            return a:char
+        elseif line[col-1] == a:char
+            "Escaping out of the string
+            return "\&lt;Right&gt;"
+        else
+            "Starting a String
+            return a:char.a:char."\&lt;Esc&gt;i"
+        endif
+    endf
+</code></pre>
+
+<p>下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：</p>
+
+<pre><code>    "-----------------------------------------------------------------
+    " plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
+    " :ERDtree 打开NERD_tree         :NERDtreeClose    关闭NERD_tree
+    " o 打开关闭文件或者目录         t 在标签页中打开
+    " T 在后台标签页中打开           ! 执行此文件
+    " p 到上层目录                   P 到根目录
+    " K 到第一个节点                 J 到最后一个节点
+    " u 打开上层目录                 m 显示文件系统菜单（添加、删除、移动操作）
+    " r 递归刷新当前目录             R 递归刷新当前根目录
+    "-----------------------------------------------------------------
+    " F3 NERDTree 切换
+    map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;
+    imap &lt;F3&gt; &lt;ESC&gt;:NERDTreeToggle&lt;CR&gt;
+
+
+    "-----------------------------------------------------------------
+    " plugin - NERD_commenter.vim   注释代码用的，
+    " [count],cc 光标以下count行逐行添加注释(7,cc)
+    " [count],cu 光标以下count行逐行取消注释(7,cu)
+    " [count],cm 光标以下count行尝试添加块注释(7,cm)
+    " ,cA 在行尾插入 /* */,并且进入插入模式。 这个命令方便写注释。
+    " 注：count参数可选，无则默认为选中行或当前行
+    "-----------------------------------------------------------------
+    let NERDSpaceDelims=1       " 让注释符与语句之间留一个空格
+    let NERDCompactSexyComs=1   " 多行注释时样子更好看
+</code></pre>
+
+<p><em>感谢使用vim配置，记住要将vim编辑器重启后才生效。</em></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-22T14:24:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2013</time> - 
+      
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/vim/'>vim</a>
+  
+</span>
+
+
+    </p>
+    
+      
+	<div class="share">
+		<ul>
+			<li>
+  <a href="https://twitter.com/intent/tweet?text=Vim配置 by @&url=http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/" title="Share Vim配置 on Twitter">
+    <img src="/images/social/twitter.png" />
+  </a>
+</li>
+
+			<li>
+  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/" title="Share Vim配置 on Facebook">
+    <img src="/images/social/facebook.png" />
+  </a>
+</li>
+
+			<li>
+  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/" title="Share Vim配置 on Google Plus">
+    <img src="/images/social/google.png" />
+  </a>
+</li>
+
+		</ul>
+	</div>
+
+
+    
+    
+      <a class="pull-left" href="/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/" title="Previous Post: Linux的文件系统">&laquo; Linux的文件系统</a>
+    
+    
+  </footer>
+
+</div>
+
+        
+          <div class="article-format">
+            <h1>Comments</h1>
+            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+          </div>
+        
+      </article>
+    </div>
+  </div>
+  <div id="footer-widgets">
+  <div class="container">
+    <div class="row">
+  <div class="span3">
+    <h2>recent posts</h2>
+    <ul class="recent_posts">
+      
+        <li>
+          <a href="/blog/2013/10/22/vimpei-zhi/">Vim配置</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/">Linux的文件系统</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">使用hosts文件上facebook等网站</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/15/nosqljian-jie/">Nosql简介</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">Ubuntu下安装redis</a>
+        </li>
+      
+    </ul>
+    <h2><a href="/blog/archives">archives</a></h2>
+  </div>
+  <div class="span3">
+    
+
+  </div>
+  <div class="span4">
+    
+
+  </div>
+  <div class="span2">
+    <h2>found on</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</div>
+
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-left">
+  <a href="/">TsaiKoga Blog</a>
+  - Copyright &copy; 2013 - TsaiKoga
+</p>
+<p class="pull-right">
+  <span>Powered by <a href="http://octopress.org/">Octopress</a>.</span>
+  
+    <span>Designed by <a href="http://www.AdrianArtiles.com">Adrian Artiles</a>.</span>
+  
+</p>
+
+  </div>
+</footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script>window.jQuery || document.write('<script src="/javascripts/libs/jquery-1.7.2.min.js" type="text/javascript"><\/script>')</script>
+<script src="/javascripts/libs/bootstrap.min.js" type="text/javascript"></script>
+<script src="/javascripts/jquery.tweet.js" type="text/javascript"></script>
+<script src="/javascripts/jquery.instagram.js" type="text/javascript"></script>
+<script src="/javascripts/libs/jquery.masonry.min.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>
