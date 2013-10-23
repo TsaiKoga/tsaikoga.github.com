@@ -1,0 +1,549 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Ubuntu常用命令 - TsaiKoga Blog</title>
+  <meta name="author" content="TsaiKoga">
+  <link rel="author" href="humans.txt">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  
+    
+  
+  <meta name="description" content="先介绍关于文件和目录的命令： ls 列出当前目录文件（不包括隐含文件） ls -a 列出当前目录文件（包括隐含文件） ls -l 列出当前目录下文件的详细信息 cd .. 回当前目录的上一级目录 cd &ndash; 回上一次所在的目录 cd ~ 或 cd 回当前用户的宿主目录 mkdir &hellip;">
+  
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/">
+  <link href="/favicon.png" rel="icon">
+  <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+  <meta name="og:type" content="website" />
+  <meta name="og:site_name" content="TsaiKoga Blog" />
+  <meta name="og:title" content="Ubuntu常用命令" />
+  <meta name="og:description" content="先介绍关于文件和目录的命令： ls 列出当前目录文件（不包括隐含文件） ls -a 列出当前目录文件（包括隐含文件） ls -l 列出当前目录下文件的详细信息 cd .. 回当前目录的上一级目录 cd &ndash; 回上一次所在的目录 cd ~ 或 cd 回当前用户的宿主目录 mkdir &hellip;" />
+  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/"/>
+  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/">
+  
+  <meta name="subject" content="Linux"/>
+  <meta name="category" content="Linux"/>
+  
+  <meta name="distribution" content="global">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-42786505-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <nav role="navigation"><div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="/">TsaiKoga Blog</a>
+    <ul class="nav">
+      <li><a href="/">Home</a></li>
+      <li><a href="/blog/archives">Archives</a></li>
+    </ul>
+    <ul class="nav" data-subscription="rss">
+      <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+      
+    </ul>
+      
+    <form class="navbar-form" action="http://google.com/search" method="get">
+      <fieldset role="search">
+        <input type="hidden" name="q" value="site:TsaiKoga.github.com" />
+        <input class="span2" type="text" name="q" results="0" placeholder="Search"/>
+      </fieldset>
+    </form>
+      
+    
+  </div>
+</div>
+</nav>
+  <div class="wrapper_single">
+    <div class="container">
+      <article class="span8 offset2" role="article">
+        <div class="article-format">
+
+  <header>
+    
+      <h1 class="entry-title">Ubuntu常用命令</h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-23T16:20:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2013</time> - 
+        
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>Linux</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>先介绍关于文件和目录的命令：</h3>
+
+<blockquote><p>ls 列出当前目录文件（不包括隐含文件）</p>
+
+<p>ls -a 列出当前目录文件（包括隐含文件）</p>
+
+<p>ls -l 列出当前目录下文件的详细信息</p>
+
+<p>cd .. 回当前目录的上一级目录</p>
+
+<p>cd &ndash; 回上一次所在的目录</p>
+
+<p>cd ~ 或 cd 回当前用户的宿主目录</p>
+
+<p>mkdir 目录名 创建一个目录</p>
+
+<p>rmdir 空目录名 删除一个空目录</p>
+
+<p>rm 文件名 文件名 删除一个文件或多个文件</p>
+
+<p>rm -rf 非空目录名 删除一个非空目录下的一切</p>
+
+<p>mv 路经/文件 /经/文件移动相对路经下的文件到绝对路经下</p>
+
+<p>mv 文件名 新名称 在当前目录下改名</p></blockquote>
+
+<h3>再介绍用户的命令:</h3>
+
+<blockquote><p>useradd 创建一个新的用户</p>
+
+<p>  groupadd 组名 创建一个新的组</p>
+
+<p>  passwd 用户名 为用户创建密码</p>
+
+<p>  passwd -d用户名 删除用户密码也能登陆</p>
+
+<p>  passwd -S用户名 查询账号密码</p>
+
+<p>  usermod -l 新用户名 老用户名 为用户改名</p>
+
+<p>  userdel–r 用户名 删除用户一切</p></blockquote>
+
+<h3>查看系统信息的命令：</h3>
+
+<blockquote><p>uname -a 查看内核版本</p>
+
+<p>cat /etc/issue 查看ubuntu版本</p>
+
+<p>lsusb 查看usb设备</p>
+
+<p>sudo ethtool eth0 查看网卡状态</p>
+
+<p>cat /proc/cpuinfo 查看cpu信息</p>
+
+<p>lshw 查看当前硬件信息</p>
+
+<p>sudo fdisk -l 查看磁盘信息</p>
+
+<p>df -h 查看硬盘剩余空间</p>
+
+<p>free -m 查看当前的内存使用情况</p>
+
+<p>ps -A 查看当前有哪些进程</p></blockquote>
+
+<h3>关于软件包操作的命令：</h3>
+
+<blockquote><p>apt-cache search package 搜索包</p>
+
+<p>  apt-cache show package 获取包的相关信息，如说明、大小、版本等</p>
+
+<p>  sudo apt-get install package 安装包</p>
+
+<p>  sudo apt-get install package &ndash; &ndash; reinstall 重新安装包</p>
+
+<p>  sudo apt-get -f install 修复安装”-f = –fix-missing”</p>
+
+<p>  sudo apt-get remove package 删除包</p>
+
+<p>  sudo apt-get remove package &ndash; &ndash; purge 删除包，包括删除配置文件等</p>
+
+<p>  sudo apt-get update 更新源</p>
+
+<p>  sudo apt-get upgrade 更新已安装的包</p>
+
+<p>  sudo apt-get dist-upgrade 升级系统</p>
+
+<p>  sudo apt-get dselect-upgrade 使用 dselect 升级</p>
+
+<p>  apt-cache depends package 了解使用依赖</p>
+
+<p>  apt-cache rdepends package 是查看该包被哪些包依赖</p>
+
+<p>  sudo apt-get build-dep package 安装相关的编译环境</p>
+
+<p>  apt-get source package 下载该包的源代码</p>
+
+<p>  sudo apt-get clean &amp;&amp; sudo apt-get autoclean 清理无用的包</p>
+
+<p>  sudo apt-get check 检查是否有损坏的依赖</p>
+
+<p>  清理所有软件缓存（即缓存在/var/cache/apt/archives目录里的deb包）</p>
+
+<p>  sudo apt-get clean</p></blockquote>
+
+<h3>最后讲几个比较重要，在实际操作中提供方便的命令：</h3>
+
+<h4>find命令</h4>
+
+<p>  find是最常见和最强大的查找命令，你可以用它找到任何你想找的文件。</p>
+
+<p><strong>使用格式如下：</strong></p>
+
+<pre><code>  $ find &lt;指定目录&gt; &lt;指定条件&gt; &lt;指定动作&gt;
+</code></pre>
+
+<ul>
+<li><p>&lt;指定目录>： 所要搜索的目录及其所有子目录。默认为当前目录。</p></li>
+<li><p>&lt;指定条件>： 所要搜索的文件的特征。</p></li>
+<li><p>&lt;指定动作>： 对搜索结果进行特定的处理。</p></li>
+</ul>
+
+
+<p><strong>举例：</strong></p>
+
+<pre><code>$ find . -name 'my*' -ls        # 搜索当前目录中，所有文件名以my开头的文件，并显示它们的详细信息。
+$ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中更新过的普通文件。如果不加-type f参数，则搜索普通文件+特殊文件+目录。
+</code></pre>
+
+<hr />
+
+<h4>locate命令</h4>
+
+<p>locate命令其实是&#8221;find -name&#8221;的另一种写法，但是要比后者快得多，原因在于它不搜索具体目录，而是搜索一个数据库（/var/lib/locatedb），这个数据库中含有本地所有文件信息。Linux系统自动创建这个数据库，并且每天自动更新一次，所以使用locate命令查不到最新变动过的文件。为了避免这种情况，可以在使用locate之前，先使用updatedb命令，手动更新数据库。</p>
+
+<hr />
+
+<h4>grep命令</h4>
+
+<p>grep命令用于查找文件中的字符串。</p>
+
+<p><strong>命令格式如下：</strong></p>
+
+<pre><code>    grep [选项] 查找模式 [文件名1, 文件名2, ...]
+
+    grep [选项] [-e 查找模式|-f 文件][文件名1, 文件名2, ...]
+</code></pre>
+
+<blockquote><p>当然：最好用的参数</p>
+
+<p>  -E 将查找模式解释成正则表达式</p>
+
+<p>  -F 将查找模式解释成单纯的字符串</p>
+
+<p>  -i &mdash;ignore-case 匹配比较时不区分字母的大小</p>
+
+<p>  -R 以递归方式查询目录下所有子目录中的文件</p></blockquote>
+
+<hr />
+
+<h4>ack-grep命令</h4>
+
+<p>grep命令加强。首先，我们先了解什么是ack？</p>
+
+<blockquote><p>  <a href="http://betterthangrep.com">http://betterthangrep.com</a></p>
+
+<p>  ack is a tool <strong>like grep</strong>, optimized for programmers</p>
+
+<p>  is written purely in Perl 5,takes advantage of the power of Perl&rsquo;s regular expressions.</p></blockquote>
+
+<p>ack诞生的目的就是要取代grep。</p>
+
+<p>注意：ubuntu下要安装<strong>ack-grep</strong>，因为在debian系中，ack这个名字被其他的软件占用了。</p>
+
+<pre><code>sudo apt-get install ack-grep
+</code></pre>
+
+<hr />
+
+<h4>netstat命令</h4>
+
+<p> Netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。</p>
+
+<p><strong>命令格式如下：</strong></p>
+
+<pre><code>    netstat -tulpn              # 显示服务器进程
+    sudo netstat -antup   # 查看进程
+    ack-grep function     # 查找函数位置（必须在文件目录下）
+</code></pre>
+
+<hr />
+
+<h4>crontab命令</h4>
+
+<p>这个命令我非常喜欢，他是<strong>设置定时执行脚本或任务</strong>,可以用它来定时做一些事情。如定时周期性的备份网站数据库，并email发送到指定邮箱。</p>
+
+<p>参数就几个很简单：</p>
+
+<pre><code>    crontab -l # 显示现有任务条目 
+    crontab -r # 删除当前的任务 
+    crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
+</code></pre>
+
+<p><strong>时间参数：</strong></p>
+
+<blockquote><p>15 * * * * : 每小时第15分执行1次</p>
+
+<p>15,18 * * * * : 每小时第15和18分各执行1次</p>
+
+<p>*/15 */2 * * *: 每隔15分钟执行1次</p>
+
+<p>15 20 * * 6: 每周星期6的20：15执行1次</p></blockquote>
+
+<hr />
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-23T16:20:00+08:00" pubdate data-updated="true">Oct 23<span>rd</span>, 2013</time> - 
+      
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/linux/'>Linux</a>
+  
+</span>
+
+
+    </p>
+    
+      
+	<div class="share">
+		<ul>
+			<li>
+  <a href="https://twitter.com/intent/tweet?text=Ubuntu常用命令 by @&url=http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/" title="Share Ubuntu常用命令 on Twitter">
+    <img src="/images/social/twitter.png" />
+  </a>
+</li>
+
+			<li>
+  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/" title="Share Ubuntu常用命令 on Facebook">
+    <img src="/images/social/facebook.png" />
+  </a>
+</li>
+
+			<li>
+  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/" title="Share Ubuntu常用命令 on Google Plus">
+    <img src="/images/social/google.png" />
+  </a>
+</li>
+
+		</ul>
+	</div>
+
+
+    
+    
+      <a class="pull-left" href="/blog/2013/10/22/railsbiao-de-guan-lian/" title="Previous Post: Rails表的关联">&laquo; Rails表的关联</a>
+    
+    
+  </footer>
+
+</div>
+
+        
+          <div class="article-format">
+            <h1>Comments</h1>
+            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+          </div>
+        
+      </article>
+    </div>
+  </div>
+  <div id="footer-widgets">
+  <div class="container">
+    <div class="row">
+  <div class="span3">
+    <h2>recent posts</h2>
+    <ul class="recent_posts">
+      
+        <li>
+          <a href="/blog/2013/10/23/ubuntuchang-yong-ming-ling/">Ubuntu常用命令</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/22/railsbiao-de-guan-lian/">Rails表的关联</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/22/vimpei-zhi/">Vim配置</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/">Linux的文件系统</a>
+        </li>
+      
+        <li>
+          <a href="/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">使用hosts文件上facebook等网站</a>
+        </li>
+      
+    </ul>
+    <h2><a href="/blog/archives">archives</a></h2>
+  </div>
+  <div class="span3">
+    
+
+  </div>
+  <div class="span4">
+    
+
+  </div>
+  <div class="span2">
+    <h2>found on</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+</div>
+
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-left">
+  <a href="/">TsaiKoga Blog</a>
+  - Copyright &copy; 2013 - TsaiKoga
+</p>
+<p class="pull-right">
+  <span>Powered by <a href="http://octopress.org/">Octopress</a>.</span>
+  
+    <span>Designed by <a href="http://www.AdrianArtiles.com">Adrian Artiles</a>.</span>
+  
+</p>
+
+  </div>
+</footer>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script>window.jQuery || document.write('<script src="/javascripts/libs/jquery-1.7.2.min.js" type="text/javascript"><\/script>')</script>
+<script src="/javascripts/libs/bootstrap.min.js" type="text/javascript"></script>
+<script src="/javascripts/jquery.tweet.js" type="text/javascript"></script>
+<script src="/javascripts/jquery.instagram.js" type="text/javascript"></script>
+<script src="/javascripts/libs/jquery.masonry.min.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+</body>
+</html>
