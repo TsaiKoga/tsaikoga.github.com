@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-23T20:56:22+08:00</updated>
+  <updated>2013-10-23T21:04:14+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -18,7 +18,9 @@
     <link href="http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/"/>
     <updated>2013-10-23T16:20:00+08:00</updated>
     <id>http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling</id>
-    <content type="html"><![CDATA[<h3>先介绍关于文件和目录的命令：</h3>
+    <content type="html"><![CDATA[<p><img src="/images/posts/2013-10-23/ubuntu.jpg" title="ubuntu" alt="无法显示图片" /></p>
+
+<h3>先介绍关于文件和目录的命令：</h3>
 
 <blockquote><p>ls 列出当前目录文件（不包括隐含文件）</p>
 
