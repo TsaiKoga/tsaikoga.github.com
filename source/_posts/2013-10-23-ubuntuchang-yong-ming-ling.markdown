@@ -6,6 +6,8 @@ comments: true
 categories: [Linux]
 ---
 
+![无法显示图片](/images/posts/2013-10-23/ubuntu.jpg "ubuntu")
+
 ###先介绍关于文件和目录的命令：
 
 > ls 列出当前目录文件（不包括隐含文件）
