@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-25T22:52:03+08:00</updated>
+  <updated>2013-10-26T09:38:25+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -14,7 +14,145 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Rails初始化和启动过程]]></title>
+    <title type="html"><![CDATA[加载Rails]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails/"/>
+    <updated>2013-10-25T22:58:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails</id>
+    <content type="html"><![CDATA[<p>在上一篇文章<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>,最后加载的config/application.rb文件中显示：</p>
+
+<pre><code>    require 'rails/all'
+</code></pre>
+
+<p>这个文件在railties/lib/rails/all.rb。</p>
+
+<hr />
+
+<h3>railties/lib/rails/all.rb</h3>
+
+<p>这个文件非常重要，它加载了rails的所有个体框架，从中可以知道这些<strong>框架的加载顺序</strong>：</p>
+
+<pre><code>require "rails"
+
+    %{
+        active_record
+        action_controller
+        action_mail
+        rails/test_unit
+        sprockets
+    }.each do |framework|
+        begin
+            require "#{framework}/railtie"          # 文件active_record/railtie等
+      rescue LoadError
+        end
+    end
+</code></pre>
+
+<blockquote><p><strong>railtie 是Rails的核心框架</strong>，并且提供hooks来修改启动时的载入流程，
+如果需要在启动过程或之后与rails框架进行交互，就需要加载Railtie。</p></blockquote>
+
+<hr />
+
+<h3>config/environment.rb</h3>
+
+<p>当config/application.rb已经将rails加载完成,并且<strong>定义了应用的命名空间</strong>（在一个module中mixin一个Application类）。</p>
+
+<p>而在config/environment.rb文件中，你的<strong>项目被初始化</strong>，如：<strong>Examples::Application.initialize!(在application.rb中已经定义了)</strong>。</p>
+
+<p>想知道初始化做了写什么吗？</p>
+
+<hr />
+
+<h3>railties/lib/rails/application.rb</h3>
+
+<p>以下为初始化代码：(你的Application类继承Rails::Application类，而这个类就在railties/lib/rails/application.rb文件中)</p>
+
+<pre><code>    def initialize!(group=:default) #:nodoc:
+        raise "Application has been already initialized." if @initialized
+        run_initializers(group, self)
+        @initialized = true
+        self
+    end
+</code></pre>
+
+<p>Rails会贯穿这整个Rails::Application祖先类，重新排序和运行他们。</p>
+
+<h3>Rack: lib/rack/server.rb</h3>
+
+<p>在<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">上一篇</a>时,有提到Rack::Server类，它里面有一个app方法是这么定义的：</p>
+
+<pre><code>    def app
+        @app ||= begin
+            if !::File.exist? options[:config]
+                abort "configuration #{options[:config]} not found"
+            end
+
+            app, options = Rack::Builder.parse_file(self.options[:config], opt_parser)
+            self.options.merge! options
+            app
+        end
+    end
+</code></pre>
+
+<p>这里所指的app就是Rails的app（一种中间件），Rack将会调用所有提供的中间件。</p>
+
+<pre><code>    def build_app(app)
+        middleware[options[:environment]].reverse_each do |middleware|
+            middleware = middleware.call(self) if middleware.respond_to?(:call)
+            next unless middleware
+            klass = middleware.shift
+            app = klass.new(app, *middleware)
+        end
+        app
+    end
+</code></pre>
+
+<p>以上代码build_app是被Server#start方法调用的，通过这个代码调用：</p>
+
+<pre><code>    server.run wrapped_app, options, &amp;blk
+</code></pre>
+
+<p>所以，server.run将会依赖于你所使用的server程序(以上代码有传入一个程序块&amp;blk,他将关系到你运行的服务),
+像是如果你是用的是Mongrel数据库，将会通过传入如下程序块运行：</p>
+
+<pre><code>    def self.run(app, options={})
+        server = ::Mongrel::HttpServer.new(
+            options[:Host]           || '0.0.0.0',
+            options[:Port]           || 8080,
+            options[:num_processors] || 950,
+            options[:throttle]       || 0,
+            options[:timeout]        || 60)
+        # Acts like Rack::URLMap, utilizing Mongrel's own path finding methods.
+        # Use is similar to #run, replacing the app argument with a hash of
+        # { path=&gt;app, ... } or an instance of Rack::URLMap.
+        if options[:map]
+            if app.is_a? Hash
+                app.each do |path, appl|
+                    path = '/'+path unless path[0] == ?/
+                    server.register(path, Rack::Handler::Mongrel.new(appl))
+                end
+            elsif app.is_a? URLMap
+                app.instance_variable_get(:@mapping).each do |(host, path, appl)|
+                 next if !host.nil? &amp;&amp; !options[:Host].nil? &amp;&amp; options[:Host] != host
+                 path = '/'+path unless path[0] == ?/
+                 server.register(path, Rack::Handler::Mongrel.new(appl))
+                end
+            else
+                raise ArgumentError, "first argument should be a Hash or URLMap"
+            end
+        else
+            server.register('/', Rack::Handler::Mongrel.new(app))
+        end
+        yield server  if block_given?
+        server.run.join
+    end
+</code></pre>
+
+<p>以上代码使用Mongrel::HttpServer定义了server实例，然后使用server.run运行.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rails服务启动过程]]></title>
     <link href="http://TsaiKoga.github.com/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/"/>
     <updated>2013-10-24T14:51:00+08:00</updated>
     <id>http://TsaiKoga.github.com/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng</id>
@@ -91,7 +229,12 @@ rails/commands.rb:</p>
         end
 </code></pre>
 
-<p>刚才我们的bin/rails脚本中已经定义了常量APP_PATH为"config/application.rb",而Dir.chdir(File.expand_path(&lsquo;../../&rsquo;, APP_PATH)) unless File.exists?(File.expand_path(&ldquo;config.ru&rdquo;))表示如果<strong>没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb</strong>。</p>
+<p>刚才我们的bin/rails脚本中已经定义了常量APP_PATH为"config/application.rb",而</p>
+
+<pre><code>    Dir.chdir(File.expand\_path('../../', APP\_PATH)) unless File.exists?(File.expand\_path("config.ru"))
+</code></pre>
+
+<p>表示如果<strong>没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb</strong>。</p>
 
 <p>也就是，你<strong>启动了服务前才帮你加载程序的应用文件application.rb</strong>。
 application.rb这个文件将会加载Rails。</p>
