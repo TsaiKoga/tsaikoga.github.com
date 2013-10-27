@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Rails初始化和启动过程"
+title: "Rails服务启动过程"
 date: 2013-10-24 14:51
 comments: true
 categories: [Rails]
@@ -75,7 +75,10 @@ rails/commands.rb:
 				server.start
 			end
 
-刚才我们的bin/rails脚本中已经定义了常量APP\_PATH为"config/application.rb",而Dir.chdir(File.expand\_path('../../', APP\_PATH)) unless File.exists?(File.expand\_path("config.ru"))表示如果**没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb**。
+刚才我们的bin/rails脚本中已经定义了常量APP\_PATH为"config/application.rb",而
+		Dir.chdir(File.expand\_path('../../', APP\_PATH)) unless File.exists?(File.expand\_path("config.ru"))
+		
+表示如果**没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb**。
 
 也就是，你**启动了服务前才帮你加载程序的应用文件application.rb**。
 application.rb这个文件将会加载Rails。
