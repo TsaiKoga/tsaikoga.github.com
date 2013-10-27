@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-26T09:38:25+08:00</updated>
+  <updated>2013-10-27T15:19:04+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,218 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rails Assets Pipeline]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline/"/>
+    <updated>2013-10-26T10:10:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline</id>
+    <content type="html"><![CDATA[<p>本章我将从三个方面介绍Assets Pipeline:</p>
+
+<ol>
+<li>Assets Pipeline的产生背景</li>
+<li>Assets Pipeline的定义</li>
+<li>Assets Pipeline的主要功能</li>
+<li>Assets Pipeline的使用方法</li>
+<li>生产环境下的Assets Pipeline</li>
+</ol>
+
+
+<hr />
+
+<h3>背景：</h3>
+
+<p>在Rails项目中，只用<strong>public/文件夹是公开读取</strong>的，所以我们通常会把<strong>javascript,css等静态资源放入</strong>其中，好让浏览器直接读取。但是随着这些静态文件越来越多，如何管理他们成为一个问题，为了加快浏览器下载速度，我们要合并javascript和stylesheet文件，来减少浏览器请求次数，更进一步还会压缩文件来加速下载时间。</p>
+
+<p>  后来,Rails3引进了Assets Pipeline的新功能，它可以让静态资源存放在不同目录下，rails帮你组合压缩，特别是一些javascript插件。没有Assets Pipeline之前，我们必须将javascript复制到public/中浏览器才可以读取。</p>
+
+<blockquote><p>Yahoo!和google都有自己开源的压缩工具<a href="http://yui.github.io/yuicompressor/">YUI Compressor</a>和<a href="https://developers.google.com/closure/compiler">Closure Compile</a>。</p></blockquote>
+
+<hr />
+
+<h3>什么是Assets Pipeline：</h3>
+
+<p>Assets Pipeline是能<strong>使Javascript,CSS的assets（包括自己在assets文件夹中写的erb,sass和coffescript文件）连接、缩小和压缩的一个框架</strong>。这个框架通过它的<strong>中心库Sprokets(将资源预处理，压缩和缩小)</strong>使所有rails开发者从中受益。</p>
+
+<p>assets pipeline是默认启动的，如果想关闭也可以到config/application.rb文件中将如下代码放入：</p>
+
+<pre><code>    config.assets.enable = false
+</code></pre>
+
+<p>当然，我们也可以在创建项目时，就不产生assets:</p>
+
+<pre><code>    rails new appname --skip-sprockets
+</code></pre>
+
+<hr />
+
+<h3>主要功能:</h3>
+
+<ul>
+<li><p><strong>连接：(减少浏览器请求数)</strong></p>
+
+<p>  它可以避免浏览器为了渲染页面而不得不发送过多的请求。网页浏览器限制了并行请求的数量， 所以更少的请求能让你的应用程序加载更快。</p>
+
+<p>  Rails 默认将所有的 JavaScript 文件连结成一个主要的 .js 文件，和将所有的 CSS 文件连结成一个主要的 .css 文件。在生产环境中， Rails 给<strong>每个文件名插入一个 MD5 指纹</strong>,以便<strong>文件被网页浏览器缓存</strong>。你可以通过修改指纹使缓存无效，这在你修改文件后会自动发生。</p></li>
+<li><p><strong>缩小/压缩：(加快js,css及图片等静态资源下载速度)</strong></p>
+
+<p>  对于 CSS 文件，是通过去除空格和注释来实现的。</p>
+
+<p>  对于 JavsScript, 会有更多的复杂过程。你可以从选项中选择一套构件或者指定你自己的。</p></li>
+<li><p><strong>使用索引文件：(建立索引文件提高访问速度)</strong></p>
+
+<p>  Sprockets 对一些特殊的用途会使用名为 index (使用相关扩展) 的文件，作为一系列相关文件的索引。</p></li>
+<li><p><strong>高级语言预编译(coffeescript &ndash;> javascript / scss &ndash;> css等)：</strong></p>
+
+<p>  它能你使用更高级的语言来编写资源，然后预编译成实质的资源。默认支持的语言包括 CSS 的 Sass，JavaScript 的 CoffeeScript 和可用于所有资源的 ERB.</p></li>
+</ul>
+
+
+<hr />
+
+<h3>使用方法：</h3>
+
+<p>在 Rails 之前的版本里，所有的资源都放置在 public 的子目录下比如 images, javascript 和 stylesheets. 对于 asset pipeline, 这些资源现在被指定到 <strong>app/assets 目录</strong>。这个<strong>目录下的所有文件都通过 Sprockets 中间件供应</strong>，这个中间件通过引入 sprockets gem 使用。</p>
+
+<h4>资源组织：</h4>
+
+<p>Pipeline assets 可以被放置到一个应用程序中这三个位置中的一个:</p>
+
+<ul>
+<li>app/assets 放置属于<strong>应用程序的资源</strong>，比如自选图像，JavaScript 文件和样式文件。</li>
+<li>lib/assets 用于不在应用程序<strong>范围内的自有函式库</strong>，或者那些<strong>跨应用程序共通的函式</strong>。</li>
+<li>vendor/assets 用于属于<strong>外部实体的资源</strong>，比如 JavaScript 插件和 CSS 框架的代码。</li>
+</ul>
+
+
+<hr />
+
+<ol type="a">
+<li><p>搜索路径：</p>
+
+<p>介绍搜索路径时，先来介绍<strong>资源清单</strong>：</p>
+
+<blockquote><ul>
+<li><p>资源清单一般是app/assets/stylesheets/application.css和app/assets/javascripts/application.js</p></li>
+<li><p>assets pipeline<strong>默认搜索路径将会在app/assets/images和三个资源路径app/assets/、lib/assets/、 vendor/assets下的所有javascripts, stylesheets子目录</strong>，而索引的<strong>文件将由文件清单给出</strong>,如：//= require home 将是 app/assets/javascripts/home.js。</p></li>
+<li><p>下图就是一份JS资源清单：</p></li>
+</ul>
+</blockquote>
+
+<p><img src="/images/posts/2013-10-26/resource_list.png" title="JS资源清单" alt="无法显示图片" /></p>
+
+<p>刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：</p>
+
+<pre><code>config.assets.paths &lt;&lt; Rails.root.join("app", "assets", "flash")
+</code></pre>
+
+<p><em>注意：想在<strong>资源清单外引用</strong>的文件必须加载到<strong>预编译列表</strong>里，否则它们在<strong>生产环境</strong>将不可以用。</em></p></li>
+<li><p>使用索引文件:</p>
+
+<p>如果你了解数据库，就应该对索引很熟悉。如果一个字段<strong>经常被查找</strong>，你可以将它<strong>建立索引</strong>从而提高访问速度。</p>
+
+<p>Sprockets也采取类似方法，对一些<strong>特殊的用途</strong>会使用名为 index (使用相关扩展) 的文件。</p>
+
+<blockquote><p>例如，如果你的<strong>许多模块都要使用某个 jQuery 函式库</strong>，这个函式库存放在 lib/assets/library_name。 lib/assets/library_name/index.js 会作为<strong>这个库的所有文件的 manifest</strong>. 这个文件可以按顺序包含一组需要使用的文件，或者一个简单的 require_tree 指令。</p></blockquote></li>
+<li><p>连接资源代码：</p>
+
+<p><strong>使用标签：</strong></p>
+
+<p>pipeline(在当前的环境上下文中没有被关闭)提供标签访问你的资源,这些文件通过Sprockets获得。</p>
+
+<p>Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。</p>
+
+<pre><code>&lt;%= stylesheet_link_tag "application" %&gt;
+&lt;%= javascript_include_tag "application" %&gt;
+&lt;%= image_tag "rails.png" %&gt;
+</code></pre>
+
+<p><strong>CSS:</strong></p>
+
+<p>assets pipeline会<strong>自动解析erb</strong>，你可以在CSS增加扩展名.erb，这样资源中就可以<strong>使用helpers</strong>方法(如：asset_path)。</p>
+
+<p>使用assets pipeline，<strong>资源路径必须重写</strong>并且sass-rails提供两个helpers方法：-url和-path。</p>
+
+<p><strong>JS:</strong></p>
+
+<p>使用erb扩展名可以使用asset_path的helpers方法。你也可以在coffeescript增加扩展名erb。</p></li>
+<li><p>资源清单和指令：</p>
+
+<p><strong>作用：</strong>Sprockets 使用资源清单文件去<strong>确认哪些资源要引入并供应</strong>的。</p>
+
+<p>这些资源清单文件包含一些 <strong>指令</strong> — 告诉 Sprockets 哪些文件要被<strong>按顺序引入</strong>，然后将它们<strong>连结成单个 CSS 或者 JavaScript 文件的指示</strong>。根据这些指令， Sprockets 加载这些被指定的文件，如果有必要就对它们<strong>进行加工</strong>，接着将它们<strong>连结成单个文件然后压缩</strong>它们 ( 如果 <strong>Rails.application.config.assets.compress</strong> 为 true ).</p>
+
+<p>由于只处理单个文件而不是多个， 浏览器可以发起更少的请求所以页面的加载时间将会大大的缩减。</p>
+
+<p>还记得清单内容吗？之前提到的资源清单。</p>
+
+<p><strong>构成：</strong></p>
+
+<ul>
+<li>JS资源清单:</li>
+</ul>
+
+
+<p>那些<strong>以//=开头的注释就是指令</strong>，而 <strong>require 指令</strong>是用于告诉 Sprockets <strong>需要加入</strong>的文件,也不用加扩展名，当资源清单是js文件，Sprockets会假设你加入的是一个.js文件。</p>
+
+<p>  <strong>require_tree</strong> 指令告诉 Sprockets <strong>递归</strong>地去包含在<strong>指定目录下<em>所有</em></strong> 的 JavaScript 文件到<strong>输出里</strong>。 这些<strong>路径必须在资源清单文件中有相关的指定</strong>。 有也可以使用 require_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。</p>
+
+<pre><code>//= require jquery
+//= require jquery_ujs
+//= require_tree .
+</code></pre>
+
+<ul>
+<li>CSS资源清单：</li>
+</ul>
+
+
+<p>  用css的注释开头，同样用require引入文件，指令<strong>require_tree</strong>和JS中的一样（<strong>加入当前目录所有stylesheets文件</strong>），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。</p>
+
+<pre><code>/* ...
+*= require_self
+*= require_tree .
+*/
+</code></pre>
+
+<p><em>注意：用到多个sass文件时，用<strong>@import rule</strong>替代Sprockets</em>指令，Sprockets 指令在 Sass 文件中定义的<strong>变量和 mixins</strong> 都只能在其<strong>被定义的文档</strong>中可用。_</p></li>
+<li><p>预处理：</p>
+
+<p>文件的<strong>扩展名</strong>被用于判断某个资源文件要进入<strong>哪个预处理过程</strong>。</p>
+
+<p><strong>预处理</strong>可以通过<strong>添加其它的扩展</strong>被加入，扩展的<strong>处理顺序</strong>按是<strong>从右到左</strong>。这应该用于需要按顺序处理的过程。编译好的 JavaScript 和 CSS 文件送回给浏览。</p>
+
+<blockquote><p>例如：</p>
+
+<p>app/assets/javascripts/projects.js.erb.coffee，那么现由 CoffeeScript 拦截器先处理。它不能解析 ERB 所以你会碰到问题。</p></blockquote></li>
+</ol>
+
+
+<hr />
+
+<h4>生产环境：</h4>
+
+<ul>
+<li><p>预编译资源</p>
+
+<p>Rails 本身绑定了一个 <strong>rake</strong> 任何去编译资源资源清单和 pipeline 中的其它文件到<strong>磁盘</strong>里。</p>
+
+<p>编译后的资源都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 pulibc/assets 目录。</p>
+
+<p>为了更<strong>快速的预编译资源</strong>，你可以在 config/application.rb 里将 <strong>config.assets.initialize_on_precompile 设置为 false</strong> 去<strong>部分加载</strong>你的应用程序。</p>
+
+<blockquote><p>如果你设置 config.assets.initialize_on_precomile 为 false,在<strong>开发模式</strong>范围内会<strong>忽略这个标记的值</strong>. 改变这个标记也会影响到 engines. Engines 也可以<strong>指定预编译资源.</strong> 因为完整的环境还没有加载完, <strong>engines (或者其他的 gems) 将不会被加载</strong>, 这会引起<strong>资源丢失</strong>.</p></blockquote>
+
+<p>所以，你可以通过以下命令生成已编译版本的资源文件:</p>
+
+<pre><code>bundle exec rake assets:precompile
+</code></pre></li>
+</ul>
+
+
+<hr />
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[加载Rails]]></title>
