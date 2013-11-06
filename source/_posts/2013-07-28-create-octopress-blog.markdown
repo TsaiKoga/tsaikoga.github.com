@@ -10,7 +10,7 @@ categories: gem
     cd blog
 
 查看Gemfile文件：
-稍作修改，如：source http://ruby.taobao.org
+稍作修改，如使用淘宝镜像：source http://ruby.taobao.org
     vim Gemfile
 
 之后执行:
@@ -33,17 +33,17 @@ categories: gem
 本地执行:
     rake setup_github_pages
 
-在github上新建一个octopress仓库，当要填入url时，不要填入".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
+在github上新建一个octopress仓库，当填入url时，不要填入后缀".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
 说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支"。
     git checkout source				# 切到开发分支source上
     git push origin source		# 推送到远程仓库
 
 
-####如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要
+####如果想在source分支下有\_deploy文件夹(当你的\_desploy文件夹没了)，只要
     git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
 
-重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/, 
-修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，
+重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为\_deploy/, 
+修改\_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，
 
 执行：
     rake generate

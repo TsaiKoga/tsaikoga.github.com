@@ -180,7 +180,7 @@ Pipeline assets 可以被放置到一个应用程序中这三个位置中的一�
 
    Rails 本身绑定了一个 **rake** 任何去编译资源资源清单和 pipeline 中的其它文件到**磁盘**里。
 
-   编译后的资源都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 pulibc/assets 目录。
+   **编译后的资源**都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 **pulibc/assets 目录**。
 
    为了更**快速的预编译资源**，你可以在 config/application.rb 里将 **config.assets.initialize\_on\_precompile 设置为 false** 去**部分加载**你的应用程序。
 
