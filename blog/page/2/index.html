@@ -111,6 +111,126 @@
 
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">Ubuntu下安装redis</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-15T10:02:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
+        
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/nosql/'>nosql</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h4>安装步骤：</h4>
+
+<hr />
+
+<ol>
+<li><p><strong>安装并编译redis:</strong></p>
+
+<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
+ tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
+ cd redis-2.2.13
+ make                              # 编译
+ sudo make install               # 安装redis
+</code></pre></li>
+</ol>
+
+
+<blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
+
+<p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
+
+<ol>
+<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
+
+<pre><code> cp redis.conf /etc/
+</code></pre></li>
+<li><p><strong>启动服务并验证：</strong></p>
+
+<pre><code> redis-server /etc/redis.conf
+</code></pre></li>
+<li><p><strong>查看是否成功启动：</strong></p>
+
+<pre><code> ps -ef | grep redis
+</code></pre></li>
+<li><p><strong>测试set方法和get方法：</strong></p>
+
+<pre><code> $redis-cli
+ redis&gt; set foo bar
+ OK
+ redis&gt; get foo
+ "bar"
+</code></pre></li>
+</ol>
+
+
+<hr />
+
+<h3>其他设置：</h3>
+
+<h4>设置开机自动启动，关机自动关闭：</h4>
+
+<pre><code>    sudo update-rc.d redis-server defaults
+</code></pre>
+
+<h4>初始化用户和日志路径：</h4>
+
+<p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
+
+<pre><code>sudo useradd redis
+sudo mkdir -p /var/lib/redis
+sudo mkdir -p /var/log/redis
+sudo chown redis.redis /var/lib/redis
+sudo chown redis.redis /var/log/redis
+</code></pre>
+</div>
+  
+  
+
+
+</div>
+
+      </article>
+    
+    
+      <article class="span4">
+        <div class="article-format">
+
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/08/30/scroll-to-top/">Scroll to Top</a></h1>
     
     
@@ -388,7 +508,7 @@ cd blog
 </code></pre>
 
 <p>查看Gemfile文件：
-稍作修改，如：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
+稍作修改，如使用淘宝镜像：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
 
 <pre><code>vim Gemfile
 </code></pre>
@@ -424,20 +544,20 @@ cd blog
 <pre><code>rake setup_github_pages
 </code></pre>
 
-<p>在github上新建一个octopress仓库，当要填入url时，不要填入&#8221;.git&#8221;，这样生成的页面才在&#8221;.com&#8221;上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
+<p>在github上新建一个octopress仓库，当填入url时，不要填入后缀&#8221;.git&#8221;，这样生成的页面才在&#8221;.com&#8221;上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
 说到在远程仓库做开发，就是将&#8221;开发分支source&#8221;覆盖原有的&#8221;master分支&#8221;。</p>
 
 <pre><code>git checkout source             # 切到开发分支source上
 git push origin source      # 推送到远程仓库
 </code></pre>
 
-<h4>如果想在source分支下有<em>deploy文件夹(当你的</em>desploy文件夹没了)，只要</h4>
+<h4>如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要</h4>
 
 <pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
 </code></pre>
 
-<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为<em>deploy/,
-修改</em>config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，</p>
+<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/,
+修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，</p>
 
 <p>执行：</p>
 
@@ -505,6 +625,10 @@ git push origin source      # 推送到远程仓库
     <ul class="recent_posts">
       
         <li>
+          <a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a>
+        </li>
+      
+        <li>
           <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
         </li>
       
@@ -518,10 +642,6 @@ git push origin source      # 推送到远程仓库
       
         <li>
           <a href="/blog/2013/10/23/ubuntuchang-yong-ming-ling/">Ubuntu常用命令</a>
-        </li>
-      
-        <li>
-          <a href="/blog/2013/10/22/railsbiao-de-guan-lian/">Rails表的关联</a>
         </li>
       
     </ul>

@@ -63,6 +63,167 @@
 
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a></h1>
+    
+    
+      <p class="meta">
+        
+  
+
+
+  
+    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
+  
+
+ - 
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-06T13:14:00+08:00" pubdate data-updated="true">Nov 6<span>th</span>, 2013</time> - 
+        
+
+posted in
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/projectmanagement/'>ProjectManagement</a>
+  
+</span>
+
+
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转眼间已经到了大四，想想大三和暑假在做的项目，自己在其中参与开发也曾参与管理；提到开发，从一开始对语言和业务都很陌生，任务不能按时完成；到后来逐渐掌握方法，准时完成任务。这个期间是一个逐渐迷失，然后发现问题，之后解决问题的过程。所以，在这里总结一下自己的经验和体会。</p>
+
+<p>在讲述之前先说一下背景:</p>
+
+<h4>背景：</h4>
+
+<blockquote><p>首先，说一下我们所使用的语言和框架：</p>
+
+<ul>
+<li>前台：主要是Extjs</li>
+<li>后台：Ruby</li>
+<li>框架：Rails</li>
+</ul>
+
+
+<p>其次，说明一下我们所做的系统内容和功能：</p>
+
+<ul>
+<li>它是一个有关服装的一套生产流程的管理系统，包括板房打板，制作订单和制单，库存管理，采购管理，员工工资预算等内容。</li>
+<li>页面所涉及的组件一般为panel（面板），form（表单），grid（表格），tree（树）和window（窗口）。</li>
+<li>页面功能一般为对记录进行增删查改，对单据进行打印和导出Excel的功能。</li>
+</ul>
+
+
+<p>最后，讲述以下我们所做的系统复杂性：</p>
+
+<ul>
+<li>其实，由前面的内容和功能看好像不复杂，大部分系统都是这样。但是，看似简单的功能，实现并不容易；因为公司涉及流程范围广，系统较大，而系统所需的表有100多张；经常一个页面涉及10多张表，所以查找关联时比较吃力。</li>
+</ul>
+</blockquote>
+
+<hr />
+
+<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;当我开始接触此项目时，团队已经调研完并且设计好了数据库；而我们对数据库和业务都不熟悉；一开始就进入实现阶段常常会产生一个接连一个的问题；面对这些问题，我们探寻一条解决道路，团队开始采取的方法是：</p>
+
+<p>1.业务完全不了解：</p>
+
+<ul>
+<li>先<strong>查看</strong>之前调研出来的<strong>流程图</strong>;</li>
+<li>要求之前调研的人员对<strong>大体的流程</strong>进行<strong>讲解</strong>（因为流程图这种文档不一定能被第三方所理解，所以必须进行讲解；但是一开始讲解太全不易接受，所以我提议一开始讲大体内容，实现前针对模块的流程进行讲解）;</li>
+<li>开发时对所做的<strong>模块流程</strong>进行<strong>讲解</strong>;</li>
+</ul>
+
+
+<p>2.数据库设计问题：</p>
+
+<ul>
+<li>对于这个问题，要看问题的大小，组织当时<strong>数据库设计相关人员进行讨论</strong>;</li>
+<li>如果易于修改，不会改动太大，不会造成较大影响的，可以进行修改。</li>
+<li>若影响较大，寻求其他途径代替，而不改动数据库。</li>
+</ul>
+
+
+<hr />
+
+<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;好，现在来讲我的代码实现方法，因为还是学生，不是什么正规公司，在代码设计上不像大公司那样规范；为了完成每一个任务，自己逐渐掌握的一套方法：</p>
+
+<h4>准备:</h4>
+
+<p>1.了解所要做的<strong>线路的流程</strong>，究竟是要干什么：
+ 理解所要实现的功能，所做的页面比起原来公司方式多了什么好处或修复了什么弊端。这样有助于理解并且找出系统设计的错误，及早改正。</p>
+
+<p>2.查看<strong>数据库</strong>的设计的<strong>有关联的表</strong>：</p>
+
+<ul>
+<li>首先可以先看名字，你之后设计的函数或变量名字其实很多可以从数据库的表名或字段名借鉴。</li>
+<li>将你前台所需要的字段找出来，你的页面将通过哪张表开始显示这个字段，找出一条搜索路径。（这里是一些大致需要查找的地方，如表单，表格）</li>
+</ul>
+
+
+<p>3.简要<strong>设计函数和分割代码</strong>(这里不是很细致地设计，而只是提出设计，实现是可以按着这个方向编写代码)：</p>
+
+<ul>
+<li>根据功能设计前台函数名（这也只能从较高层次上设计，如果熟练了，就知道页面大概要什么函数了，到那时设计起来简单）。</li>
+<li>计高内聚低耦合的代码（这个比较难，一开始会因为站在比较高的地方，对一些细致的内容不了解或是业务知识不清晰而做出设计，最后由于一些功能不一致而修改，发现内聚性较差）。</li>
+</ul>
+
+
+<p>4.根据前台功能开始着手<strong>设计后台</strong>，前台所需发的请求，归纳后台需要什么内容，将后台处理过程划分，设计后台方法名。</p>
+
+<h4>实现:</h4>
+
+<p>5.开始着手敲代码实现，在前台这个期间我经历了三个阶段：</p>
+
+<ul>
+<li><p>没显示内容：怎么办？只好不停的调试；因为使用js的ext库做前台，所以我会在代码中用console.log()通过chrome的审查元素进行调试。</p>
+
+<p><strong>结论：</strong>第一次还是不要一次性写太多内容；对于前台，你只需要写出那么一个总体显示框架就行了（如：一个布局：上面有个form，下面有个grid，显示出来就行了），之后再逐步细化。</p></li>
+<li><p>当前台显示出来后，我认为根据MVC，View要发送请求，必须通过前台的功能实现，所以着手写之前所设计的前台功能代码：增删查改的ajax。但是，这样编代码后思想会很乱，容易分心，效率低下。</p>
+
+<p><strong>结论：</strong>先做号前台页面的显示和最基本的数据显示（包括后台代码）；然后还是前台的一个功能设计出来后，后台根据这个请求实现，完成后台代码后测试这个功能是否可用。</p></li>
+<li><p>最后一阶段就是一个一个的功能实现了，接在在一起时出现了问题，这时也只能调试。</p>
+
+<p><strong>结论：</strong>调试时先判断是前台还是后台，这一期间一般发生在后台；如果可以通过提示的错误判断，则判断哪个范围出错，并那个范围进行调试；不然就顺着请求的访问路径测试，逐步调试。</p></li>
+</ul>
+
+
+<h4>总结:</h4>
+
+<blockquote><p>编代码时</p>
+
+<p>1.先整体后局部：做前台先将整体框架显示，再一个一个进行实现，而功能先不做；</p>
+
+<p>2.先简单后复杂（复杂局部实现）：找出前台要显示的基本信息，编写后台实现基本的显示信息，再用一个功能一个功能实现;</p>
+
+<p>3.先局部后整体：在此期间的不断地测试。</p></blockquote>
+</div>
+  
+  
+
+
+</div>
+</article>
+
+
+    <article class="post"><div class="article-format">
+
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a></h1>
     
     
@@ -295,7 +456,7 @@ posted in
 
 <p>Rails 本身绑定了一个 <strong>rake</strong> 任何去编译资源资源清单和 pipeline 中的其它文件到<strong>磁盘</strong>里。</p>
 
-<p>编译后的资源都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 pulibc/assets 目录。</p>
+<p><strong>编译后的资源</strong>都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 <strong>pulibc/assets 目录</strong>。</p>
 
 <p>为了更<strong>快速的预编译资源</strong>，你可以在 config/application.rb 里将 <strong>config.assets.initialize_on_precompile 设置为 false</strong> 去<strong>部分加载</strong>你的应用程序。</p>
 
@@ -2668,124 +2829,6 @@ posted in
 </div>
 </article>
 
-
-    <article class="post"><div class="article-format">
-
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/10/15/ubuntuxia-an-zhuang-redis/">Ubuntu下安装redis</a></h1>
-    
-    
-      <p class="meta">
-        
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-15T10:02:00+08:00" pubdate data-updated="true">Oct 15<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/nosql/'>nosql</a>
-  
-</span>
-
-
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h4>安装步骤：</h4>
-
-<hr />
-
-<ol>
-<li><p><strong>安装并编译redis:</strong></p>
-
-<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
- tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
- cd redis-2.2.13
- make                              # 编译
- sudo make install               # 安装redis
-</code></pre></li>
-</ol>
-
-
-<blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
-
-<p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
-
-<ol>
-<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
-
-<pre><code> cp redis.conf /etc/
-</code></pre></li>
-<li><p><strong>启动服务并验证：</strong></p>
-
-<pre><code> redis-server /etc/redis.conf
-</code></pre></li>
-<li><p><strong>查看是否成功启动：</strong></p>
-
-<pre><code> ps -ef | grep redis
-</code></pre></li>
-<li><p><strong>测试set方法和get方法：</strong></p>
-
-<pre><code> $redis-cli
- redis&gt; set foo bar
- OK
- redis&gt; get foo
- "bar"
-</code></pre></li>
-</ol>
-
-
-<hr />
-
-<h3>其他设置：</h3>
-
-<h4>设置开机自动启动，关机自动关闭：</h4>
-
-<pre><code>    sudo update-rc.d redis-server defaults
-</code></pre>
-
-<h4>初始化用户和日志路径：</h4>
-
-<p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
-
-<pre><code>sudo useradd redis
-sudo mkdir -p /var/lib/redis
-sudo mkdir -p /var/log/redis
-sudo chown redis.redis /var/lib/redis
-sudo chown redis.redis /var/log/redis
-</code></pre>
-</div>
-  
-  
-
-
-</div>
-</article>
-
 <nav id="pagenavi">
     
     
@@ -2801,6 +2844,10 @@ sudo chown redis.redis /var/log/redis
     <ul class="recent_posts">
       
         <li>
+          <a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a>
+        </li>
+      
+        <li>
           <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
         </li>
       
@@ -2814,10 +2861,6 @@ sudo chown redis.redis /var/log/redis
       
         <li>
           <a href="/blog/2013/10/23/ubuntuchang-yong-ming-ling/">Ubuntu常用命令</a>
-        </li>
-      
-        <li>
-          <a href="/blog/2013/10/22/railsbiao-de-guan-lian/">Rails表的关联</a>
         </li>
       
     </ul>

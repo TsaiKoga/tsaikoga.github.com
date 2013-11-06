@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2013-10-27T15:19:04+08:00</updated>
+  <updated>2013-11-06T15:06:56+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -208,7 +208,7 @@
 
 <p>Rails 本身绑定了一个 <strong>rake</strong> 任何去编译资源资源清单和 pipeline 中的其它文件到<strong>磁盘</strong>里。</p>
 
-<p>编译后的资源都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 pulibc/assets 目录。</p>
+<p><strong>编译后的资源</strong>都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 <strong>pulibc/assets 目录</strong>。</p>
 
 <p>为了更<strong>快速的预编译资源</strong>，你可以在 config/application.rb 里将 <strong>config.assets.initialize_on_precompile 设置为 false</strong> 去<strong>部分加载</strong>你的应用程序。</p>
 
