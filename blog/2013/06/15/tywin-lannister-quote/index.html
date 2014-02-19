@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>create octopress blog - TsaiKoga Blog</title>
+  <title>Tywin Lannister Quote - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
 
   
-  <meta name="description" content="克隆octopress项目 git clone git://github.com/imathis/octopress.git blog
-cd blog 查看Gemfile文件：
-稍作修改，如使用淘宝镜像：source http://ruby.taobao.org vim Gemfile 之后执行 &hellip;">
+  <meta name="description" content="A nice quote by Tywin Lannister taken from A Storm of Sword book. The greatest fools are ofttimes more clever then the men who laugh at them.Tywin &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ cd blog 查看Gemfile文件：
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/06/15/tywin-lannister-quote">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
@@ -68,7 +66,7 @@ cd blog 查看Gemfile文件：
   
   <header>
     
-      <h1 class="entry-title">Create Octopress Blog</h1>
+      <h1 class="entry-title">Tywin Lannister Quote</h1>
     
     
       <p class="meta">
@@ -84,115 +82,25 @@ cd blog 查看Gemfile文件：
   
 
 
-<time datetime="2013-07-28T22:51:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
+<time datetime="2013-06-15T09:28:00+08:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><h4>克隆octopress项目</h4>
+<div class="entry-content"><p>A nice quote by Tywin Lannister taken from <em>A Storm of Sword</em> book.</p>
 
-<pre><code>git clone git://github.com/imathis/octopress.git blog
-cd blog
-</code></pre>
+<blockquote><p>The greatest fools are ofttimes more clever then the men who laugh at them.</p><footer><strong>Tywin Lannister</strong> <cite>A Storm of Swords</cite></footer></blockquote>
 
-<p>查看Gemfile文件：
-稍作修改，如使用淘宝镜像：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
-
-<pre><code>vim Gemfile
-</code></pre>
-
-<p>之后执行:</p>
-
-<pre><code>bundle install
-</code></pre>
-
-<p>接着要做的事是查看rakefile文件的：</p>
-
-<pre><code>vim Rakefile    # 里面有许多rake任务
-</code></pre>
-
-<p>我们执行其中的:</p>
-
-<pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"blog/"文件夹下
-</code></pre>
-
-<p><strong>查看网页效果：</strong></p>
-
-<pre><code>rake preview
-</code></pre>
-
-<p>他会生成public文件夹</p>
-
-<hr />
-
-<h4>创建仓库：名字要以用户名为头，区分大小写。(username.github.io)</h4>
-
-<p>本地执行:</p>
-
-<pre><code>rake setup_github_pages
-</code></pre>
-
-<p>在github上新建一个octopress仓库，当填入url时，不要填入后缀&#8221;.git&#8221;，这样生成的页面才在&#8221;.com&#8221;上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
-说到在远程仓库做开发，就是将&#8221;开发分支source&#8221;覆盖原有的&#8221;master分支&#8221;。</p>
-
-<pre><code>git checkout source             # 切到开发分支source上
-git push origin source      # 推送到远程仓库
-</code></pre>
-
-<h4>如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要</h4>
-
-<pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
-</code></pre>
-
-<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/,
-修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，</p>
-
-<p>执行：</p>
-
-<pre><code>rake generate
-</code></pre>
-
-<p>再执行以下名令，<strong>部署到远程仓库</strong>：</p>
-
-<pre><code>rake deploy
-</code></pre>
-
-<p>最后到网址刷新看看。</p>
-
-<hr />
-
-<h4>附加功能：</h4>
-
-<p>注册一个google analytics帐号：
-生成tracking_id:</p>
-
-<h4>新建一个博客：</h4>
-
-<pre><code>rake new_post["Hello TsaiKoga"]
-</code></pre>
-
-<p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
-
-<h4>做评论，可以基于第三方插件：disqus</h4>
-
-<p>扯开一下话题：</p>
-
-<blockquote><p>Disqus的主要目标是通过提供功能强大的第三评论系统，将当前不同网站的相对孤立、隔绝的评论系统，连接成具有社会化特性的大网，用户使用Disqus，在不同网站上评论，无需重复注册账号，只需使用Disqus账号或者<em>第三方平台账号</em>，即可方便的进行评论，且所有评论都会存储、保存在Disqus账号后台，方便随时查看、回顾。</p></blockquote>
-
-<p>可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
-在</em>config.yml中加入你申请的disqus的short_name</p>
 </div>
 
 
   <footer>
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/06/15/tywin-lannister-quote/" title="Previous Post: Tywin Lannister Quote">&laquo; Tywin Lannister Quote</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Next Post: redcarpet和pygments结合进行markdown显示">redcarpet和pygments结合进行markdown显示 &raquo;</a>
+        <a class="basic-alignment right" href="/blog/2013/07/28/create-octopress-blog/" title="Next Post: create octopress blog">create octopress blog &raquo;</a>
       
     </p>
   </footer>
@@ -259,8 +167,8 @@ git push origin source      # 推送到远程仓库
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/';
-        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/';
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2013/06/15/tywin-lannister-quote/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2013/06/15/tywin-lannister-quote/';
         var disqus_script = 'embed.js';
       
     (function () {

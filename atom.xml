@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2014-02-19T15:52:42+08:00</updated>
+  <updated>2014-02-19T16:45:50+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -2681,6 +2681,18 @@ git push origin source      # 推送到远程仓库
 
 <p>可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
 在</em>config.yml中加入你申请的disqus的short_name</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tywin Lannister Quote]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2013/06/15/tywin-lannister-quote/"/>
+    <updated>2013-06-15T09:28:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2013/06/15/tywin-lannister-quote</id>
+    <content type="html"><![CDATA[<p>A nice quote by Tywin Lannister taken from <em>A Storm of Sword</em> book.</p>
+
+<blockquote><p>The greatest fools are ofttimes more clever then the men who laugh at them.</p><footer><strong>Tywin Lannister</strong> <cite>A Storm of Swords</cite></footer></blockquote>
+
 ]]></content>
   </entry>
   
