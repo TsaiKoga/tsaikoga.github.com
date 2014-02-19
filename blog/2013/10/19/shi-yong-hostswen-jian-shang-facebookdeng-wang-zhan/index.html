@@ -7,42 +7,29 @@
   <meta charset="utf-8">
   <title>使用hosts文件上facebook等网站 - TsaiKoga Blog</title>
   <meta name="author" content="TsaiKoga">
-  <link rel="author" href="humans.txt">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  
-    
   
   <meta name="description" content="原因： hosts文件是本地域名解析文件, 系统在访问互联网时先在本机hosts文件中查找对应的域名解析（即把你输入的域名变成对应服务器IP地址），
 如果没有再去相应的dns服务器查找，网通，电信的dns服务器可能屏蔽facebook等网站的解析， &hellip;">
   
+
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">
+  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan">
   <link href="/favicon.png" rel="icon">
-  <link href='http://fonts.googleapis.com/css?family=Cantarell' rel='stylesheet' type='text/css'>
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
-  <meta name="og:type" content="website" />
-  <meta name="og:site_name" content="TsaiKoga Blog" />
-  <meta name="og:title" content="使用hosts文件上facebook等网站" />
-  <meta name="og:description" content="原因： hosts文件是本地域名解析文件, 系统在访问互联网时先在本机hosts文件中查找对应的域名解析（即把你输入的域名变成对应服务器IP地址），
-如果没有再去相应的dns服务器查找，网通，电信的dns服务器可能屏蔽facebook等网站的解析， &hellip;" />
-  <meta name="og:url" content="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/"/>
-  <meta name="url" content="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/">
-  
-  <meta name="subject" content="net"/>
-  <meta name="category" content="net"/>
-  
-  <meta name="distribution" content="global">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-
+<link href='http://fonts.googleapis.com/css?family=Vollkorn:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -59,35 +46,25 @@
 
 </head>
 
-<body   >
-  <nav role="navigation"><div class="navbar">
-  <div class="navbar-inner">
-    <a class="brand" href="/">TsaiKoga Blog</a>
-    <ul class="nav">
-      <li><a href="/">Home</a></li>
-      <li><a href="/blog/archives">Archives</a></li>
-    </ul>
-    <ul class="nav" data-subscription="rss">
-      <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-      
-    </ul>
-      
-    <form class="navbar-form" action="http://google.com/search" method="get">
-      <fieldset role="search">
-        <input type="hidden" name="q" value="site:TsaiKoga.github.com" />
-        <input class="span2" type="text" name="q" results="0" placeholder="Search"/>
-      </fieldset>
-    </form>
-      
-    
-  </div>
-</div>
-</nav>
-  <div class="wrapper_single">
-    <div class="container">
-      <article class="span8 offset2" role="article">
-        <div class="article-format">
+<body   class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">TsaiKoga Blog</a></h1>
+</hgroup>
 
+</header>
+<div class="navi">
+<ul>
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme/">Author</a></li>
+</ul>
+</div>
+
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
   <header>
     
       <h1 class="entry-title">使用hosts文件上facebook等网站</h1>
@@ -95,15 +72,6 @@
     
       <p class="meta">
         
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
-        
 
 
 
@@ -115,24 +83,14 @@
   
 
 
-<time datetime="2013-10-19T20:52:00+08:00" pubdate data-updated="true">Oct 19<span>th</span>, 2013</time> - 
-        
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/net/'>net</a>
-  
-</span>
-
-
+<time datetime="2013-10-19T20:52:00+08:00" pubdate data-updated="true">Oct 19<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h3>原因：</h3>
+<div class="entry-content"><h3>原因：</h3>
 
 <p>  hosts文件是<strong>本地域名解析文件</strong>,</p>
 
@@ -909,168 +867,70 @@ Ubuntu hosts文件位置: /etc/hosts
   <footer>
     <p class="meta">
       
-  
-
-
-  
-    <span class="byline author vcard">by <span class="fn">TsaiKoga</span></span>
-  
-
- - 
+        <a class="basic-alignment left" href="/blog/2013/10/15/nosqljian-jie/" title="Previous Post: Nosql简介">&laquo; Nosql简介</a>
       
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-19T20:52:00+08:00" pubdate data-updated="true">Oct 19<span>th</span>, 2013</time> - 
       
-
-posted in
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/net/'>net</a>
-  
-</span>
-
-
+        <a class="basic-alignment right" href="/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/" title="Next Post: Linux的文件系统">Linux的文件系统 &raquo;</a>
+      
     </p>
-    
-      
-	<div class="share">
-		<ul>
-			<li>
-  <a href="https://twitter.com/intent/tweet?text=使用hosts文件上facebook等网站 by @&url=http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Share 使用hosts文件上facebook等网站 on Twitter">
-    <img src="/images/social/twitter.png" />
-  </a>
-</li>
-
-			<li>
-  <a href="https://www.facebook.com/sharer.php?u=http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Share 使用hosts文件上facebook等网站 on Facebook">
-    <img src="/images/social/facebook.png" />
-  </a>
-</li>
-
-			<li>
-  <a href="https://plus.google.com/share?url=http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Share 使用hosts文件上facebook等网站 on Google Plus">
-    <img src="/images/social/google.png" />
-  </a>
-</li>
-
-		</ul>
-	</div>
-
-
-    
-    
-      <a class="pull-left" href="/blog/2013/10/15/nosqljian-jie/" title="Previous Post: Nosql简介">&laquo; Nosql简介</a>
-    
-    
-      <a class="pull-right" href="/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/" title="Next Post: Linux的文件系统">Linux的文件系统 &raquo;</a>
-    
   </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
 
 </div>
 
-        
-          <div class="article-format">
-            <h1>Comments</h1>
-            <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-          </div>
-        
-      </article>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/11/07/linuxyong-hu-he-quan-xian/">Linux用户和权限</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/25/jia-zai-rails/">加载Rails</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
     </div>
   </div>
-  <div id="footer-widgets">
-  <div class="container">
-    <div class="row">
-  <div class="span3">
-    <h2>recent posts</h2>
-    <ul class="recent_posts">
-      
-        <li>
-          <a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a>
-        </li>
-      
-        <li>
-          <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
-        </li>
-      
-        <li>
-          <a href="/blog/2013/10/25/jia-zai-rails/">加载Rails</a>
-        </li>
-      
-        <li>
-          <a href="/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>
-        </li>
-      
-        <li>
-          <a href="/blog/2013/10/23/ubuntuchang-yong-ming-ling/">Ubuntu常用命令</a>
-        </li>
-      
-    </ul>
-    <h2><a href="/blog/archives">archives</a></h2>
-  </div>
-  <div class="span3">
-    
-
-  </div>
-  <div class="span4">
-    
-
-  </div>
-  <div class="span2">
-    <h2>found on</h2>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-</div>
-
-  </div>
-</div>
-<footer class="footer">
-  <div class="container">
-    <p class="pull-left">
-  <a href="/">TsaiKoga Blog</a>
-  - Copyright &copy; 2013 - TsaiKoga
-</p>
-<p class="pull-right">
-  <span>Powered by <a href="http://octopress.org/">Octopress</a>.</span>
-  
-    <span>Designed by <a href="http://www.AdrianArtiles.com">Adrian Artiles</a>.</span>
-  
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - TsaiKoga -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
-  </div>
 </footer>
-
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-<script>window.jQuery || document.write('<script src="/javascripts/libs/jquery-1.7.2.min.js" type="text/javascript"><\/script>')</script>
-<script src="/javascripts/libs/bootstrap.min.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.tweet.js" type="text/javascript"></script>
-<script src="/javascripts/jquery.instagram.js" type="text/javascript"></script>
-<script src="/javascripts/libs/jquery.masonry.min.js" type="text/javascript"></script>
-<script src="/javascripts/custom.js" type="text/javascript"></script>
-
+  
 
 <script type="text/javascript">
       var disqus_shortname = 'tsaikogablog';
@@ -1103,6 +963,7 @@ posted in
       document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
     })();
   </script>
+
 
 
 
