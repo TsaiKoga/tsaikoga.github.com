@@ -1,13 +1,19 @@
 article{
-	padding-top: 40px;
+	
+	
+	padding: 30px 0;
 	position: relative;
-	header {
-		margin-bottom: 1.5em;
+	@media screen and (max-width: 620px){
+		padding-bottom: 15px;
+	}
+	@media screen and (max-width: 620px){
+		padding: 15px 0;
 	}
 	h2.title{
 		font-size: 36px;
 		font-weight: 300;
 		line-height: 1;
+		margin-bottom: 20px;
 		margin-left:0px;
 		text-align:left;
 		border-bottom: 0px;
@@ -18,20 +24,37 @@ article{
 		color: $color-main;
 		border-bottom: 0px;
 		}
+		border-bottom: 1px solid $color-gray04;
+		padding-bottom: .75em;
 		@media screen and (max-width: 620px) {
 		font-size: 18px;
 		}
 
 	}
-
+	
 	.entry-content{
 		line-height: 1.5;
-		text-align: justify;
+		text-align: left;
 		a{
 			&:hover{
 				text-decoration:none;
 
 			}
+		}
+		.more-link{
+			display: block;
+			margin-top: 16px;
+			padding-left: 30px;
+			position: relative;
+			border-bottom: 0px;
+			&:before{
+				content: "\f061";
+				font: 1.3em $font-icon;
+				line-height: 1.6em;
+				position: absolute;
+				left: 0;
+			}
+			
 		}
 		p, blockquote, ul, ol, dl, table, iframe, h1, h2, h3, h4, h5, h6, .video-container{
 			margin-top: 1.5em;
@@ -50,7 +73,7 @@ article{
 			font-style: italic;
 		}
 		p{
-			margin-top: 10px;
+			margin-top: 10px;	
 		}
 		h2{
 			font-weight: 300;
@@ -64,7 +87,7 @@ article{
 				width: 100%;
 			}
 		}
-
+		
 		img, video{
 			max-width: 100%;
 			height: auto;
@@ -79,7 +102,7 @@ article{
 			box-shadow:0 0 15px rgba(0,0,0,0.35);
 			border-bottom: 0px;
 		}
-
+		
 		blockquote{
 			background: $color-gray04;
 			border-left: 5px solid $color-gray03;
@@ -116,6 +139,14 @@ article{
 			color: $color-gray02;
 			padding-left: 25px;
 			position: relative;
+			&:before{
+				content: "\f040";
+				color: $color-gray03;
+				font: 1.3em $font-icon;
+				line-height: 1.6em;
+				position: absolute;
+				left: 0;
+			}
 		}
 		.video-container{
 			position: relative;
@@ -136,18 +167,9 @@ article{
 }
 .share{
 	padding: 15px 0;
-	text-align: center;
+	padding-left:260px;
 	@media screen and (max-width: 620px) {
 	padding-left: 0px;
 	}
-	ul {
-		list-style: none;
-		li {
-			display: inline;
-			padding: 0 2px;
-			a:link,a:visited {
-				border: none;
-			}
-		}
-	}
+	@include border-shadow();
 }

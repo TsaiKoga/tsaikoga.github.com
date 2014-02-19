@@ -19,3 +19,47 @@
 //$sidebar-pad-medium: 15px;
 //$sidebar-pad-wide: 20px;
 //$sidebar-width-wide: 300px;
+
+body {
+	background-image: url("../../images/background.png");
+}
+.navi {
+  text-align: center;
+  ul {
+    padding: 0;
+    list-style: none;
+
+    li {
+      @include inline-block;
+      margin: 0;
+      padding: 0 (2/2 * 1em);
+
+      a {
+        color: #000;
+        text-decoration: none;
+				background: #999;
+				padding: 12px;
+				-webkit-border-radius: 6px;
+				-moz-border-radius: 6px;
+				border-radius: 6px;
+        &:hover {
+          color: #8C8C8C;
+					background: #333;
+					padding: 12px;
+					-webkit-border-radius: 6px;
+					-moz-border-radius: 6px;
+					border-radius: 6px;
+        }
+        &:active {
+          color: #8C8C8C;
+        }
+      } /* // a */
+    } /* // li */
+  } /* // ul */
+} /* // .navi */
+
+body > footer p:last-child {
+  text-align: center;
+  font-size: 0.9em;
+  margin-bottom: 0px;
+}
