@@ -1,10 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://TsaiKoga.github.com/blog/2013/06/15/tywin-lannister-quote/</loc>
-        <lastmod>2014-02-19T16:57:46+08:00</lastmod>
-    </url>
-    <url>
         <loc>http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/</loc>
         <lastmod>2014-02-19T16:57:46+08:00</lastmod>
     </url>
@@ -71,8 +67,12 @@
         <lastmod>2014-02-19T16:57:46+08:00</lastmod>
     </url>
     <url>
+        <loc>http://TsaiKoga.github.com/blog/2014/02/25/min-jie-kai-fa/</loc>
+        <lastmod>2014-02-25T15:42:19+08:00</lastmod>
+    </url>
+    <url>
         <loc>http://TsaiKoga.github.com/archives/</loc>
-        <lastmod>2014-02-19T16:57:46+08:00</lastmod>
+        <lastmod>2014-02-25T15:42:19+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/404.html</loc>
@@ -80,11 +80,11 @@
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/archives/</loc>
-        <lastmod>2014-02-19T16:57:46+08:00</lastmod>
+        <lastmod>2014-02-25T15:42:19+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/</loc>
-        <lastmod>2014-02-19T16:57:46+08:00</lastmod>
+        <lastmod>2014-02-25T15:42:19+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/robots.txt</loc>
@@ -92,6 +92,6 @@
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/</loc>
-        <lastmod>2014-02-19T16:57:46+08:00</lastmod>
+        <lastmod>2014-02-25T15:42:19+08:00</lastmod>
     </url>
 </urlset>
