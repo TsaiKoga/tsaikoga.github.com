@@ -18,3 +18,11 @@ hgroup {
 		}
 	}
 }
+#blog-archives{
+	h2 {
+		-webkit-text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;  
+		-moz-text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;  
+		text-shadow:#000 1px 0 0,#000 0 1px 0,#000 -1px 0 0,#000 0 -1px 0;   
+		*filter: Glow(Color=#000, Strength=1);  
+	}
+}
