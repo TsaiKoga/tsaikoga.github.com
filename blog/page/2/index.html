@@ -9,8 +9,7 @@
   <meta name="author" content="TsaiKoga">
 
   
-  <meta name="description" content="原因： hosts文件是本地域名解析文件, 系统在访问互联网时先在本机hosts文件中查找对应的域名解析（即把你输入的域名变成对应服务器IP地址），
-如果没有再去相应的dns服务器查找，网通，电信的dns服务器可能屏蔽facebook等网站的解析， &hellip;">
+  <meta name="description" content="文件系统： 我们都知道Linux的文件系统层次结构是一棵树，以&#8221;/&ldquo;表示的为最上层的目录。 example: Ubuntu文件系统示意图： 定义: 文件: 是文件系统中存储数据的一个命名对象。即使是一个空文件，它也包含用户数据，仍然为操作系统提供其他信息。 目录: &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -64,6 +63,197 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/">Linux的文件系统</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-22T09:49:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><hr />
+
+<h3>文件系统：</h3>
+
+<p>我们都知道Linux的文件系统层次结构是一棵树，以&#8221;/&ldquo;表示的为最上层的目录。</p>
+
+<p><strong>example:</strong></p>
+
+<p>Ubuntu文件系统示意图：</p>
+
+<p><img src="/images/posts/2013-10-22/ubuntu_file_system.png" title="Ubuntu文件系统" alt="无法显示图片" /></p>
+
+<hr />
+
+<h4>定义:</h4>
+
+<blockquote><p><strong>文件:</strong> 是文件系统中存储数据的一个命名<strong>对象</strong>。即使是一个<strong>空文件</strong>，它也包含<strong>用户数据</strong>，仍然为操作系统提供其他信息。</p>
+
+<p><strong>目录:</strong> 其中包含许多文件项目的一类<strong>特殊文件</strong>。支持文件系统的层次结构。系统中每个文件都登记在一个目录中。</p>
+
+<p><strong>子目录：</strong> 被包含在另一个目录中的目录。除了root目录以外，所有的目录都是子目录，并且有他们的父目录。<strong>root目录就作为自己的父目录</strong>。</p>
+
+<p><strong>文件名：</strong> 用来标志文件的字符串，保存在一个<strong>目录文件项</strong>中。</p></blockquote>
+
+<hr />
+
+<h4>文件结构：</h4>
+
+<p>文件的成分：无论文件是一个程序，一个文档，一个数据库，还是一个目录，操作系统都会赋予它如下所示的同样的结构：</p>
+
+<ul>
+<li><p><strong>文件索引</strong>：又称<strong>I节点</strong>，是文件系统结构中包含<strong>相应文件信息</strong>的<strong>一个记录</strong>。这些信息包括文件权限、文件主、文件大小等。</p></li>
+<li><p><strong>数据</strong>： 文件的实际内容，可以是空，可以非常大，并且有自己的结构。</p>
+
+<p>文件名规范：</p>
+
+<blockquote><p>（1）除了写先<strong>（“/”）和空字符（ASCII字符“\0”）</strong>以外，文件名可以包含任意的ASCII字符，因为这两个字符被核心<strong>当作标识路径名的特殊字符</strong>来解释。</p>
+
+<p>（2）Linux<strong>区分大小写</strong>。</p>
+
+<p>（3）以<strong>圆点（.）开头</strong>的文件为<strong>隐含文件</strong>。</p></blockquote></li>
+</ul>
+
+
+<hr />
+
+<h4>文件类型：</h4>
+
+<ul>
+<li><strong>普通文件：</strong></li>
+</ul>
+
+
+<p>普通文件也称规范文件，包含<strong>各种长度的字符串</strong>。核心对这些<strong>数据没有进行结构化</strong>，只是作为<strong>有序的字符序列</strong>把它提交给应用程序。应用程序<strong>自己组织和解释</strong>这些数据。</p>
+
+<blockquote><p>(1)<strong>文本文件</strong>：有ASCII字符构成。</p>
+
+<p>(2)<strong>数据文件</strong>：来自<strong>应用程序</strong>的<strong>数字型和文本型数据</strong>组成，例如：电子表格，数据库及字处理文档。</p>
+
+<p>(3)<strong>可执行的二进制文件</strong>：有机器指令和数据构成。</p></blockquote>
+
+<p><em>命令：指定文件的类型（可将多个文件作为参数）</em></p>
+
+<pre><code>$ file 文件名 [文件名...]
+</code></pre>
+
+<ul>
+<li><strong>目录文件：</strong></li>
+</ul>
+
+
+<p>目录文件也<strong>包含数据</strong>，但与普通文件的差别是：核心对这些数据进行<strong>结构处理</strong>，即它是<strong>有成对的“I节点号/文件名”</strong>构成的<strong>列表</strong>。</p>
+
+<blockquote><ul>
+<li><p>I节点号是检索I节点表的下标，<strong>I节点中存放有文件的状态信息</strong>。</p></li>
+<li><p>每个目录的<strong>第一项都表示目录本身</strong>，用“点（.）”作文它的文件名，每个目录的<strong>第二项的名字用“点点（..）”表示</strong>。这就是当你输入ls显示第一二项是.和..的原因。</p></li>
+<li><p>当文件<strong>添加</strong>到一个目录时，改目录的<strong>尺寸会加大，以便容纳新文件名</strong>。当<strong>删除文件</strong>时，目录的尺寸<strong>并不会减小</strong>，而是核心对<strong>该目录项上做特殊标识</strong>，一边下次添加一个文件时<strong>重新使用</strong>它。ls不会列出这些未被使用的项。</p></li>
+</ul>
+</blockquote>
+
+<ul>
+<li><strong>设备文件</strong></li>
+</ul>
+
+
+<p>是一种特别文件，除了在其文件I节点中存放属性信息外，不包含任何数据。系统利用他们来标记各个设备驱动器，核心使用它们与硬件设备通信。</p>
+
+<blockquote><ul>
+<li><p>字符设备：最常用的设备文件，允许I/O传送任意大小的数据，取决于设备本身的容量。使用这种接口的设备：终端，打印机及鼠标。</p></li>
+<li><p>块设备：利用核心缓冲区的自动缓存机制。缓存区进行I/O传送总是已KB为单位。使用这种接口的设备包括硬盘，软盘和RAM盘。</p></li>
+</ul>
+</blockquote>
+
+<p>tty可显示设备文件：</p>
+
+<pre><code>$ tty   #=&gt; /dev/pts/1
+</code></pre>
+
+<p><em>注意： 设备文件存放在&#8221;/dev/&ldquo;目录下</em></p>
+
+<ul>
+<li><strong>符号链接文件：</strong> 存放的<strong>数据</strong>是文件系统<strong>通向文件的路径</strong>。当使用符号链接文件时，核心<strong>自动访问所保存这个路径</strong>。</li>
+</ul>
+
+
+<hr />
+
+<p>讲到这里，我不得不说一下硬链接和软链接。</p>
+
+<h3>什么是链接：</h3>
+
+<p>Linux具有<strong>一个文件起多个名字</strong>的功能，叫做链接。它有两种情况：</p>
+
+<blockquote><ul>
+<li><p>被链接的文件存放在<strong>相同的目录</strong>下，但是必须有<strong>不同的文件名</strong>，不用在硬盘上为同样的数据重复备份。</p></li>
+<li><p>被链接的文件拥有<strong>相同的文件名</strong>，但是存放在<strong>不同的目录</strong>下。只要在<em>一个目录下的文件做修改，就可以完成对所有目录下同名链接文件的修改</em>。</p></li>
+</ul>
+</blockquote>
+
+<p>链接形式就这两种：</p>
+
+<h4>硬链接：</h4>
+
+<p>在<strong>别的目录</strong>或<strong>本目录</strong>增加<strong>目标文件</strong>的一个<strong>目录项</strong>(让某目录同样可以访问目标文件)，这样一个文件就<strong>登记</strong>在多个目录中。
+创建硬链接后，已经存在的文件节点(Inode)会被多个目录文件项使用。</p>
+
+<p>一个文件的硬链接数可以在目录的长列表格式的第二列中看到，无额外链接的文件的连接数为1。
+在默认情况下，<strong>ln命令创建硬链接</strong>。ln会<strong>增加链接数</strong>，<strong>rm命令会减少链接数</strong>。一个文件除非链接数为0，否则不会从文件系统中物理地删除。</p>
+
+<p>限制：</p>
+
+<blockquote><p>不能对目录文件创建硬链接。</p>
+
+<p>不能在不同的文件系统之间做硬链接。链接文件与被链接文件必须位于同一个文件系统。</p></blockquote>
+
+<h4>软链接：（符号链接）</h4>
+
+<p>将一个路径名链接到一个文件。这些文件是一种特殊类型的文件。事实上，它只是一个文本文件，其中包含它提供链接的另一个文件的路径名。
+当使用读写文件内容的命令被用于符号链接时，将沿着链接方向前进来访问实际的文件。</p>
+
+<h4>两种链接的区别：</h4>
+
+<ol>
+<li><p><strong>符号链接</strong>是一个<strong>新文件</strong>，它具有<strong>不同的I节点</strong>；硬链接并没有建立新文件，只是建立目录项。</p></li>
+<li><p>符号链接可以对<strong>目录建立符号链接</strong>，也可在<strong>不同文件系统中建立符号链接</strong>。</p></li>
+<li><p><strong>删除源</strong>文件或目录时，<strong>只删除数据，不会删除符号链接</strong>，一旦以同样文件名创建源文件，链接将继续指向该文件的新数据。</p></li>
+<li><p>符号链接的大小是链接文件的<strong>路径名的字节数</strong>。</p></li>
+</ol>
+
+
+<h4>命令：</h4>
+
+<pre><code>    ln [选项] 源文件 [目标文件]        # -s建立符号链接
+</code></pre>
+
+<hr />
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1443,6 +1633,10 @@ git push origin source      # 推送到远程仓库
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/04/tuan-dui-guan-li/">团队管理</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/02/25/min-jie-kai-fa/">敏捷开发</a>
       </li>
     
@@ -1456,10 +1650,6 @@ git push origin source      # 推送到远程仓库
     
       <li class="post">
         <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/10/25/jia-zai-rails/">加载Rails</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ProjectManagement | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/projectmanagement/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2014-02-25T16:07:57+08:00</updated>
+  <updated>2014-03-04T16:23:21+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,58 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[团队管理]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2014/03/04/tuan-dui-guan-li/"/>
+    <updated>2014-03-04T09:33:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2014/03/04/tuan-dui-guan-li</id>
+    <content type="html"><![CDATA[<p>首先，我要提一下管理的四大原则，因为它真是至理名言:</p>
+
+<h5>管理的四大原则</h5>
+
+<ol>
+<li>计划：设定目标，制定实现目标的战略，指定计划以整合和协调各项活动。</li>
+<li>组织：决定需要做什么，怎么做，谁去做。</li>
+<li>领导：指导和激励所有群体和个人去实现目标。</li>
+<li>控制：达成目标与预订计划评估是否按照计划进行。</li>
+</ol>
+
+
+<h5>大学团队管理经历</h5>
+
+<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://tsaikoga.github.io/blog/2014/02/25/min-jie-kai-fa/">上一章</a>我们提到项目 ce 被分为三期，而我在第一期担任的是开发职务，第二期担任管理团队职务。
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在第一期时，当我们刚参与团队的第一次开发时，我们犯下许多错误：</p>
+
+<blockquote><p><strong>任务划分问题：</strong>团队管理者犯了一个错误，他将三个联系紧密的页面分别安排给我和另一同学。这导致我很难开始自己的开发，因为只有需求文档和页面制作要求，通过询问得到另一同学流出的数据，我开始进行编码，但还是因为另一同学还没完成那个页面，之前对流出的数据也不能保证正确，所以当他出错时，我又得再次更改代码。这是这个任务拖慢的主要原因；当然还有一个原因，因为我和另一同学刚参与编码，有很多东西要学，必须边学习边工作，而任务是按照有经验人士的工作时间安排的，所以计划时间不合理。</p>
+
+<p><strong>目标消失问题：</strong>在第一期后期大家都变成了一个打代码的机器人，直到全部任务都完成，团队准备集成测试时，才发现这些完成的流程不能很好地连接在一起。每个人只管完成自己的任务，却不知道一些模块组合起来后却没有什么用处。所以，团队的每个成员都必须明确自己的目标，知道自己负责的流程的作用。</p>
+
+<p><strong>文档修改问题：</strong>在开发过程中，难免会发现一些数据库不合理的问题，如增加或减少一个字段；而我们只修改了数据库 mysql 的内容和数据库表的文档内容（有时还没改），对于数据库表间关系图中的内容没进行丝毫更改。这导致有人关注数据库表间关系而进行开发时，不知道数据库已经改变，致使开发速度减慢。</p></blockquote>
+
+<p><strong>纠正方式：</strong></p>
+
+<blockquote><p><strong>合理任务划分:</strong>通过流程划分各人任务，而不是通过难易程度;对于任务的难易程度结合个人能力划分任务的时间要求。</p>
+
+<p><strong>确立模块目标:</strong>这里的目标是主目标和子目标，成员必须知道项目的主要目标是什么，还必须了解和实现自己的子目标。</p>
+
+<p><strong>文档同步更新：</strong>所有关于项目更改的内容如果有对应的文档，应该将文档一起进行更改。如果是项目刚开始阶段，必须将项目中所有文档列出给所有成员，以便查找。</p></blockquote>
+
+<hr />
+
+<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;在第二期时，我们已经吸收了第一期的经验教训；并且通过第一期开发，我们所有人都有了几个月的开发经验，第二期不会像第一期那样拖了很久。这里讲一下管理者具体做的事情。</p>
+
+<blockquote><p><strong>对具体的模块进行任务划分和人员安排,并使用软件进行管理：</strong>由于得到上一期的经验教训，我们将人员划分成两个人一组(其中一个人熟悉这个流程)，每一组负责一个流程。这样流程中的页面有两个人负责。每个页面一个任务。并且每个人的页面都是连贯的。用 redmine 登记任务的内容，开始时间，计划完成时间和实际完成时间以及负责的人员等等，完成任务必须及时更新。</p>
+
+<p><strong>解释所需的流程、文档和封装库：</strong>团队成员开会对流程进行讲解，并将所有封装库的用法和作用列举出来，要求所有成员在编码时，尽量使用封装库。</p>
+
+<p><strong>使用软件进行及时沟通,每周开大会:</strong>通过类似微博的团队管理软件每天在线汇报任务进度，对项目进度进行把控；设立周六大讨论，主要汇报讲解这周所遇到的问题并提出解决方案，并汇报流程总体进度。</p>
+
+<p><strong>成员心理识别和调整：</strong>要及时发现成员的心理，并及时调整好，防止由于成员自己的问题而影响他人心理或直接导致项目拖慢。</p>
+
+<p><strong>及时开会进行紧急处理：</strong>对较大的问题，应马上开会进行商量和处理，使全体成员都有权提出自己意见并了解。</p></blockquote>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[敏捷开发]]></title>
