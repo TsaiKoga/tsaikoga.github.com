@@ -6,8 +6,8 @@ comments: true
 categories: gem
 ---
 ####克隆octopress项目
-    git clone git://github.com/imathis/octopress.git blog
-    cd blog
+    git clone git://github.com/imathis/octopress.git tsaikoga.github.com  # 这里的tsaikoga.github.com为你的项目名称
+    cd tsaikoga.github.com
 
 查看Gemfile文件：
 稍作修改，如使用淘宝镜像：source http://ruby.taobao.org
@@ -16,11 +16,15 @@ categories: gem
 之后执行:
     bundle install
 
-接着要做的事是查看rakefile文件的：
+接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：
     vim Rakefile	# 里面有许多rake任务
 
 我们执行其中的:
-    rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"blog/"文件夹下
+    rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"tsaikoga.github.com/"文件夹下
+    # 当然你也可以从网上下载他人的样式，如下命令：
+    git clone git://github.com/panks/fabric.git .themes/fabric
+    rake install['fabric'] # 然后安装fabric这个样式，不加[]则安装默认样式，如上命令：rake install
+    rake generate          # 执行此命令后才会生效，然后重启服务
 
 **查看网页效果：**
     rake preview
@@ -34,7 +38,7 @@ categories: gem
     rake setup_github_pages
 
 在github上新建一个octopress仓库，当填入url时，不要填入后缀".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
-说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支"。
+说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支",以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。
     git checkout source				# 切到开发分支source上
     git push origin source		# 推送到远程仓库
 
