@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gem | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/gem/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2014-03-04T16:23:21+08:00</updated>
+  <updated>2015-07-25T11:34:55+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -113,8 +113,8 @@
     <id>http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog</id>
     <content type="html"><![CDATA[<h4>克隆octopress项目</h4>
 
-<pre><code>git clone git://github.com/imathis/octopress.git blog
-cd blog
+<pre><code>git clone git://github.com/imathis/octopress.git tsaikoga.github.com  # 这里的tsaikoga.github.com为你的项目名称
+cd tsaikoga.github.com
 </code></pre>
 
 <p>查看Gemfile文件：
@@ -128,14 +128,18 @@ cd blog
 <pre><code>bundle install
 </code></pre>
 
-<p>接着要做的事是查看rakefile文件的：</p>
+<p>接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：</p>
 
 <pre><code>vim Rakefile    # 里面有许多rake任务
 </code></pre>
 
 <p>我们执行其中的:</p>
 
-<pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"blog/"文件夹下
+<pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"tsaikoga.github.com/"文件夹下
+# 当然你也可以从网上下载他人的样式，如下命令：
+git clone git://github.com/panks/fabric.git .themes/fabric
+rake install['fabric'] # 然后安装fabric这个样式，不加[]则安装默认样式，如上命令：rake install
+rake generate          # 执行此命令后才会生效，然后重启服务
 </code></pre>
 
 <p><strong>查看网页效果：</strong></p>
@@ -155,7 +159,7 @@ cd blog
 </code></pre>
 
 <p>在github上新建一个octopress仓库，当填入url时，不要填入后缀".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
-说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支"。</p>
+说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支",以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。</p>
 
 <pre><code>git checkout source             # 切到开发分支source上
 git push origin source      # 推送到远程仓库

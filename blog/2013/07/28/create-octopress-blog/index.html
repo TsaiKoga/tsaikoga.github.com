@@ -1,97 +1,99 @@
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!DOCTYPE HTML>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>create octopress blog - TsaiKoga Blog</title>
-  <meta name="author" content="TsaiKoga">
+	<meta charset="utf-8">
+	<title>create octopress blog - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="克隆octopress项目 git clone git://github.com/imathis/octopress.git tsaikoga.github.com # 这里的tsaikoga.github.com为你的项目名称
+cd tsaikoga.github.com 查看Gemfile文件 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
-  <meta name="description" content="克隆octopress项目 git clone git://github.com/imathis/octopress.git blog
-cd blog 查看Gemfile文件：
-稍作修改，如使用淘宝镜像：source http://ruby.taobao.org vim Gemfile 之后执行 &hellip;">
-  
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
-  
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Vollkorn:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-42786505-1']);
-    _gaq.push(['_trackPageview']);
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
 
 
 </head>
 
-<body   class="collapse-sidebar sidebar-footer" >
-  <header role="banner"><hgroup>
-  <h1><a href="/">TsaiKoga Blog</a></h1>
-</hgroup>
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
 
 </header>
-<div class="navi">
-<ul>
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-  <li><a href="/aboutme/">Author</a></li>
-</ul>
-</div>
 
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Create Octopress Blog</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-07-28T22:51:00+08:00" pubdate data-updated="true">Jul 28<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><h4>克隆octopress项目</h4>
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Create Octopress Blog</h2>
+	<div class="entry-content"><h4>克隆octopress项目</h4>
 
 <pre><code>git clone git://github.com/imathis/octopress.git tsaikoga.github.com  # 这里的tsaikoga.github.com为你的项目名称
 cd tsaikoga.github.com
@@ -108,7 +110,7 @@ cd tsaikoga.github.com
 <pre><code>bundle install
 </code></pre>
 
-<p>接着要做的事是查看rakefile文件的，我们会用rake来执行创建博客或创建样式等：</p>
+<p>接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：</p>
 
 <pre><code>vim Rakefile    # 里面有许多rake任务
 </code></pre>
@@ -129,18 +131,6 @@ rake generate          # 执行此命令后才会生效，然后重启服务
 
 <p>他会生成public文件夹</p>
 
-<h4>配置项目名称作者等内容，更改_config.yml的内容</h4>
-
-<pre>
-  <code>
-    url: http://tsaikoga.github.io
-title: Koga Tsai Blog
-subtitle: Knowing why blogs.
-author: Koga Tsai
-  </code>
-</pre>
-
-
 <hr />
 
 <h4>创建仓库：名字要以用户名为头，区分大小写。(username.github.io)</h4>
@@ -151,7 +141,7 @@ author: Koga Tsai
 </code></pre>
 
 <p>在github上新建一个octopress仓库，当填入url时，不要填入后缀&#8221;.git&#8221;，这样生成的页面才在&#8221;.com&#8221;上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
-说到在远程仓库做开发，就是将&#8221;开发分支source&#8221;覆盖原有的&#8221;master分支&#8221;。</p>
+说到在远程仓库做开发，就是将&#8221;开发分支source&#8221;覆盖原有的&#8221;master分支&#8221;,以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。</p>
 
 <pre><code>git checkout source             # 切到开发分支source上
 git push origin source      # 推送到远程仓库
@@ -201,72 +191,51 @@ git push origin source      # 推送到远程仓库
 在</em>config.yml中加入你申请的disqus的short_name</p>
 </div>
 
-
-  <footer>
-    <p class="meta">
-      
-      
-        <a class="basic-alignment right" href="/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/" title="Next Post: redcarpet和pygments结合进行markdown显示">redcarpet和pygments结合进行markdown显示 &raquo;</a>
-      
-    </p>
-  </footer>
+<div class="meta">
+	
+</div>
 </article>
 
-  <section>
-    <h1>Comments</h1>
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
     <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  </section>
-
-
-</div>
-
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/03/04/tuan-dui-guan-li/">团队管理</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/02/25/min-jie-kai-fa/">敏捷开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/07/linuxyong-hu-he-quan-xian/">Linux用户和权限</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
-      </li>
-    
-  </ul>
 </section>
 
-
-
-
-
-  
-</aside>
-
-
     </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - TsaiKoga -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2015
 
-</footer>
-  
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
 
 <script type="text/javascript">
       var disqus_shortname = 'tsaikogablog';
@@ -288,21 +257,14 @@ git push origin source      # 推送到远程仓库
 
 
 
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
 </body>
 </html>

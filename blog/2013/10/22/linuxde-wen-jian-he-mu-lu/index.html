@@ -1,95 +1,98 @@
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!DOCTYPE HTML>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Linux的文件系统 - TsaiKoga Blog</title>
-  <meta name="author" content="TsaiKoga">
+	<meta charset="utf-8">
+	<title>Linux的文件系统 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="文件系统： 我们都知道Linux的文件系统层次结构是一棵树，以&#8221;/&ldquo;表示的为最上层的目录。 example: Ubuntu文件系统示意图： 定义: 文件: 是文件系统中存储数据的一个命名对象。即使是一个空文件，它也包含用户数据，仍然为操作系统提供其他信息。 目录: &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
-  <meta name="description" content="文件系统： 我们都知道Linux的文件系统层次结构是一棵树，以&#8221;/&ldquo;表示的为最上层的目录。 example: Ubuntu文件系统示意图： 定义: 文件: 是文件系统中存储数据的一个命名对象。即使是一个空文件，它也包含用户数据，仍然为操作系统提供其他信息。 目录: &hellip;">
-  
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 
-  
-  <link rel="canonical" href="http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Vollkorn:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Cabin' rel='stylesheet' type='text/css'>
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-42786505-1']);
-    _gaq.push(['_trackPageview']);
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
 
 
 </head>
 
-<body   class="collapse-sidebar sidebar-footer" >
-  <header role="banner"><hgroup>
-  <h1><a href="/">TsaiKoga Blog</a></h1>
-</hgroup>
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
 
 </header>
-<div class="navi">
-<ul>
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-  <li><a href="/aboutme/">Author</a></li>
-</ul>
-</div>
 
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Linux的文件系统</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-10-22T09:49:00+08:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><hr />
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Linux的文件系统</h2>
+	<div class="entry-content"><hr />
 
 <h3>文件系统：</h3>
 
@@ -247,74 +250,51 @@
 <hr />
 </div>
 
-
-  <footer>
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/" title="Previous Post: 使用hosts文件上facebook等网站">&laquo; 使用hosts文件上facebook等网站</a>
-      
-      
-        <a class="basic-alignment right" href="/blog/2013/10/22/vimpei-zhi/" title="Next Post: Vim配置">Vim配置 &raquo;</a>
-      
-    </p>
-  </footer>
+<div class="meta">
+	
+</div>
 </article>
 
-  <section>
-    <h1>Comments</h1>
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
     <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  </section>
-
-
-</div>
-
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2014/03/04/tuan-dui-guan-li/">团队管理</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2014/02/25/min-jie-kai-fa/">敏捷开发</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/07/linuxyong-hu-he-quan-xian/">Linux用户和权限</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/">项目代码实现</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/10/26/rails-assets-pipeline/">Rails Assets Pipeline</a>
-      </li>
-    
-  </ul>
 </section>
 
-
-
-
-
-  
-</aside>
-
-
     </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - TsaiKoga -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2015
 
-</footer>
-  
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
 
 <script type="text/javascript">
       var disqus_shortname = 'tsaikogablog';
@@ -336,21 +316,14 @@
 
 
 
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
 </body>
 </html>
