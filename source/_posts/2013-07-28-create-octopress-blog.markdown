@@ -11,23 +11,38 @@ categories: gem
 
 查看Gemfile文件：
 稍作修改，如使用淘宝镜像：source http://ruby.taobao.org
+
+``` sh
     vim Gemfile
+```
 
 之后执行:
+
+``` sh
     bundle install
+```
 
 接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：
+
+``` sh
     vim Rakefile	# 里面有许多rake任务
+```
 
 我们执行其中的:
+
+``` sh
     rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"tsaikoga.github.com/"文件夹下
     # 当然你也可以从网上下载他人的样式，如下命令：
     git clone git://github.com/panks/fabric.git .themes/fabric
     rake install['fabric'] # 然后安装fabric这个样式，不加[]则安装默认样式，如上命令：rake install
     rake generate          # 执行此命令后才会生效，然后重启服务
+```
 
 **查看网页效果：**
+
+``` sh
     rake preview
+``` 
 
 他会生成public文件夹
 
@@ -35,25 +50,40 @@ categories: gem
 
 ####创建仓库：名字要以用户名为头，区分大小写。\(username.github.io\)
 本地执行:
+
+``` sh
     rake setup_github_pages
+```
 
 在github上新建一个octopress仓库，当填入url时，不要填入后缀".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
 说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支",以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。
+
+``` sh
     git checkout source				# 切到开发分支source上
     git push origin source		# 推送到远程仓库
+```
 
 
 ####如果想在source分支下有\_deploy文件夹(当你的\_desploy文件夹没了)，只要
+
+``` sh
     git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
+```
 
 重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为\_deploy/, 
 修改\_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，
 
 执行：
+
+``` sh
     rake generate
+```
 
 再执行以下名令，**部署到远程仓库**：
+
+``` sh
     rake deploy
+```
 
 最后到网址刷新看看。
 ******************************** 
@@ -62,7 +92,10 @@ categories: gem
 生成tracking_id:
 
 ####新建一个博客：
+
+``` sh
     rake new_post["Hello TsaiKoga"]
+```
 
 存放到了 source/_post 之中, 编辑_post文件，如果使用disqus，这里的comment必须填true，下面有原因。
 

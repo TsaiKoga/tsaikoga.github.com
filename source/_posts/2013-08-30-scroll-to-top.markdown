@@ -18,15 +18,17 @@ categories: [coffeescript, web]
 
 **example:** (标签\<a class="go_top"\>)
 
-		$(document).ready -> 
-			$("a.go_top").click () -> 
-				$('html, body').animate({scrollTop: 0}, 300)
-				return false
+``` js
+    $(document).ready -> 
+        $("a.go_top").click () -> 
+            $('html, body').animate({scrollTop: 0}, 300)
+            return false
 
-			$(window).bind 'scroll resize', -> 
-				scroll_from_top = $(window).scrollTop()
-				if scroll_from_top >= 1
-					$('a.go_top').show()
-				else
-					$('a.go_top').hide()
+        $(window).bind 'scroll resize', -> 
+            scroll_from_top = $(window).scrollTop()
+            if scroll_from_top >= 1
+                $('a.go_top').show()
+            else
+                $('a.go_top').hide()
+```
 

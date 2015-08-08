@@ -37,19 +37,31 @@ Rails中表的关联主要有三种：单表继承,多态关联,自引用。
 顾名思义，单表就是一张表，那么怎么呈现多种表的形态呢。当其他表引用它时，可以给予其他名字，但是要声明它实际是那张表(belongs\_to :manager, :class\_name => "Person")，举例：
 
 person.rb:
+
+``` ru
 	Class Person < ActiveRecord::Base
 			belongs_to XXX
 	end
+```
 
+``` ru
 manager.rb:(继承Person类)
 	Class Manager < Person
 	end
+```
  
 
 rails console:
+
+``` ru
 	XXX.first.manager
+```
+
 mysql:
+
+``` ru
 	select people.* from people where people.type in ("Manager") and people.id=1
+```
 
 ------------------------------------------------------------------
 
@@ -65,50 +77,65 @@ mysql:
 
 没用多态关联前：不复杂，但是麻烦，如果**以后加个book model之类**的，也需要有个图做封面的，那又要**改image model里的关联和migration**了，一点都不DRY。
 
+``` ru
     class Person < ActiveRecord::Base
       has_one :image, :dependent => :destroy
     end
 
-	  class Album < ActiveRecord::Base
-			 has_one :image, :dependent => :destroy
-	  end
-
-	  class Image < ActiveRecord::Base
-	     belongs_to :person
-			 belongs_to :album
+    class Album < ActiveRecord::Base
+         has_one :image, :dependent => :destroy
     end
+
+    class Image < ActiveRecord::Base
+        belongs_to :person
+        belongs_to :album
+    end
+```
 
 相应的image的migration要添加上关联字段：
 
-  	t.column :person_id, :integer, :null => false, :default => 0
-		t.column :album_id, :integer, :null => false, :default => 0
+``` ru
+    t.column :person_id, :integer, :null => false, :default => 0
+    t.column :album_id, :integer, :null => false, :default => 0
+```
 
 使用多态关联后：
 
-		class Person < ActiveRecord::Base
-			has_one :image, :as => :iconable, :dependent => :destroy
-		end
-		class Album < ActiveRecord::Base
-			has_one :image, :as => :iconable, :dependent => :destroy
-		end
-		class Image < ActiveRecord::Base
-			belongs_to :iconable, :polymorphic => true
-		end
+``` ru
+    class Person < ActiveRecord::Base
+        has_one :image, :as => :iconable, :dependent => :destroy
+    end
+    class Album < ActiveRecord::Base
+        has_one :image, :as => :iconable, :dependent => :destroy
+    end
+    class Image < ActiveRecord::Base
+        belongs_to :iconable, :polymorphic => true
+    end
+```
 
 Person和Album有了**共同的一个虚拟的名字**叫做iconable,image表就可以直接用外键iconable\_id关联它,
 
 **使用方法：**
 
 添加：
+
+``` ru
 		@person = Person.new(params[:person])
 		@person.build_image(params[:image])
 		@person.save
+```
 
 读取：
-		@person.image
+
+``` ru
+	@person.image
+```
 
 image 的属主：
-		@person.iconable
+
+``` ru
+	@person.iconable
+```
 
 -------------------------------------------------------------------
 
@@ -116,6 +143,7 @@ image 的属主：
 
 自引用就是**一条记录可能引用同一张表的另一条记录**：公司员工都有主管，主管也是员工。使用:class\_name 和foregin\_key加上has\_many/has\_one和belongs\_to.
 
+``` ru
 	class Employee < ActiveRecord::Base
 		belongs_to :manager,
 		  :class_name => "Employee",
@@ -130,3 +158,4 @@ image 的属主：
 		  :class_name => "Employee",
 		  :foreign_key => "manager_id"
 	end
+```

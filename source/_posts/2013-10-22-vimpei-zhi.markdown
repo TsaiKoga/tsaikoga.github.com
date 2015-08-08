@@ -14,6 +14,7 @@ categories: [vim]
 
 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:
 
+``` sh
     set nocompatible            " 关闭 vi 兼容模式
 		syntax on                   " 自动语法高亮
 		colorscheme molokai         " 设定配色方案
@@ -128,5 +129,6 @@ categories: [vim]
 		"-----------------------------------------------------------------
 		let NERDSpaceDelims=1       " 让注释符与语句之间留一个空格
 		let NERDCompactSexyComs=1   " 多行注释时样子更好看
+```
 
 _感谢使用vim配置，记住要将vim编辑器重启后才生效。_

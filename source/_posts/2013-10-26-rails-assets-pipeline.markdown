@@ -33,10 +33,16 @@ categories: [Rails]
 Assets Pipeline是能**使Javascript,CSS的assets（包括自己在assets文件夹中写的erb,sass和coffescript文件）连接、缩小和压缩的一个框架**。这个框架通过它的**中心库Sprokets(将资源预处理，压缩和缩小)**使所有rails开发者从中受益。
 
 assets pipeline是默认启动的，如果想关闭也可以到config/application.rb文件中将如下代码放入：
-		config.assets.enable = false
+
+``` ru
+    config.assets.enable = false
+```
 
 当然，我们也可以在创建项目时，就不产生assets:
-		rails new appname --skip-sprockets
+
+``` ru
+    rails new appname --skip-sprockets
+```
 
 ----------------------------------------------
 
@@ -94,7 +100,9 @@ Pipeline assets 可以被放置到一个应用程序中这三个位置中的一�
 	
 	刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：
 	
+``` ru
 		config.assets.paths << Rails.root.join("app", "assets", "flash")
+```
 
 	_注意：想在**资源清单外引用**的文件必须加载到**预编译列表**里，否则它们在**生产环境**将不可以用。_
 
@@ -114,9 +122,11 @@ Pipeline assets 可以被放置到一个应用程序中这三个位置中的一�
 
     Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。
 
-		<%= stylesheet_link_tag "application" %>
-		<%= javascript_include_tag "application" %>
-		<%= image_tag "rails.png" %>
+``` ru
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_include_tag "application" %>
+    <%= image_tag "rails.png" %>
+```
 
     **CSS:**
 
@@ -147,18 +157,22 @@ Pipeline assets 可以被放置到一个应用程序中这三个位置中的一�
  
 	  **require_tree** 指令告诉 Sprockets **递归**地去包含在**指定目录下_所有_** 的 JavaScript 文件到**输出里**。 这些**路径必须在资源清单文件中有相关的指定**。 有也可以使用 require\_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。
 
+``` css
 		//= require jquery
 		//= require jquery_ujs
 		//= require_tree .
+```
 
 	  - CSS资源清单：
 	
 	  用css的注释开头，同样用require引入文件，指令**require_tree**和JS中的一样（**加入当前目录所有stylesheets文件**），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。
 
+``` javascript
 		/* ...
 		*= require_self
 		*= require_tree .
 		*/
+```
 
     _注意：用到多个sass文件时，用**@import rule**替代Sprockets_指令，Sprockets 指令在 Sass 文件中定义的**变量和 mixins** 都只能在其**被定义的文档**中可用。_
 
@@ -188,7 +202,9 @@ Pipeline assets 可以被放置到一个应用程序中这三个位置中的一�
 
    所以，你可以通过以下命令生成已编译版本的资源文件:
 		
-       bundle exec rake assets:precompile
+``` ru
+    bundle exec rake assets:precompile
+```
 
 ----------------------------------------------------------------
 
