@@ -98,3 +98,5 @@ google_analytics_tracking_id: UA-42786505-1
 
 # Facebook Like
 facebook_like: false
+
+top_category_limit: 0
