@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gem | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/gem/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2015-07-25T11:34:55+08:00</updated>
+  <updated>2016-02-22T22:48:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -28,15 +28,25 @@
 
 <p>2.安装redcarpet</p>
 
-<pre><code>    gem install redcarpet
+<p>``` sh</p>
+
+<pre><code>gem install redcarpet
 </code></pre>
 
+<p>```</p>
+
 <p>3.以前可直接在要显示的view中加入如下代码:</p>
+
+<p>``` html</p>
 
 <pre><code>&lt;%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
 </code></pre>
 
+<p>```</p>
+
 <p>现在在辅助方法中写如下代码：</p>
+
+<p>``` ru</p>
 
 <pre><code>def markdown(text)
         require 'redcarpet'
@@ -52,10 +62,16 @@
     end
 </code></pre>
 
+<p>```</p>
+
 <p>4.在view中加入显示markdown的代码:</p>
+
+<p>``` html</p>
 
 <pre><code>&lt;%= raw(markdown.render(@post.content).html_safe) %&gt;
 </code></pre>
+
+<p>```</p>
 
 <h2>pygments</h2>
 
@@ -63,6 +79,8 @@
 
 <p>可以和redcarpet很好的结合，用于语法高亮设置。
 具体代码如下：</p>
+
+<p>``` ru</p>
 
 <pre><code>    def markdown(text)
             require 'redcarpet'
@@ -86,6 +104,8 @@
     end
 </code></pre>
 
+<p>```</p>
+
 <blockquote><h3>注意：</h3>
 
 <ol>
@@ -94,6 +114,8 @@
 <li>必须有fenced_code_blocks才能将代码块放入代码框中。</li>
 </ol>
 </blockquote>
+
+<p>{% video <a href="http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4">http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4</a> 800 504 <a href="http://railscasts.com/static/episodes/posters/loading.png">http://railscasts.com/static/episodes/posters/loading.png</a> %}</p>
 
 <p>参考：</p>
 
@@ -120,20 +142,34 @@ cd tsaikoga.github.com
 <p>查看Gemfile文件：
 稍作修改，如使用淘宝镜像：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
 
+<p>``` sh</p>
+
 <pre><code>vim Gemfile
 </code></pre>
 
+<p>```</p>
+
 <p>之后执行:</p>
+
+<p>``` sh</p>
 
 <pre><code>bundle install
 </code></pre>
 
+<p>```</p>
+
 <p>接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：</p>
+
+<p>``` sh</p>
 
 <pre><code>vim Rakefile    # 里面有许多rake任务
 </code></pre>
 
+<p>```</p>
+
 <p>我们执行其中的:</p>
+
+<p>``` sh</p>
 
 <pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"tsaikoga.github.com/"文件夹下
 # 当然你也可以从网上下载他人的样式，如下命令：
@@ -142,10 +178,16 @@ rake install['fabric'] # 然后安装fabric这个样式，不加[]则安装默�
 rake generate          # 执行此命令后才会生效，然后重启服务
 </code></pre>
 
+<p>```</p>
+
 <p><strong>查看网页效果：</strong></p>
+
+<p>``` sh</p>
 
 <pre><code>rake preview
 </code></pre>
+
+<p>```</p>
 
 <p>他会生成public文件夹</p>
 
@@ -155,33 +197,53 @@ rake generate          # 执行此命令后才会生效，然后重启服务
 
 <p>本地执行:</p>
 
+<p>``` sh</p>
+
 <pre><code>rake setup_github_pages
 </code></pre>
 
+<p>```</p>
+
 <p>在github上新建一个octopress仓库，当填入url时，不要填入后缀".git"，这样生成的页面才在".com"上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
 说到在远程仓库做开发，就是将"开发分支source"覆盖原有的"master分支",以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。</p>
+
+<p>``` sh</p>
 
 <pre><code>git checkout source             # 切到开发分支source上
 git push origin source      # 推送到远程仓库
 </code></pre>
 
+<p>```</p>
+
 <h4>如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要</h4>
+
+<p>``` sh</p>
 
 <pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
 </code></pre>
+
+<p>```</p>
 
 <p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/,
 修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，</p>
 
 <p>执行：</p>
 
+<p>``` sh</p>
+
 <pre><code>rake generate
 </code></pre>
 
+<p>```</p>
+
 <p>再执行以下名令，<strong>部署到远程仓库</strong>：</p>
+
+<p>``` sh</p>
 
 <pre><code>rake deploy
 </code></pre>
+
+<p>```</p>
 
 <p>最后到网址刷新看看。</p>
 
@@ -194,8 +256,12 @@ git push origin source      # 推送到远程仓库
 
 <h4>新建一个博客：</h4>
 
+<p>``` sh</p>
+
 <pre><code>rake new_post["Hello TsaiKoga"]
 </code></pre>
+
+<p>```</p>
 
 <p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
 

@@ -87,6 +87,12 @@
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -155,8 +161,10 @@
 
 <p><em>命令：指定文件的类型（可将多个文件作为参数）</em></p>
 
-<pre><code>$ file 文件名 [文件名...]
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>file 文件名 <span class="o">[</span>文件名...<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <ul>
 <li><strong>目录文件：</strong></li>
@@ -187,8 +195,10 @@
 
 <p>tty可显示设备文件：</p>
 
-<pre><code>$ tty   #=&gt; /dev/pts/1
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$ </span>tty   <span class="c">#=&gt; /dev/pts/1</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p><em>注意： 设备文件存放在&#8221;/dev/&ldquo;目录下</em></p>
 
@@ -244,8 +254,10 @@
 
 <h4>命令：</h4>
 
-<pre><code>    ln [选项] 源文件 [目标文件]        # -s建立符号链接
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>   ln <span class="o">[</span>选项<span class="o">]</span> 源文件 <span class="o">[</span>目标文件<span class="o">]</span>        <span class="c"># -s建立符号链接</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 </div>
@@ -278,7 +290,7 @@
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

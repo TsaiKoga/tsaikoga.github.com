@@ -91,6 +91,12 @@ Assets Pipeline的使用方法
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -125,13 +131,17 @@ Assets Pipeline的使用方法
 
 <p>assets pipeline是默认启动的，如果想关闭也可以到config/application.rb文件中将如下代码放入：</p>
 
-<pre><code>    config.assets.enable = false
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">enable</span> <span class="o">=</span> <span class="kp">false</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>当然，我们也可以在创建项目时，就不产生assets:</p>
 
-<pre><code>    rails new appname --skip-sprockets
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">rails</span> <span class="kp">new</span> <span class="n">appname</span> <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">sprockets</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 
@@ -190,12 +200,19 @@ Assets Pipeline的使用方法
 
 <p><img src="/images/posts/2013-10-26/resource_list.png" title="JS资源清单" alt="无法显示图片" /></p>
 
-<p>刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：</p>
+<p>刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：</p></li>
+</ol>
 
-<pre><code>config.assets.paths &lt;&lt; Rails.root.join("app", "assets", "flash")
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="n">config</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">paths</span> <span class="o">&lt;&lt;</span> <span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;app&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="s2">&quot;flash&quot;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<pre><code>_注意：想在**资源清单外引用**的文件必须加载到**预编译列表**里，否则它们在**生产环境**将不可以用。_
 </code></pre>
 
-<p><em>注意：想在<strong>资源清单外引用</strong>的文件必须加载到<strong>预编译列表</strong>里，否则它们在<strong>生产环境</strong>将不可以用。</em></p></li>
+<ol type="a">
 <li><p>使用索引文件:</p>
 
 <p>如果你了解数据库，就应该对索引很熟悉。如果一个字段<strong>经常被查找</strong>，你可以将它<strong>建立索引</strong>从而提高访问速度。</p>
@@ -209,22 +226,31 @@ Assets Pipeline的使用方法
 
 <p>pipeline(在当前的环境上下文中没有被关闭)提供标签访问你的资源,这些文件通过Sprockets获得。</p>
 
-<p>Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。</p>
+<p>Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。</p></li>
+</ol>
 
-<pre><code>&lt;%= stylesheet_link_tag "application" %&gt;
-&lt;%= javascript_include_tag "application" %&gt;
-&lt;%= image_tag "rails.png" %&gt;
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sx">%= stylesheet_link_tag &quot;application&quot; %&gt;</span>
+</span><span class='line'><span class="sx">&lt;%=</span> <span class="n">javascript_include_tag</span> <span class="s2">&quot;application&quot;</span> <span class="sx">%&gt;</span>
+</span><span class='line'><span class="sx">&lt;%= image_tag &quot;rails.png&quot; %&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<pre><code>**CSS:**
+
+assets pipeline会**自动解析erb**，你可以在CSS增加扩展名.erb，这样资源中就可以**使用helpers**方法(如：asset\_path)。
+
+使用assets pipeline，**资源路径必须重写**并且sass-rails提供两个helpers方法：-url和-path。
+
+**JS:**
+
+使用erb扩展名可以使用asset\_path的helpers方法。你也可以在coffeescript增加扩展名erb。
 </code></pre>
 
-<p><strong>CSS:</strong></p>
-
-<p>assets pipeline会<strong>自动解析erb</strong>，你可以在CSS增加扩展名.erb，这样资源中就可以<strong>使用helpers</strong>方法(如：asset_path)。</p>
-
-<p>使用assets pipeline，<strong>资源路径必须重写</strong>并且sass-rails提供两个helpers方法：-url和-path。</p>
-
-<p><strong>JS:</strong></p>
-
-<p>使用erb扩展名可以使用asset_path的helpers方法。你也可以在coffeescript增加扩展名erb。</p></li>
+<ol type="a">
 <li><p>资源清单和指令：</p>
 
 <p><strong>作用：</strong>Sprockets 使用资源清单文件去<strong>确认哪些资源要引入并供应</strong>的。</p>
@@ -244,27 +270,39 @@ Assets Pipeline的使用方法
 
 <p>那些<strong>以//=开头的注释就是指令</strong>，而 <strong>require 指令</strong>是用于告诉 Sprockets <strong>需要加入</strong>的文件,也不用加扩展名，当资源清单是js文件，Sprockets会假设你加入的是一个.js文件。</p>
 
-<p>  <strong>require_tree</strong> 指令告诉 Sprockets <strong>递归</strong>地去包含在<strong>指定目录下<em>所有</em></strong> 的 JavaScript 文件到<strong>输出里</strong>。 这些<strong>路径必须在资源清单文件中有相关的指定</strong>。 有也可以使用 require_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。</p>
+<p>  <strong>require_tree</strong> 指令告诉 Sprockets <strong>递归</strong>地去包含在<strong>指定目录下<em>所有</em></strong> 的 JavaScript 文件到<strong>输出里</strong>。 这些<strong>路径必须在资源清单文件中有相关的指定</strong>。 有也可以使用 require_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。</p></li>
+</ol>
 
-<pre><code>//= require jquery
-//= require jquery_ujs
-//= require_tree .
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'>  <span class="o">//=</span> <span class="nt">require</span> <span class="nt">jquery</span>
+</span><span class='line'>  <span class="o">//=</span> <span class="nt">require</span> <span class="nt">jquery_ujs</span>
+</span><span class='line'>  <span class="o">//=</span> <span class="nt">require_tree</span> <span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<pre><code>  - CSS资源清单：
+
+  用css的注释开头，同样用require引入文件，指令**require_tree**和JS中的一样（**加入当前目录所有stylesheets文件**），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。
 </code></pre>
 
-<ul>
-<li>CSS资源清单：</li>
-</ul>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'>   <span class="cm">/* ...</span>
+</span><span class='line'><span class="cm"> *= require_self</span>
+</span><span class='line'><span class="cm"> *= require_tree .</span>
+</span><span class='line'><span class="cm"> */</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>  用css的注释开头，同样用require引入文件，指令<strong>require_tree</strong>和JS中的一样（<strong>加入当前目录所有stylesheets文件</strong>），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。</p>
-
-<pre><code>/* ...
-*= require_self
-*= require_tree .
-*/
+<pre><code>_注意：用到多个sass文件时，用**@import rule**替代Sprockets_指令，Sprockets 指令在 Sass 文件中定义的**变量和 mixins** 都只能在其**被定义的文档**中可用。_
 </code></pre>
 
-<p><em>注意：用到多个sass文件时，用<strong>@import rule</strong>替代Sprockets</em>指令，Sprockets 指令在 Sass 文件中定义的<strong>变量和 mixins</strong> 都只能在其<strong>被定义的文档</strong>中可用。_</p></li>
+<ol type="a">
 <li><p>预处理：</p>
 
 <p>文件的<strong>扩展名</strong>被用于判断某个资源文件要进入<strong>哪个预处理过程</strong>。</p>
@@ -292,11 +330,13 @@ Assets Pipeline的使用方法
 
 <blockquote><p>如果你设置 config.assets.initialize_on_precomile 为 false,在<strong>开发模式</strong>范围内会<strong>忽略这个标记的值</strong>. 改变这个标记也会影响到 engines. Engines 也可以<strong>指定预编译资源.</strong> 因为完整的环境还没有加载完, <strong>engines (或者其他的 gems) 将不会被加载</strong>, 这会引起<strong>资源丢失</strong>.</p></blockquote>
 
-<p>所以，你可以通过以下命令生成已编译版本的资源文件:</p>
-
-<pre><code>bundle exec rake assets:precompile
-</code></pre></li>
+<p>所以，你可以通过以下命令生成已编译版本的资源文件:</p></li>
 </ul>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">rake</span> <span class="ss">assets</span><span class="p">:</span><span class="n">precompile</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <hr />
@@ -330,7 +370,7 @@ Assets Pipeline的使用方法
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

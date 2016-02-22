@@ -6,7 +6,25 @@
 	<title>Vim配置 - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。 .vimrc配置文件 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用: set nocompatible " 关闭 vi 兼容模式 syntax on " 自动语法高亮 &hellip;">
+	<meta name="description" content="说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。 .vimrc配置文件 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用: 1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -87,6 +105,12 @@
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -100,123 +124,236 @@
 
 <p>以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:</p>
 
-<pre><code>set nocompatible            " 关闭 vi 兼容模式
-    syntax on                   " 自动语法高亮
-    colorscheme molokai         " 设定配色方案
-    set number                  " 显示行号
-    set cursorline              " 突出显示当前行
-    set ruler                   " 打开状态栏标尺
-    set shiftwidth=4            " 设定 &lt;&lt; 和 &gt;&gt; 命令移动时的宽度为 4
-    set softtabstop=4           " 使得按退格键时可以一次删掉 4 个空格
-    set tabstop=4               " 设定 tab 长度为 4
-    set nobackup                " 覆盖文件时不备份
-    set autochdir               " 自动切换当前目录为当前文件所在的目录
-    filetype plugin indent on   " 开启插件
-    set backupcopy=yes          " 设置备份时的行为为覆盖
-    set ignorecase smartcase    " 搜索时忽略大小写，但在有一个或以上大写字母时仍保持对大小写敏感
-    set nowrapscan              " 禁止在搜索到文件两端时重新搜索
-    set incsearch               " 输入搜索内容时就显示搜索结果
-    set hlsearch                " 搜索时高亮显示被找到的文本
-    set noerrorbells            " 关闭错误信息响铃
-    set novisualbell            " 关闭使用可视响铃代替呼叫
-    set t_vb=                   " 置空错误铃声的终端代码
-    " set showmatch               " 插入括号时，短暂地跳转到匹配的对应括号
-    " set matchtime=2             " 短暂跳转到匹配括号的时间
-    set magic                   " 设置魔术
-    set hidden                  " 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
-    set guioptions-=T           " 隐藏工具栏  （等号前后不能空格）
-    set guioptions-=m           " 隐藏菜单栏
-    set smartindent             " 开启新行时使用智能自动缩进
-    set backspace=indent,eol,start
-                                                            " 不设定在插入状态无法用退格键和 Delete 键删除回车符
-    set cmdheight=1             " 设定命令行的行数为 1
-    set laststatus=2            " 显示状态栏 (默认值为 1, 无法显示状态栏)
-    set statusline=\ %&lt;%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&amp;fileformat}\ %{&amp;encoding}\ %c:%l/%L%)\ 
-                                                            " 设置在状态行显示的信息
-    set foldenable              " 开始折叠
-    set foldmethod=syntax       " 设置语法折叠
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">set </span>nocompatible            <span class="s2">&quot; 关闭 vi 兼容模式</span>
+</span><span class='line'><span class="s2"> syntax on                   &quot;</span> 自动语法高亮
+</span><span class='line'>  colorscheme molokai         <span class="s2">&quot; 设定配色方案</span>
+</span><span class='line'><span class="s2"> set number                  &quot;</span> 显示行号
+</span><span class='line'>  <span class="nb">set </span>cursorline              <span class="s2">&quot; 突出显示当前行</span>
+</span><span class='line'><span class="s2"> set ruler                   &quot;</span> 打开状态栏标尺
+</span><span class='line'>  <span class="nb">set </span><span class="nv">shiftwidth</span><span class="o">=</span>4            <span class="s2">&quot; 设定 &lt;&lt; 和 &gt;&gt; 命令移动时的宽度为 4</span>
+</span><span class='line'><span class="s2"> set softtabstop=4           &quot;</span> 使得按退格键时可以一次删掉 4 个空格
+</span><span class='line'>  <span class="nb">set </span><span class="nv">tabstop</span><span class="o">=</span>4               <span class="s2">&quot; 设定 tab 长度为 4</span>
+</span><span class='line'><span class="s2"> set nobackup                &quot;</span> 覆盖文件时不备份
+</span><span class='line'>  <span class="nb">set </span>autochdir               <span class="s2">&quot; 自动切换当前目录为当前文件所在的目录</span>
+</span><span class='line'><span class="s2"> filetype plugin indent on   &quot;</span> 开启插件
+</span><span class='line'>  <span class="nb">set </span><span class="nv">backupcopy</span><span class="o">=</span>yes          <span class="s2">&quot; 设置备份时的行为为覆盖</span>
+</span><span class='line'><span class="s2"> set ignorecase smartcase    &quot;</span> 搜索时忽略大小写，但在有一个或以上大写字母时仍保持对大小写敏感
+</span><span class='line'>  <span class="nb">set </span>nowrapscan              <span class="s2">&quot; 禁止在搜索到文件两端时重新搜索</span>
+</span><span class='line'><span class="s2"> set incsearch               &quot;</span> 输入搜索内容时就显示搜索结果
+</span><span class='line'>  <span class="nb">set </span>hlsearch                <span class="s2">&quot; 搜索时高亮显示被找到的文本</span>
+</span><span class='line'><span class="s2"> set noerrorbells            &quot;</span> 关闭错误信息响铃
+</span><span class='line'>  <span class="nb">set </span>novisualbell            <span class="s2">&quot; 关闭使用可视响铃代替呼叫</span>
+</span><span class='line'><span class="s2"> set t_vb=                   &quot;</span> 置空错误铃声的终端代码
+</span><span class='line'>  <span class="s2">&quot; set showmatch               &quot;</span> 插入括号时，短暂地跳转到匹配的对应括号
+</span><span class='line'>  <span class="s2">&quot; set matchtime=2             &quot;</span> 短暂跳转到匹配括号的时间
+</span><span class='line'>  <span class="nb">set </span>magic                   <span class="s2">&quot; 设置魔术</span>
+</span><span class='line'><span class="s2"> set hidden                  &quot;</span> 允许在有未保存的修改时切换缓冲区，此时的修改由 vim 负责保存
+</span><span class='line'>  <span class="nb">set </span>guioptions-<span class="o">=</span>T           <span class="s2">&quot; 隐藏工具栏  （等号前后不能空格）</span>
+</span><span class='line'><span class="s2"> set guioptions-=m           &quot;</span> 隐藏菜单栏
+</span><span class='line'>  <span class="nb">set </span>smartindent             <span class="s2">&quot; 开启新行时使用智能自动缩进</span>
+</span><span class='line'><span class="s2"> set backspace=indent,eol,start</span>
+</span><span class='line'><span class="s2">                                                         &quot;</span> 不设定在插入状态无法用退格键和 Delete 键删除回车符
+</span><span class='line'>  <span class="nb">set </span><span class="nv">cmdheight</span><span class="o">=</span>1             <span class="s2">&quot; 设定命令行的行数为 1</span>
+</span><span class='line'><span class="s2"> set laststatus=2            &quot;</span> 显示状态栏 <span class="o">(</span>默认值为 1, 无法显示状态栏<span class="o">)</span>
+</span><span class='line'>  <span class="nb">set </span><span class="nv">statusline</span><span class="o">=</span><span class="se">\ </span>%&lt;%F<span class="o">[</span>%1*%M%*%n%R%H<span class="o">]</span>%<span class="o">=</span><span class="se">\ </span>%y<span class="se">\ </span>%0<span class="o">(</span>%<span class="o">{</span>&amp;fileformat<span class="o">}</span><span class="se">\ </span>%<span class="o">{</span>&amp;encoding<span class="o">}</span><span class="se">\ </span>%c:%l/%L%<span class="o">)</span><span class="se">\ </span>
+</span><span class='line'>                                                          <span class="s2">&quot; 设置在状态行显示的信息</span>
+</span><span class='line'><span class="s2"> set foldenable              &quot;</span> 开始折叠
+</span><span class='line'>  <span class="nb">set </span><span class="nv">foldmethod</span><span class="o">=</span>syntax       <span class="s2">&quot; 设置语法折叠</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2"> &quot;</span>窗口分割时,进行切换的按键热键需要连接两次,比如从下方窗口移动
+</span><span class='line'>  <span class="s2">&quot;光标到上方窗口,需要&lt;c-w&gt;&lt;c-w&gt;k,非常麻烦,现在重映射为&lt;c-k&gt;,切换的</span>
+</span><span class='line'><span class="s2"> &quot;</span>时候会变得非常方便.
+</span><span class='line'>  nnoremap &lt;C-h&gt; &lt;C-w&gt;h
+</span><span class='line'>  nnoremap &lt;C-j&gt; &lt;C-w&gt;j
+</span><span class='line'>  nnoremap &lt;C-k&gt; &lt;C-w&gt;k
+</span><span class='line'>  nnoremap &lt;C-l&gt; &lt;C-w&gt;l
+</span><span class='line'>
+</span><span class='line'>接下来是括号补全：
+</span><span class='line'>
+</span><span class='line'>  inoremap <span class="o">(</span>   <span class="o">()</span>&lt;Esc&gt;i               <span class="s2">&quot; inoremap表示输入模式下的匹配,当有&quot;</span><span class="o">(</span><span class="s2">&quot;时，匹配&quot;</span><span class="o">)</span><span class="s2">&quot;并退出重新进入&quot;</span>i编辑模式<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2"> inoremap [  []&lt;Esc&gt;i</span>
+</span><span class='line'><span class="s2"> inoremap {  {}&lt;Esc&gt;i</span>
+</span><span class='line'><span class="s2"> autocmd Syntax html,vim inoremap &lt; &lt;lt&gt;&gt;&lt;Esc&gt;i | inoremap &gt; &lt;c-r&gt;=ClosePair(&#39;&gt;&#39;)&lt;CR&gt;</span>
+</span><span class='line'><span class="s2"> inoremap ) &lt;c-r&gt;=ClosePair(&#39;)&#39;)&lt;CR&gt;</span>
+</span><span class='line'><span class="s2"> inoremap ] &lt;c-r&gt;=ClosePair(&#39;]&#39;)&lt;CR&gt;</span>
+</span><span class='line'><span class="s2"> inoremap } &lt;c-r&gt;=CloseBracket()&lt;CR&gt;</span>
+</span><span class='line'><span class="s2"> inoremap &quot;</span> &lt;c-r&gt;<span class="o">=</span>QuoteDelim<span class="o">(</span><span class="s1">&#39;&quot;&#39;</span><span class="o">)</span>&lt;CR&gt;
+</span><span class='line'>  inoremap <span class="s1">&#39; &lt;c-r&gt;=QuoteDelim(&quot;&#39;</span><span class="s2">&quot;)&lt;CR&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2"> function ClosePair(char)</span>
+</span><span class='line'><span class="s2">     if getline(&#39;.&#39;)[col(&#39;.&#39;) - 1] == a:char</span>
+</span><span class='line'><span class="s2">         return &quot;</span><span class="se">\&lt;</span>Right&gt;<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">     else</span>
+</span><span class='line'><span class="s2">         return a:char</span>
+</span><span class='line'><span class="s2">     endif</span>
+</span><span class='line'><span class="s2"> endf</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2"> function CloseBracket()</span>
+</span><span class='line'><span class="s2">     if match(getline(&#39;.&#39; + 1), &#39;\s*}&#39;) &lt; 0</span>
+</span><span class='line'><span class="s2">         return &quot;</span><span class="se">\&lt;</span>CR&gt;<span class="o">}</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">     else</span>
+</span><span class='line'><span class="s2">         return &quot;</span><span class="se">\&lt;</span>Esc&gt;j0f<span class="o">}</span>a<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">     endif</span>
+</span><span class='line'><span class="s2"> endf</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2"> function QuoteDelim(char)</span>
+</span><span class='line'><span class="s2">     let line = getline(&#39;.&#39;)</span>
+</span><span class='line'><span class="s2">     let col = col(&#39;.&#39;)</span>
+</span><span class='line'><span class="s2">     if line[col-2] == &quot;</span><span class="se">\\</span><span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">         &quot;</span>Inserting a quoted quotation mark into string
+</span><span class='line'>          <span class="k">return </span>a:char
+</span><span class='line'>      elseif line<span class="o">[</span>col-1<span class="o">]</span> <span class="o">==</span> a:char
+</span><span class='line'>          <span class="s2">&quot;Escaping out of the string</span>
+</span><span class='line'><span class="s2">         return &quot;</span><span class="se">\&lt;</span>Right&gt;<span class="s2">&quot;</span>
+</span><span class='line'><span class="s2">     else</span>
+</span><span class='line'><span class="s2">         &quot;</span>Starting a String
+</span><span class='line'>          <span class="k">return </span>a:char.a:char.<span class="s2">&quot;\&lt;Esc&gt;i&quot;</span>
+</span><span class='line'>      endif
+</span><span class='line'>  endf
+</span><span class='line'>  
+</span><span class='line'>下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：
+</span><span class='line'>
+</span><span class='line'>  <span class="s2">&quot;-----------------------------------------------------------------</span>
+</span><span class='line'><span class="s2"> &quot;</span> plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
+</span><span class='line'>  <span class="s2">&quot; :ERDtree 打开NERD_tree         :NERDtreeClose    关闭NERD_tree</span>
+</span><span class='line'><span class="s2"> &quot;</span> o 打开关闭文件或者目录         t 在标签页中打开
+</span><span class='line'>  <span class="s2">&quot; T 在后台标签页中打开           ! 执行此文件</span>
+</span><span class='line'><span class="s2"> &quot;</span> p 到上层目录                   P 到根目录
+</span><span class='line'>  <span class="s2">&quot; K 到第一个节点                 J 到最后一个节点</span>
+</span><span class='line'><span class="s2"> &quot;</span> u 打开上层目录                 m 显示文件系统菜单（添加、删除、移动操作）
+</span><span class='line'>  <span class="s2">&quot; r 递归刷新当前目录             R 递归刷新当前根目录</span>
+</span><span class='line'><span class="s2"> &quot;</span>-----------------------------------------------------------------
+</span><span class='line'>  <span class="s2">&quot; F3 NERDTree 切换</span>
+</span><span class='line'><span class="s2"> map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;</span>
+</span><span class='line'><span class="s2"> imap &lt;F3&gt; &lt;ESC&gt;:NERDTreeToggle&lt;CR&gt;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="s2"> &quot;</span>-----------------------------------------------------------------
+</span><span class='line'>  <span class="s2">&quot; plugin - NERD_commenter.vim   注释代码用的，</span>
+</span><span class='line'><span class="s2"> &quot;</span> <span class="o">[</span>count<span class="o">]</span>,cc 光标以下count行逐行添加注释<span class="o">(</span>7,cc<span class="o">)</span>
+</span><span class='line'>  <span class="s2">&quot; [count],cu 光标以下count行逐行取消注释(7,cu)</span>
+</span><span class='line'><span class="s2"> &quot;</span> <span class="o">[</span>count<span class="o">]</span>,cm 光标以下count行尝试添加块注释<span class="o">(</span>7,cm<span class="o">)</span>
+</span><span class='line'>  <span class="s2">&quot; ,cA 在行尾插入 /* */,并且进入插入模式。 这个命令方便写注释。</span>
+</span><span class='line'><span class="s2"> &quot;</span> 注：count参数可选，无则默认为选中行或当前行
+</span><span class='line'>  <span class="s2">&quot;-----------------------------------------------------------------</span>
+</span><span class='line'><span class="s2"> let NERDSpaceDelims=1       &quot;</span> 让注释符与语句之间留一个空格
+</span><span class='line'>  <span class="nb">let </span><span class="nv">NERDCompactSexyComs</span><span class="o">=</span>1   <span class="err">&quot;</span> 多行注释时样子更好看
+</span></code></pre></td></tr></table></div></figure>
 
-    "窗口分割时,进行切换的按键热键需要连接两次,比如从下方窗口移动
-    "光标到上方窗口,需要&lt;c-w&gt;&lt;c-w&gt;k,非常麻烦,现在重映射为&lt;c-k&gt;,切换的
-    "时候会变得非常方便.
-    nnoremap &lt;C-h&gt; &lt;C-w&gt;h
-    nnoremap &lt;C-j&gt; &lt;C-w&gt;j
-    nnoremap &lt;C-k&gt; &lt;C-w&gt;k
-    nnoremap &lt;C-l&gt; &lt;C-w&gt;l
-</code></pre>
-
-<p>接下来是括号补全：</p>
-
-<pre><code>    inoremap (  ()&lt;Esc&gt;i                " inoremap表示输入模式下的匹配,当有"("时，匹配")"并退出重新进入"i编辑模式"
-    inoremap [  []&lt;Esc&gt;i
-    inoremap {  {}&lt;Esc&gt;i
-    autocmd Syntax html,vim inoremap &lt; &lt;lt&gt;&gt;&lt;Esc&gt;i | inoremap &gt; &lt;c-r&gt;=ClosePair('&gt;')&lt;CR&gt;
-    inoremap ) &lt;c-r&gt;=ClosePair(')')&lt;CR&gt;
-    inoremap ] &lt;c-r&gt;=ClosePair(']')&lt;CR&gt;
-    inoremap } &lt;c-r&gt;=CloseBracket()&lt;CR&gt;
-    inoremap " &lt;c-r&gt;=QuoteDelim('"')&lt;CR&gt;
-    inoremap ' &lt;c-r&gt;=QuoteDelim("'")&lt;CR&gt;
-
-    function ClosePair(char)
-        if getline('.')[col('.') - 1] == a:char
-            return "\&lt;Right&gt;"
-        else
-            return a:char
-        endif
-    endf
-
-    function CloseBracket()
-        if match(getline('.' + 1), '\s*}') &lt; 0
-            return "\&lt;CR&gt;}"
-        else
-            return "\&lt;Esc&gt;j0f}a"
-        endif
-    endf
-
-    function QuoteDelim(char)
-        let line = getline('.')
-        let col = col('.')
-        if line[col-2] == "\\"
-            "Inserting a quoted quotation mark into string
-            return a:char
-        elseif line[col-1] == a:char
-            "Escaping out of the string
-            return "\&lt;Right&gt;"
-        else
-            "Starting a String
-            return a:char.a:char."\&lt;Esc&gt;i"
-        endif
-    endf
-</code></pre>
-
-<p>下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：</p>
-
-<pre><code>    "-----------------------------------------------------------------
-    " plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
-    " :ERDtree 打开NERD_tree         :NERDtreeClose    关闭NERD_tree
-    " o 打开关闭文件或者目录         t 在标签页中打开
-    " T 在后台标签页中打开           ! 执行此文件
-    " p 到上层目录                   P 到根目录
-    " K 到第一个节点                 J 到最后一个节点
-    " u 打开上层目录                 m 显示文件系统菜单（添加、删除、移动操作）
-    " r 递归刷新当前目录             R 递归刷新当前根目录
-    "-----------------------------------------------------------------
-    " F3 NERDTree 切换
-    map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;
-    imap &lt;F3&gt; &lt;ESC&gt;:NERDTreeToggle&lt;CR&gt;
-
-
-    "-----------------------------------------------------------------
-    " plugin - NERD_commenter.vim   注释代码用的，
-    " [count],cc 光标以下count行逐行添加注释(7,cc)
-    " [count],cu 光标以下count行逐行取消注释(7,cu)
-    " [count],cm 光标以下count行尝试添加块注释(7,cm)
-    " ,cA 在行尾插入 /* */,并且进入插入模式。 这个命令方便写注释。
-    " 注：count参数可选，无则默认为选中行或当前行
-    "-----------------------------------------------------------------
-    let NERDSpaceDelims=1       " 让注释符与语句之间留一个空格
-    let NERDCompactSexyComs=1   " 多行注释时样子更好看
-</code></pre>
 
 <p><em>感谢使用vim配置，记住要将vim编辑器重启后才生效。</em></p>
 </div>
@@ -249,7 +386,7 @@
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

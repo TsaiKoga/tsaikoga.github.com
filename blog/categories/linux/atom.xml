@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2015-07-25T11:34:55+08:00</updated>
+  <updated>2016-02-22T22:48:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -40,8 +40,12 @@
 
 <p>可以使用 ls -d 查看目录文件的使用权限。如以下信息：（这些信息都包含在I节点，可以通过 ls -i/&mdash;inode 查看）</p>
 
+<p>``` bash</p>
+
 <pre><code>-rwxr-xr--  2  tsaikoga  group  198  Sep  8  14:06  ..
 </code></pre>
+
+<p>```</p>
 
 <ol>
 <li>第一个字段中第一个字符标识文件类型，有如下几种表示：</li>
@@ -201,8 +205,12 @@
 
 <p><strong>使用格式如下：</strong></p>
 
-<pre><code>  $ find &lt;指定目录&gt; &lt;指定条件&gt; &lt;指定动作&gt;
+<p>``` bash</p>
+
+<pre><code> $ find &lt;指定目录&gt; &lt;指定条件&gt; &lt;指定动作&gt;
 </code></pre>
+
+<p>```</p>
 
 <ul>
 <li><p>&lt;指定目录>： 所要搜索的目录及其所有子目录。默认为当前目录。</p></li>
@@ -213,9 +221,13 @@
 
 <p><strong>举例：</strong></p>
 
+<p>``` bash</p>
+
 <pre><code>$ find . -name 'my*' -ls        # 搜索当前目录中，所有文件名以my开头的文件，并显示它们的详细信息。
 $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中更新过的普通文件。如果不加-type f参数，则搜索普通文件+特殊文件+目录。
 </code></pre>
+
+<p>```</p>
 
 <hr />
 
@@ -231,10 +243,14 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p><strong>命令格式如下：</strong></p>
 
-<pre><code>    grep [选项] 查找模式 [文件名1, 文件名2, ...]
+<p>``` bash</p>
 
-    grep [选项] [-e 查找模式|-f 文件][文件名1, 文件名2, ...]
+<pre><code>grep [选项] 查找模式 [文件名1, 文件名2, ...]
+
+grep [选项] [-e 查找模式|-f 文件][文件名1, 文件名2, ...]
 </code></pre>
+
+<p>```</p>
 
 <blockquote><p>当然：最好用的参数</p>
 
@@ -262,8 +278,12 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p>注意：ubuntu下要安装<strong>ack-grep</strong>，因为在debian系中，ack这个名字被其他的软件占用了。</p>
 
+<p>``` bash</p>
+
 <pre><code>sudo apt-get install ack-grep
 </code></pre>
+
+<p>```</p>
 
 <hr />
 
@@ -273,10 +293,14 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p><strong>命令格式如下：</strong></p>
 
-<pre><code>    netstat -tulpn              # 显示服务器进程
-    sudo netstat -antup   # 查看进程
-    ack-grep function     # 查找函数位置（必须在文件目录下）
+<p>``` bash</p>
+
+<pre><code>netstat -tulpn        # 显示服务器进程
+sudo netstat -antup   # 查看进程
+ack-grep function     # 查找函数位置（必须在文件目录下）
 </code></pre>
+
+<p>```</p>
 
 <hr />
 
@@ -286,10 +310,14 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p>参数就几个很简单：</p>
 
-<pre><code>    crontab -l # 显示现有任务条目 
-    crontab -r # 删除当前的任务 
-    crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
+<p>``` bash</p>
+
+<pre><code>crontab -l # 显示现有任务条目 
+crontab -r # 删除当前的任务 
+crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
 </code></pre>
+
+<p>```</p>
 
 <p><strong>时间参数：</strong></p>
 
@@ -373,8 +401,12 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p><em>命令：指定文件的类型（可将多个文件作为参数）</em></p>
 
+<p>``` sh</p>
+
 <pre><code>$ file 文件名 [文件名...]
 </code></pre>
+
+<p>```</p>
 
 <ul>
 <li><strong>目录文件：</strong></li>
@@ -405,8 +437,12 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p>tty可显示设备文件：</p>
 
+<p>``` sh</p>
+
 <pre><code>$ tty   #=&gt; /dev/pts/1
 </code></pre>
+
+<p>```</p>
 
 <p><em>注意： 设备文件存放在"/dev/&ldquo;目录下</em></p>
 
@@ -462,8 +498,12 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <h4>命令：</h4>
 
+<p>``` sh</p>
+
 <pre><code>    ln [选项] 源文件 [目标文件]        # -s建立符号链接
 </code></pre>
+
+<p>```</p>
 
 <hr />
 ]]></content>

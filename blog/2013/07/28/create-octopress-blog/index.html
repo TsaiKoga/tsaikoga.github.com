@@ -88,6 +88,12 @@ cd tsaikoga.github.com 查看Gemfile文件 &hellip;">
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -102,32 +108,48 @@ cd tsaikoga.github.com
 <p>查看Gemfile文件：
 稍作修改，如使用淘宝镜像：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
 
-<pre><code>vim Gemfile
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim Gemfile
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>之后执行:</p>
 
-<pre><code>bundle install
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>bundle install
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：</p>
 
-<pre><code>vim Rakefile    # 里面有许多rake任务
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim Rakefile   <span class="c"># 里面有许多rake任务</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>我们执行其中的:</p>
 
-<pre><code>rake install # 复制"theme/"中的"sass/"和"source/"文件夹到"tsaikoga.github.com/"文件夹下
-# 当然你也可以从网上下载他人的样式，如下命令：
-git clone git://github.com/panks/fabric.git .themes/fabric
-rake install['fabric'] # 然后安装fabric这个样式，不加[]则安装默认样式，如上命令：rake install
-rake generate          # 执行此命令后才会生效，然后重启服务
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake install <span class="c"># 复制&quot;theme/&quot;中的&quot;sass/&quot;和&quot;source/&quot;文件夹到&quot;tsaikoga.github.com/&quot;文件夹下</span>
+</span><span class='line'><span class="c"># 当然你也可以从网上下载他人的样式，如下命令：</span>
+</span><span class='line'>git clone git://github.com/panks/fabric.git .themes/fabric
+</span><span class='line'>rake install<span class="o">[</span><span class="s1">&#39;fabric&#39;</span><span class="o">]</span> <span class="c"># 然后安装fabric这个样式，不加[]则安装默认样式，如上命令：rake install</span>
+</span><span class='line'>rake generate          <span class="c"># 执行此命令后才会生效，然后重启服务</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p><strong>查看网页效果：</strong></p>
 
-<pre><code>rake preview
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake preview
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
 
 <p>他会生成public文件夹</p>
 
@@ -137,33 +159,44 @@ rake generate          # 执行此命令后才会生效，然后重启服务
 
 <p>本地执行:</p>
 
-<pre><code>rake setup_github_pages
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake setup_github_pages
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>在github上新建一个octopress仓库，当填入url时，不要填入后缀&#8221;.git&#8221;，这样生成的页面才在&#8221;.com&#8221;上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
 说到在远程仓库做开发，就是将&#8221;开发分支source&#8221;覆盖原有的&#8221;master分支&#8221;,以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。</p>
 
-<pre><code>git checkout source             # 切到开发分支source上
-git push origin source      # 推送到远程仓库
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout <span class="nb">source</span>                <span class="c"># 切到开发分支source上</span>
+</span><span class='line'>git push origin <span class="nb">source</span>        <span class="c"># 推送到远程仓库</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h4>如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要</h4>
 
-<pre><code>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/,
 修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，</p>
 
 <p>执行：</p>
 
-<pre><code>rake generate
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake generate
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>再执行以下名令，<strong>部署到远程仓库</strong>：</p>
 
-<pre><code>rake deploy
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake deploy
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>最后到网址刷新看看。</p>
 
@@ -176,8 +209,10 @@ git push origin source      # 推送到远程仓库
 
 <h4>新建一个博客：</h4>
 
-<pre><code>rake new_post["Hello TsaiKoga"]
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake new_post<span class="o">[</span><span class="s2">&quot;Hello TsaiKoga&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
 
@@ -219,7 +254,7 @@ git push origin source      # 推送到远程仓库
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

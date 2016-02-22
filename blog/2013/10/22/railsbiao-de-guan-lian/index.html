@@ -89,6 +89,12 @@ Rails中表的关联主要有三种：单表继承,多态关联,自引用。 个
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -129,26 +135,39 @@ Rails中表的关联主要有三种：单表继承,多态关联,自引用。</p>
 
 <p>person.rb:</p>
 
-<pre><code>Class Person &lt; ActiveRecord::Base
-        belongs_to XXX
-end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Class</span> <span class="no">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>      <span class="n">belongs_to</span> <span class="no">XXX</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>manager.rb:(继承Person类)</p>
 
-<pre><code>Class Manager &lt; Person
-end
-</code></pre>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">manager</span><span class="o">.</span><span class="n">rb</span><span class="p">:(</span><span class="err">继承</span><span class="no">Person</span><span class="err">类</span><span class="p">)</span>
+</span><span class='line'>  <span class="no">Class</span> <span class="no">Manager</span> <span class="o">&lt;</span> <span class="no">Person</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>rails console:</p>
 
-<pre><code>XXX.first.manager
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">XXX</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">manager</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>mysql:</p>
 
-<pre><code>select people.* from people where people.type in ("Manager") and people.id=1
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">select</span> <span class="n">people</span><span class="o">.</span><span class="n">*</span> <span class="n">from</span> <span class="n">people</span> <span class="n">where</span> <span class="n">people</span><span class="o">.</span><span class="n">type</span> <span class="k">in</span> <span class="p">(</span><span class="s2">&quot;Manager&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">people</span><span class="o">.</span><span class="n">id</span><span class="o">=</span><span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 
@@ -164,38 +183,64 @@ end
 
 <p>没用多态关联前：不复杂，但是麻烦，如果<strong>以后加个book model之类</strong>的，也需要有个图做封面的，那又要<strong>改image model里的关联和migration</strong>了，一点都不DRY。</p>
 
-<pre><code>class Person &lt; ActiveRecord::Base
-  has_one :image, :dependent =&gt; :destroy
-end
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Album</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>     <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Image</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>    <span class="n">belongs_to</span> <span class="ss">:person</span>
+</span><span class='line'>    <span class="n">belongs_to</span> <span class="ss">:album</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
-  class Album &lt; ActiveRecord::Base
-         has_one :image, :dependent =&gt; :destroy
-  end
-
-  class Image &lt; ActiveRecord::Base
-     belongs_to :person
-         belongs_to :album
-end
-</code></pre>
 
 <p>相应的image的migration要添加上关联字段：</p>
 
-<pre><code>t.column :person_id, :integer, :null =&gt; false, :default =&gt; 0
-    t.column :album_id, :integer, :null =&gt; false, :default =&gt; 0
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">column</span> <span class="ss">:person_id</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+</span><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">column</span> <span class="ss">:album_id</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>使用多态关联后：</p>
 
-<pre><code>    class Person &lt; ActiveRecord::Base
-        has_one :image, :as =&gt; :iconable, :dependent =&gt; :destroy
-    end
-    class Album &lt; ActiveRecord::Base
-        has_one :image, :as =&gt; :iconable, :dependent =&gt; :destroy
-    end
-    class Image &lt; ActiveRecord::Base
-        belongs_to :iconable, :polymorphic =&gt; true
-    end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>    <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="ss">:iconable</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Album</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>    <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="ss">:iconable</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Image</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>    <span class="n">belongs_to</span> <span class="ss">:iconable</span><span class="p">,</span> <span class="ss">:polymorphic</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>Person和Album有了<strong>共同的一个虚拟的名字</strong>叫做iconable,image表就可以直接用外键iconable_id关联它,</p>
 
@@ -203,20 +248,28 @@ end
 
 <p>添加：</p>
 
-<pre><code>    @person = Person.new(params[:person])
-    @person.build_image(params[:image])
-    @person.save
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="vi">@person</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:person</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="vi">@person</span><span class="o">.</span><span class="n">build_image</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:image</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="vi">@person</span><span class="o">.</span><span class="n">save</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>读取：</p>
 
-<pre><code>    @person.image
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@person</span><span class="o">.</span><span class="n">image</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>image 的属主：</p>
 
-<pre><code>    @person.iconable
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@person</span><span class="o">.</span><span class="n">iconable</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 
@@ -224,21 +277,36 @@ end
 
 <p>自引用就是<strong>一条记录可能引用同一张表的另一条记录</strong>：公司员工都有主管，主管也是员工。使用:class_name 和foregin_key加上has_many/has_one和belongs_to.</p>
 
-<pre><code>class Employee &lt; ActiveRecord::Base
-    belongs_to :manager,
-      :class_name =&gt; "Employee",
-      :foregin_key =&gt; "manager_id"
-    belongs_to :mentor,
-        :class_name =&gt; "Employee",
-        :foregin_key =&gt; "mentor_id"
-    has_many ：mentored_employees,
-      :class_name =&gt; "Employee",
-      :foreign_key =&gt; "mentor_id"
-    has_many ：managed_employees,
-      :class_name =&gt; "Employee",
-      :foreign_key =&gt; "manager_id"
-end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Employee</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:manager</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">:foregin_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;manager_id&quot;</span>
+</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:mentor</span><span class="p">,</span>
+</span><span class='line'>      <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
+</span><span class='line'>      <span class="ss">:foregin_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;mentor_id&quot;</span>
+</span><span class='line'>  <span class="n">has_many</span> <span class="err">：</span><span class="n">mentored_employees</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">:foreign_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;mentor_id&quot;</span>
+</span><span class='line'>  <span class="n">has_many</span> <span class="err">：</span><span class="n">managed_employees</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
+</span><span class='line'>    <span class="ss">:foreign_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;manager_id&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 <div class="meta">
@@ -269,7 +337,7 @@ end
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2015-07-25T11:34:55+08:00</updated>
+  <updated>2016-02-22T22:48:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,2648 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Routing]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2015/08/03/routing/"/>
+    <updated>2015-08-03T14:55:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2015/08/03/routing</id>
+    <content type="html"><![CDATA[<h3>目录：</h3>
+
+<h4><a href="#2.1">2.1 路由的两个目标</a></h4>
+
+<h4><a href="#2.2">2.2 routes.rb文件</a></h4>
+
+<h5><a href="#2.2.1">2.2.1 路由规则</a></h5>
+
+<h5><a href="#2.2.2">2.2.2 限制请求方法</a></h5>
+
+<h5><a href="#2.2.3">2.2.3 URL 模式</a></h5>
+
+<h5><a href="#2.2.4">2.2.4 段键</a></h5>
+
+<h5><a href="#2.2.5">2.2.5 聚焦于id字段</a></h5>
+
+<h5><a href="#2.2.6">2.2.6 可选的段键</a></h5>
+
+<h5><a href="#2.2.7">2.2.7 重定向路由</a></h5>
+
+<h5><a href="#2.2.8">2.2.8 格式段format</a></h5>
+
+<h5><a href="#2.2.9">2.2.9 路由作为Rack的端点</a></h5>
+
+<h5><a href="#2.2.10">2.2.10 接收头</a></h5>
+
+<h5><a href="#2.2.11">2.2.11 段键约束</a></h5>
+
+<h5><a href="#2.2.12">2.2.12 根路由</a></h5>
+
+<h4><a href="#2.3">2.3 路径匹配</a></h4>
+
+<h4><a href="#2.4">2.4 命名路由</a></h4>
+
+<h5><a href="#2.4.1">2.4.1 创建一个命名路由</a></h5>
+
+<h5><a href="#2.4.2">2.4.2 name_path vs name_url</a></h5>
+
+<h5><a href="#2.4.3">2.4.3 给你的路由命名</a></h5>
+
+<h5><a href="#2.4.4">2.4.4 参数糖</a></h5>
+
+<h5><a href="#2.4.5">2.4.5 你的糖中还有糖吗？</a></h5>
+
+<h4><a href="#2.5">2.5 作用域的路由规则</a></h4>
+
+<h5><a href="#2.5.1">2.5.1 Controller</a></h5>
+
+<h5><a href="#2.5.2">2.5.2 路径前缀</a></h5>
+
+<h5><a href="#2.5.3">2.5.3 命名前缀</a></h5>
+
+<h5><a href="#2.5.4">2.5.4 命名空间</a></h5>
+
+<h5><a href="#2.5.5">2.5.5 捆绑约束</a></h5>
+
+<h4><a href="#2.6">2.6 路由列表</a></h4>
+
+<h2 id='2.1'>2.1 路由的两个目标</h2>
+
+
+<p>路由系统做两件事：</p>
+
+<ol>
+<li><p>通过请求匹配对应的controller的action方法</p></li>
+<li><p>为你的方法（像link_to  redirect_to）动态生成URL</p></li>
+</ol>
+
+
+<p>路由定义了一个规则，用来作为匹配URL的模板和作为创建url的蓝图，这种规则会按照惯例自动生成（例如REST资源）。这种规则包括静态子字符串和斜杠（模仿URL的写法），和作为与url的值相符合的位置(segment key)段参数的key。</p>
+
+<p>一个路由包括一个或多个硬编码的段参数key形成键值对，然后通过params方法进入对应的controller的action中。键（:controller和:action）决定哪个controller的哪个action被调用。路由中的其他键值对的定义得到了参考。</p>
+
+<p>来看一个例子：</p>
+
+<p>``` ru</p>
+
+<pre><code>get 'recipes/:ingredient' =&gt; "recipes#index"
+</code></pre>
+
+<p>```</p>
+
+<p>在这个例子中，你可以找到：</p>
+
+<ul>
+<li><p>静态字符串（recipes）</p></li>
+<li><p>斜杠（/）</p></li>
+<li><p>段参数key（:ingredient）</p></li>
+<li><p>controller和action的映射（recipes#index）</p></li>
+<li><p>HTTP动词抑制方法（get）</p></li>
+</ul>
+
+
+<p>路由有许多丰富的语法，但不是意味着这个是最复杂的，也不是最简单的；由于实在是太多了，一个简单的路由，想这个例子，必须<strong>提供足够的信息去匹配现存的url</strong>并且<strong>可以生成新的url</strong>，路由语法的设计就是来解决这两个过程的。</p>
+
+<br />
+
+
+
+
+<h2 id="2.2">2.2 routes.rb文件</h2>
+
+
+<hr />
+
+<p>路由定义在config/routes.rb文件中，根据 Listing2.1 这个文件创建于你创建你的Rails应用时并且还有命令教你如何使用，</p>
+
+<h6>Listing 2.1: The default routes.rb file</h6>
+
+<p>``` ru</p>
+
+<pre><code>Example::Application.routes.draw do
+  # The priority is based upon order of creation: first created -&gt; highest
+  # priority.
+  # See how all your routes lay out with "rake routes".
+  # You can have the root of your site routed with "root"
+  # root to: 'welcome#index'
+
+  # Example of regular route:
+  #   get 'products/:id' =&gt; 'catalog#view'
+
+  # Example of named route that can be invoked with
+  # purchase_url(id: product.id)
+  #  get 'products/:id/purchase' =&gt; 'catalog#purchase', as: :purchase
+
+  # Example resource route (maps HTTP verbs to controller actions
+  #automatically):
+  #   resources :products
+
+  # Example resource route with options:
+  # resources :products do
+  #   member do
+  #     get 'short'
+  #     post 'toggle'
+  #   end
+
+  #   collection do
+  #     get 'sold'
+  #   end
+  # end
+
+  # Example resource route with sub-resources:
+  #   resources :products do
+  #       resources :comments, :sales
+  #       resource :seller
+  #   end
+
+  # Example resource route with more complex sub-resources:
+  #   resources :products do
+  #     resources :comments
+  #     resources :sales do
+  #        get 'recent', on: :collection
+  #     end
+  #   end
+
+  # Example resource route within a namespace:
+  #   namespace :admin do
+  #     # Directs /admin/products/* to Admin::ProductsController
+  #     # (app/controllers/admin/products_controller.rb)
+  #     resources :products
+  #   end
+</code></pre>
+
+<p>```</p>
+
+<p>这个文件由Example::Application.routes 的draw 方法调用构成的，方法用到一个块，从文件的第二行到倒数第二行都是块的内容，
+在运行时，块在ActionDispatch::Routing::Mapper实例中估值，你可以通过它设置整个路由系统。</p>
+
+<p>路由系统不得不寻找一个匹配URL的模式，它尝试着辨识或匹配url产生的参数，按着定义的顺序执行；也就是，按照 routes.rb 里面的顺序。
+如果所给的路由匹配失败，匹配历程将查找下一个再匹配，直到成功匹配，查询才结束。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.1">2.2.1 路由规则</h3>
+
+
+<hr />
+
+<p>最基础的定义路由方法是提供URL的模式加上一个通过特殊参数:to 映射的controller类action方法。</p>
+
+<p><code>ru
+get 'products/:id', to: 'products#show'
+</code></p>
+
+<p>这是比较通用的，提供一个简写形式：</p>
+
+<p><code>ru
+get 'products/:id' =&gt; 'products#show'
+</code></p>
+
+<p>David曾经公开评价过这种简写形式背后的设计决定，他说这是从2个来源汲取灵感的：</p>
+
+<ol>
+<li>因为我们一直在使用controller作为小写这种模式，而且在:controller => “main”的定义中也没有“Controller”这部分。</li>
+<li>采用Ruby模式#表示你正在谈论一个实例方法，它的影响甚至被部分混合。Main#index会让你认为存在Main这个对象，然而没有；
+每次输出MainController#index将会成为一个麻烦。也是同样地原因我们考虑过:controller => “main” 和 :controller => “MainController”。给了这些限制，我想“main#index”是迄今为止最好的选择。</li>
+</ol>
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.2">2.2.2 限制请求方法</h3>
+
+
+<hr />
+
+<p>Rails4，限制HTTP方法被用来操作路由。
+如果你用match 命令去定义一个路由，你会通过via这个可选参数来完成：</p>
+
+<p><code>ru
+match 'products/:id' =&gt; 'products#show', via: :get
+</code></p>
+
+<p>Rails提供更简洁的方法去表达这种限制，通过设计好的http方法来替换原来的match命令：</p>
+
+<p><code>ru
+get 'products/:id' =&gt; 'products#show'
+post' products' =&gt; 'products#create'
+</code></p>
+
+<p>如果，处于某些原因，你想使用多个http方法限制路由，可以通过将这些动词方法构造成数组，然后传递给:via即可：</p>
+
+<p><code>ru
+match 'products/:id' =&gt; 'products#show', via: [:get,:post]
+</code></p>
+
+<p>定义一个路由没有定义他的http方法，将会使Rails抛出RuntimeError 异常。
+然而这里不作为推荐，一个路由仍然可以匹配任何的http方法，只要传递:any到:via即可</p>
+
+<p><code>ru
+match 'products' =&gt; 'products#index', via: :any
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.3">2.2.3 URL 模式</h3>
+
+
+<hr />
+
+<p>请记住，模式字符串中不需要对应每个字段，段键(segment keys ：表示url字符串中得参数符号)；事实上每个连接都需要controller和action，举个例子，你可以写如下的路由：</p>
+
+<p><code>ru
+get ":id" =&gt; "products#show"
+</code></p>
+
+<p>它将会被如下的URL辨别：</p>
+
+<p><code>ru
+http://localhost:3000/8
+</code></p>
+
+<p>这个路由系统将设置params[:id]为8（基于:id的段键位置与url中得8位置相匹配），并且它会执行product这个controller的show方法。当然，在视觉上看这个路由有点微小。另一方面，下面例子的路由包含静态字符串products/，在URL模式中：</p>
+
+<p>``` ru</p>
+
+<pre><code>match 'products/:id' =&gt; 'products#show'
+</code></pre>
+
+<p>```</p>
+
+<p>在这个字符串锚文本的识别过程中，任何左边不包含products/的URL将不符合此路由。</p>
+
+<p>至于URL的产生，路由中的静态字符串将会简单地代替路由系统生成URL。URL生成器生成URL是使用路由的模式字符串作为蓝图的。模式字符串规定了子串products。</p>
+
+<p>讲到这里，你心中应该了解到路由的这两种双重的意图了&mdash;识别/生成，这也是为什么之前强调了几次的目的。
+这也有专门用来记住的两个原则：</p>
+
+<ol>
+<li><p>同样的规则决定了识别和生成。整个系统都是这样建立起来的，你不再需要去写规则。你每写一次规则，逻辑将在两个方向流动。</p></li>
+<li><p>URL将由路由系统生成（link_to 等），url <a href="http://example.com/products/19201">http://example.com/products/19201</a> 的结果没有包含当用户遵循它时应该发生的一丝线索&mdash;除了它的路由规则。路由规则提供了必要的信息去触发controller和action。有些人看着URL但是不知道路由规则，将不知道url映射到哪个controller和action。</p></li>
+</ol>
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.4">2.2.4 段键</h3>
+
+
+<hr />
+
+<p>URL的模式字符串可以包含参数（用一个符号表示），并称为段键。
+在下面的路由声明中，:id就是段键：</p>
+
+<p><code>ru
+get 'products/:id' =&gt; 'products#show'
+</code></p>
+
+<p>当这个路由去匹配url请求时，该模式的:id部分将作为匹配部分，并且挑选片段的值。
+举个例子，下面这个url的:id的值将会是4：<a href="http://example.com/products/4">http://example.com/products/4</a></p>
+
+<p>这个路由，当他匹配的时候，将会总是带着用户到product controller的show这个action方法，你不久将会看到基于片段匹配controller和action的技术。在单引号中得:id符号将是路由的段键（可以将它视为一种变量类型），它的工作就是被一个值锁上。</p>
+
+<p>上面例子的意思是params[:id]的值将会被设置成4，你可以在product controller中的show方法中读取这个值。</p>
+
+<p>当你需要生成一串url，你必须提供一个值能连接url中模式字符串的段键。一个最简单的理解（并且最原始）的方式是使用hash，像这样：</p>
+
+<p><code>ru
+link_to "Products",
+  controller: "products",
+  action: "show",
+  id: 1
+</code></p>
+
+<p>就像你知道的那样，它确实有像当今共同的生成路由的方法，名叫具名路由，在hash中明确地提供了controller和action。然而，现在我们是回顾路由的基本知识。</p>
+
+<p>在上面的link_to中，我们提供了三个参数，其中两个将会匹配路由中得硬编码和段键；第三个，:id将会分配给url模式中相符合的段键值。</p>
+
+<p>非常重要的是理解link_to不需要知道是否提供硬编码或是段值。只需要知道（或者希望）那三个值，绑定着那三个键，就能足够精确一个路由和模式字符串；因此，能够生成自动生成URL的蓝图。</p>
+
+<h4>i:硬编码参数</h4>
+
+<p>你总是有可能插入额外的硬编码参数到定义的路由的，尽管这个它对url的匹配无任何作用：</p>
+
+<p><code>ru
+get 'products/special' =&gt; 'products#show', special: 'true'
+</code></p>
+
+<p>提醒你，我不支持上述这个例子的做法；对我来说（从风格问题上讲）指出不同的action，而不是插入一个分句，</p>
+
+<p><code>ru
+get 'products/special' =&gt; 'products#special'
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.5">2.2.5 聚焦于id字段</h3>
+
+
+<hr />
+
+<p>注意，对待URL中的:id字段并不是魔法，它只是一个当做一个值的名字对待而已。如果你想要，可以改变Rails的规则，例如将:id改为:blah，但是你也不得不在你的controller中得action像下面这样做：</p>
+
+<p><code>ru
+@product=Product.find(params[:blah])
+</code></p>
+
+<p>:id这个字段仅仅是一个惯例，它映射了一个action的普遍行为，就是操作一条特定的数据库记录。路由主要的工作是确定controller和对应的action被执行。通过:id的hash，你去数据库获取想要的记录：</p>
+
+<p>``` ru
+class ProductsController &lt; ApplicationController
+  def show</p>
+
+<pre><code>@product = Product.find(params[:id]) 
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.6">2.2.6 可选的段键</h3>
+
+
+<hr />
+
+<p>Rails3 引入定义URL可选部分的模式，最简单的阐述这种方法的方式是看下面例子，这是从旧版本的config/routes.rb 文件底部的例子：</p>
+
+<p><code>ru
+match ':controller(/:action(/:id(.:format)))', via: :any
+</code></p>
+
+<p>注意圆括号是用来定义可选段键的，有点像正则表达式中的可选组合。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.7">2.2.7 重定向路由</h3>
+
+
+<hr />
+
+<p>你可以在直接在路由定义中直接编写一个redirect重定向，只要使用redirect方法：</p>
+
+<p><code>ru
+get "/foo", to: redirect('/bar')
+</code></p>
+
+<p>redirect的参数url可以是一个相对地址也可以是一个绝对地址。</p>
+
+<p><code>ru
+get "/google",to: redirect('http://google.com/')
+</code></p>
+
+<p>redirect方法可以使用一个块，接收params请求作为他的参数；举个例子，做一个web服务端api的快速版本：</p>
+
+<p>``` ru
+match"/api/v1/:api",to:</p>
+
+<pre><code>redirect {|params| "/api/v2/#{params[:api].pluralize}" }, via: :any
+</code></pre>
+
+<p>```
+redirect也接受:status参数：</p>
+
+<p><code>ru
+match "/api/v1/:api", :to=&gt;
+  redirect(status: 302) {|params| "/api/v2/#{params[:api].pluralize}" }, via: :any
+</code></p>
+
+<p>redirect 返回的是ActionDispatch::Routing::Redirect的实例，看一下它的源代码：</p>
+
+<p>``` ru
+module ActionDispatch
+  module Routing</p>
+
+<pre><code>class redirect
+  # :nodoc: ...
+  def call(env)
+    req = Request.new(env)
+
+    # If any of the path parameters has a invalid encoding then 
+    # raise since it's likely to trigger errors further on.
+
+    req.symbolized_path_parameters.each do |key, value|
+      unless value.valid_encoding?
+      raise ActionController::BadRequest,
+      "Invalid parameter: #{key} =&gt; #{value}"
+    end
+  end
+
+  uri = URI.parse(path(req.symbolized_path_parameters, req)) uri.scheme ||= req.scheme
+  uri.host ||= req.host
+  uri.port ||= req.port unless req.standard_port?
+
+  body = %(&lt;html&gt;&lt;body&gt;You are being &lt;a href="#{ERB::Util.h(uri.to_s)\ }"&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;)
+
+  headers = {
+          'Location' =&gt; uri.to_s,
+          'Content-Type' =&gt; 'text/html',
+          'Content-Length' =&gt; body.length.to_s
+  }
+
+  [status, headers, [body] ]
+
+  end
+  ...
+end
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.8">2.2.8 格式段format</h3>
+
+
+<hr />
+
+<p>我们来重新访问之前的默认路由：
+<code>ru
+match ':controller(/:action(/:id(.:format)))', via: :any
+</code></p>
+
+<p>.:format将匹配id字段后面.之后的值，举个例子，像如下的url：</p>
+
+<p><code>ru
+http://localhost:3000/products/show/3.json
+</code></p>
+
+<p>在这里，params[:format]将会被设置成为json。:format很特别，它在controller的action中有一个作用，这个作用与调用respond_to方法有关。</p>
+
+<p>respond_to方法允许你的action依据请求的格式返回不同的结果，这里的product_controller的show方法提供了html和json两种格式：</p>
+
+<p>``` ru
+def show
+  @product = Product.find(params[:id])
+  respond_to do |format|</p>
+
+<pre><code>format.html
+format.json { render json: @product.to_json  } 
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>这个respond_to的块中有两个分句，html分句是由format.html组成，对于html格式的请求将采用正常渲染方式，而json分句包含一个代码块；如果json被请求，那么json中的代码块将会被执行，并且其结果将会返回到客户端。</p>
+
+<p>这里有个使用curl命令的结果：</p>
+
+<p>``` bash
+curl <a href="http://localhost:3000/products/show/1.json">http://localhost:3000/products/show/1.json</a> -i
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length:81
+Connection:Keep-Alive</p>
+
+<p>{&ldquo;created_at&rdquo;:&ldquo;2013-02-09T18:25:03.513Z&rdquo;,
+ &ldquo;description&rdquo;:&ldquo;Keyboard&rdquo;,
+ &ldquo;id&rdquo;:&ldquo;1&rdquo;,
+ &ldquo;maker&rdquo;:&ldquo;Apple&rdquo;,
+ &ldquo;updated_at&rdquo;:&ldquo;2013-02-09T18:25:03.513Z&rdquo;}
+```</p>
+
+<p>URL最后以.json结尾会导致respond_to选择json分支，并且返回json表达的结果。</p>
+
+<p>如果请求的格式不包含在respond_to的块里面，rails不会抛出异常，Rails会返回406 Not Acceptable status，告诉你无法处理这种请求。</p>
+
+<p>如果你想要在respond_to的块里设置其他情况的处理，你可以使用any方法，这将会告诉rails处理那些没有被清晰定义的其他请求格式。</p>
+
+<p>``` ru
+def show
+  @product = Product.find(params[:id])
+  respond_to do |format|</p>
+
+<pre><code>format.html
+format.json { render json: @product.to_json  }
+format.any
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>你只要告诉any方法该如何处理那个格式的请求或者有那个对应格式的视图模板，否则你将会得到 MissingTemplate 异常。</p>
+
+<p><code>bash
+ActionView::MissingTemplate(Missingtemplateproducts/show, application/show with {:locale=&gt;[:en], :formats=&gt;[:xml], :handlers=&gt;[:erb, :builder, :raw, :ruby, :jbuilder, :coffee]}.)
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.9">2.2.9 路由作为Rack的端点</h3>
+
+
+<hr />
+
+<p>在这一章的路由中你会见到可选的参数:to的用法，最有意思的是:to的值将会作为指向Rack的端点(Rack Endpoint)，看看下面简单的例子：</p>
+
+<p><code>ru
+get "/hello", to: proc{|env| [ 200, {}, ["Helloworld"] ] }
+</code></p>
+
+<p>路由到controllers是非常松耦合的！最简洁的语法是（像"items#show"）依靠controller类的action方法去返回执行action请求的Rack Endpoint。</p>
+
+<p>``` ru</p>
+
+<blockquote><blockquote><p>ItemsController.action(:show)
+=> #&lt;Proc:0x01e96cd0@&hellip;>
+```</p></blockquote></blockquote>
+
+<p>派发基于Rack应用的能力，像由Sinatra创建的app，可以实现使用amount方法。
+amount方法接收一个:at可选项可以说明基于Rack的应用映射的路由。</p>
+
+<p>``` ru
+class HelloApp &lt; Sinatra::Base
+  get &ldquo;/&rdquo; do</p>
+
+<pre><code>"Hello World!"
+</code></pre>
+
+<p>  end
+end</p>
+
+<p>Example::Application.routes.draw do
+  mount HelloApp, at: &lsquo;/hello&rsquo;
+end
+```</p>
+
+<p>当然，更简洁的方式是：</p>
+
+<p><code>ru
+mount HelloApp =&gt; '/hello'
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.10">2.2.10 接收头</h3>
+
+
+<hr />
+
+<p>你可以通过设置请求的接收头（Accept Headers）来触发respond_to的其他分句，当你这样做了，就不需要在URL末尾加上.:format。（然而，由于http客户端的不一致，现实使用这种技术并不是很可靠）。</p>
+
+<p>下面使用curl的例子，没有定义.json格式，但是不需要将接收头设置成application/json。</p>
+
+<p>``` ru
+$curl -i -H &ldquo;Accept: application/json&rdquo;
+<a href="http://localhost:3000/products/show/1">http://localhost:3000/products/show/1</a>
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Length: 81
+Connection: Keep-Alive</p>
+
+<p>{&ldquo;created_at&rdquo;:&ldquo;2013-02-09T18:25:03.513Z&rdquo;,
+   &ldquo;description&rdquo;:&ldquo;Keyboard&rdquo;,
+   &ldquo;id&rdquo;:&ldquo;1&rdquo;,
+   &ldquo;maker&rdquo;:&ldquo;Apple&rdquo;,
+   &ldquo;updated_at&rdquo;:&ldquo;2013-02-09T18:25:03.513Z&rdquo;}</p>
+
+<p>```</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.11">2.2.11 段键约束</h3>
+
+
+<hr />
+
+<p>有时候你不仅仅需要辨认一个路由，还需要辨别比现在更细粒度的组件或字段，你可以使用:constraint选项进行限制（可能需要正则表达式）。</p>
+
+<p>举个例子，如果id为非数值，你可以路由许多show 请求到一个错误的action。你可以创建两个路由，一个处理id为数值的路由，另一个处理错误的路由。</p>
+
+<h4>i:隐式锚文本</h4>
+
+<blockquote><p>如果我们使用下面的限制：</p>
+
+<p>constraints: {:id => /\d+/}</p>
+
+<p>乍一看，好像会匹配"foo32bar"。其实不会，因为rails隐式锚文本会在表达式前后增加终结符。</p>
+
+<p>事实上，像这样在表达式前后增加\A 和 \Z会导致Rails抛出异常。</p></blockquote>
+
+<p>事实上，我们经常给:id增加限制，rails提供了更加简洁的方式：</p>
+
+<p><code>ru
+get ':controller/show/:id' =&gt; :show, id: /\d+/
+get ':controller/show/:id' =&gt; :show_error
+</code></p>
+
+<p>正则表达式中的路由非常有用，特别是当你的路由中组件只是值不同时。但是，它们并不能作为数据完整性检查的替代品。你可能仍然需要确定你所处理的值是对于你的项目是有用或合适的。</p>
+
+<p>从例子看，你可能总结为:constraints 检查params中的元素。然而，你也可以利用:constraints来检查任何一个请求“返回字符串的属性”，就像:subdomain和:referrer。对于匹配请求的方法，则不支持返回为数值或布尔型的，并且将会抛出神秘的异常。</p>
+
+<p>``` ru</p>
+
+<h1>only allow users admin subdomain to do old-school routing</h1>
+
+<p>get &lsquo;:controller/:action/:id&rsquo; => :show, constraints: {subdomain: &lsquo;admin&rsquo;}
+```</p>
+
+<p>如果由于某些原因，你需要更加强大的限制性检查，有时候需要访问请求req，然后通过接受一个块或其他相应call的对象作为值来限制。</p>
+
+<p>``` ru</p>
+
+<h1>protect records with id under 100</h1>
+
+<p> get'records/:id'=>&ldquo;records#protected&rdquo;,
+ constraints: proc {|req| req.params[:id].to_i &lt; 100 }
+```</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.12">2.2.12 根路由</h3>
+
+
+<hr />
+
+<p>config/routes.rb文件的默认第8行，你会见到：</p>
+
+<p>``` ru</p>
+
+<h1>You can have the root of your site routed with &ldquo;root&rdquo;</h1>
+
+<h1>root to: &lsquo;welcome#index&rsquo;</h1>
+
+<p>```</p>
+
+<p>上述代码的作用是，当你的浏览器连接：</p>
+
+<p><code>ru
+http://example.com # Note the lack of "/anything" at the end!
+</code>
+路由会说：“我不需要任何值，我不需要任何东西，我已经知道是哪个controller的哪个action了，我现在就去触发它。”</p>
+
+<p>在一个最新创建的路由中，这一行是被注释掉的，因为并不是默认需要到的。你需要确定你写的应用URL不应该做什么。
+下面是简单的对于空路由的例子：</p>
+
+<p>``` ru
+root :to => &ldquo;welcome#index&rdquo;
+root :to => &ldquo;pages#home&rdquo;</p>
+
+<h1>Shorthand syntax</h1>
+
+<p>root &ldquo;user_sessions#new&rdquo;
+```</p>
+
+<p>定义空路由给那些只用域名的url连接你的站点的用户有东西可以看。</p>
+
+<p>当你没有建立根路由，默认Rails会连接到因特网controller为Rails::WelcomeController 的页面。</p>
+
+<p>在之前rails版本中，新创建的Rails项目通过引入public/目录下地index.html文件都把这些自动完成了。所有public/目录下的静态文本的层次结构将匹配你的应用中提出的URL方案，结果导致静态内容被服务而不是触发路由规则。
+事实上，Web服务器会服务这些静态内容而而不需要Rails参与。</p>
+
+<h3>注意路由顺序：</h3>
+
+<blockquote><p>路由都是为了“辨别”和“产生”而按顺序排列在config/routes.rb文件中。</p></blockquote>
+
+<br/>
+
+
+
+
+<h2 id="2.3">2.3 路径匹配</h2>
+
+
+<p>在某些情况下，你可能需要抓取一个或更多的路由组件并且不需要一个个匹配它们的位置参数。举个例子，你的URL可能映射成一个目录结构。如果有人连接：</p>
+
+<p><code>bash
+/items/list/base/books/fiction/dickens
+</code></p>
+
+<p>你想通过items/list这action访问剩下的三个字段，但是，有时可能仅有三个字段：</p>
+
+<p><code>bash
+/items/list/base/books/fiction
+</code></p>
+
+<p>或者5个：</p>
+
+<p><code>bash
+/items/list/base/books/fiction/dickens/little_dorrit
+</code></p>
+
+<p>所以，在特殊情况下，你需要一个路由去匹配URI的第二个组件后面的所有东西，你可以通过星号通配符进行路径匹配。</p>
+
+<p><code>ru
+get 'items/list/*specs',controller: 'items', action: 'list'
+</code></p>
+
+<p>现在items/list这个action可以访问一串不同数量的以/分开字段的URL了，可以通过params[:specs]访问：</p>
+
+<p><code>ru
+def list
+ specs = params[:specs] # e.g, "base/books/fiction/dickens"
+end
+</code></p>
+
+<h3>匹配键值对</h3>
+
+<blockquote><p>路径匹配应该对字段的临时查询提供一个普遍的机制基础。如果让你通过下面形式设计的URI方案：</p>
+
+<p><a href="http://localhost:3000/items/q/field1/value1/field2/value2/...">http://localhost:3000/items/q/field1/value1/field2/value2/...</a></p>
+
+<p>用这种方法发出的请求会返回一连串所有匹配每个字段的产品。</p>
+
+<p>换句话说， <a href="http://localhost:3000/items/q/year/1939/material/wood">http://localhost:3000/items/q/year/1939/material/wood</a> 会产生一系列在1993年生产的木材。完成这个路由将是这个样子：</p></blockquote>
+
+<p><code>ru
+get 'items/q/*specs', controller: "items", action: "query"
+</code></p>
+
+<blockquote><p>当然，你将不得不像这样去写action查询：</p></blockquote>
+
+<p>``` ru
+def query
+  @items = Item.where(Hash[params[:specs].split(&ldquo;/&rdquo;)])
+  if @items.empty?</p>
+
+<pre><code>flash[:error] = "Can't find items with those properties" 
+</code></pre>
+
+<p>  end
+  render :index
+end
+```</p>
+
+<p>Hash的类方法中括号是几个意思啊？他将一维数组转化成键值对hash！进一步证明，深入了解ruby是一个先决条件，让你成为一个专业的rails开发者。</p>
+
+<br/>
+
+
+
+
+<h2 id="2.4">2.4 命名路由</h2>
+
+
+<p>事实上，你在这里学习的东西将直接进入我们在第3章中的相关路由的检查中。</p>
+
+<p>命名路由这个方法是为了让作为程序员的你的生活更加简单，就应用程序而言，没有什么表面上看得见的效果。当你命名一个路由，一个新的方法将被定义并且在你的controller和view中使用，这个方法叫做name_url（name是你给路由的name），并且调用这个方法，使用合理的参数使路由产生相应的URL。</p>
+
+<p>另外，有一个方法叫做name_path也会被创建，它会产生URL中没有协议和host的部分。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.1">2.4.1 创建一个命名路由</h3>
+
+
+<hr />
+
+<p>为路由命名的方法是在路由规则中使用:as参数：</p>
+
+<p><code>ru
+get 'help' =&gt; 'help#index', as: 'help'
+</code></p>
+
+<p>在这个例子中，你将可以得到两个方法：help_url和help_path，你可以在使用到url时用这两个方法：</p>
+
+<p><code>ru
+link_to "Help", help_path
+</code></p>
+
+<p>当然，对辨识和产生也有效，该模式字符串包括静态字符串组件“help”。因此，你看到超链接的路径是：</p>
+
+<p><code>bash
+/help
+</code></p>
+
+<p>当有人点击这个link，help controller的index方法将会被调用。</p>
+
+<h3>Xavier 说：</h3>
+
+<blockquote><p>你可以在 console 中直接使用app 对象测试命名路由：</p></blockquote>
+
+<p>``` ru</p>
+
+<blockquote><blockquote><p>app.clients_path
+ => &ldquo;/clients&rdquo;</p>
+
+<p>app.clients_url
+ => &ldquo;<a href="http://www.example.com/clients">http://www.example.com/clients</a>&rdquo;
+```</p></blockquote></blockquote>
+
+<p>命名路由给你省下很多生成路由的功夫，虽然如此，但是你还是需要为你的路由模式字符串任何段键提供相对应的值。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.2"> 2.4.2 name_path vs name_url</h3>
+
+
+<hr />
+
+<p>当你创建一个命名路由，你几乎就是创建了两个helper方法，在之前的例子中，那两个路由方法分别是helper_path 和 helper_url，不同的是helper_url产生的是整个url，包括域名和协议。然而，_path产生的仅仅是路径部分。（有时候作为绝对路径或相对路径）</p>
+
+<p>根据HTTP规范，重定向可以定义一个可以被编译的URI，这意味着它是一个完全合格的网址。因此，如果你想要坚持严谨，当你使用命名路由作为redirect_to的参数时，你可能需要总是运用_url版本。</p>
+
+<p>其实redirect_to可以完美支持命名路由helper方法<em>path生成的相对路径。事实上，除了重定向(redirect)，还有永久链接（permalink）和一些其他情况，Rails都建议用</em>path代替_url方法，每当你这么做，基于HTTP头部请求、document的一个元素或是URL，他都会产生较短的字符串和用户代理（浏览器或其他的东西）可以推断出完全合格的URL。</p>
+
+<p>如果你在练习这篇文章的代码之时，你可能会发现基本上<em>url和</em>path没什么区别。但是，我更倾向于在一般讨论中使用<em>url这种风格，而在view中使用</em>path风格（例如link_to或form_for）。这基本是书写风格方面的问题。使用<em>url更普遍，使用</em>path则更专业。</p>
+
+<h3>使用字面的URL</h3>
+
+<blockquote><p>如果你想要，你可以将路径或URL硬编码作为link_to或是redirect_to的字符串参数，举个例子：</p></blockquote>
+
+<p><code>ru
+link_to "Help", controller: "main", action: "help"
+</code></p>
+
+<blockquote><p>可以使用下面来替代：</p></blockquote>
+
+<p><code>ru
+link_to "Help", "/main/help"
+</code></p>
+
+<blockquote><p>然而，在路由系统中使用字面路径或字面URL，你需要自己维护他（如果这是适合你做的方法，你当然可以使用Ruby的字符串插值技术插入值，但这真的符合Rails的两大原则吗？）</p></blockquote>
+
+<br/>
+
+
+
+
+<h3 id="2.4.3">2.4.3 给你的路由命名</h3>
+
+
+<hr />
+
+<p>最好的命名方法是按照REST的惯例，在另一个方面，你还需要自上而下的考虑，那就是，你需要在你的应用中写怎样的代码让创建路由成为可能。</p>
+
+<p>举个例子，调用link_to:</p>
+
+<p><code>ru
+link_to "Auction of #{item.name}",
+  controller: "items",
+  action: "show",
+  id: item.id
+</code></p>
+
+<p>这个路由规则匹配路径是（最普通的路由）</p>
+
+<p><code>ru
+get "item/:id" =&gt; "items#show"
+</code></p>
+
+<p>可以确定的是这样简短的路由会更加好看，毕竟，路由规则总是定义了controller和action。
+下面这是item命名路由的很好的候选：</p>
+
+<p><code>ru
+get "item/:id" =&gt; "items#show", as: "item"
+</code></p>
+
+<p>通过在link_to中引入item_path来改善产生路由：</p>
+
+<p><code>ru
+link_to "Auctionof#{item.name}", item_path(id: item.id)
+</code></p>
+
+<p>给路由一个简短的命名，使我们省略一些查询路由的工作，提高效率，</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.4">2.4.4 参数糖</h3>
+
+
+<hr />
+
+<p>事实上，你给item_path的参数可以更短。如果你需要像命名路由提供一个id参数，完全可以直接将这个:id的值作为参数。</p>
+
+<p><code>ru
+link_to "Auction of #{item.name}", item_path(item.id)
+</code></p>
+
+<p>语法糖更加牛B：你可以传一个对象，Rails自动获取其中的id：</p>
+
+<p><code>ru
+link_to "Auction of #{item.name}", item_path(item)
+</code></p>
+
+<p>这些原则继承命名路由中模式字符串的其他段键，举个例子，如果你有一个路由像：</p>
+
+<p><code>ru
+get "auction/:auction_id/item/:id" =&gt; "items#show", as: "item"
+</code></p>
+
+<p>你可以这样调用它：</p>
+
+<p><code>ru
+link_to "Auction of #{item.name}", item_path(auction, item)
+</code></p>
+
+<p>然后你会得到像下面的路径：</p>
+
+<p><code>bash
+/auction/5/item/11
+</code></p>
+
+<p>在这里，我们让Rails自动推断auction和item的id值，它是通过你所传递给命名路由helper方法的参数（这个参数不管是否hash）调用to_param方法。只要你按照顺序给他们传递参数，就能获得对应的id值。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.5">2.4.5 你的糖中还有糖吗？</h3>
+
+
+<hr />
+
+<p>而且，你不需要让Rails路由生成id值插入URL中，你可以通过在你的model中覆盖 to_param 方法来改变这个值。</p>
+
+<p>假设你想要你的auction的item的描述信息出现在你的URL中。那么，在你的model中item.rb文件，请覆盖to_params方法；
+在这里，我们覆盖它，让它提供一个“munged” （除去标点符号和加入连字符）。使用parameterize方法添加到Active Support的string中，它会使你的字符串转化成适合url的漂亮字符串。</p>
+
+<p><code>ru
+def to_param
+ description.parameterize
+end
+</code></p>
+
+<p>随后，调用item_path(auction, item)方法，将会产生如下内容：</p>
+
+<p><code>bash
+/auction/3/item/cello-bow
+</code></p>
+
+<p>当然，如果你在调用处区域用“cello-bow”代替id值，你将需要再次挖出对象。
+博客应用利用这种技术创建slugs用来作为永久链接通常有一个单独字段来存储毁掉版本的部分路径的标题。
+这样，我们可以这样做：</p>
+
+<p><code>ru
+Item.where(munged_description: params[:id]).first!
+</code></p>
+
+<p>去查找正确的item记录。（没错，你可以在路由中调用id以外的其他东西使他更加清楚）</p>
+
+<h3>Courtenay 说：</h3>
+
+<blockquote><p>为什么在URL中不使用数字表示呢？</p>
+
+<p>首先，你的竞争者可以通过url知道你创建了多少个auction。</p>
+
+<p>连续数字的id也允许蜘蛛自动偷窃你的内容，成为进入你数据库的窗口。</p>
+
+<p>使用文字使url更加好看。</p></blockquote>
+
+<br/>
+
+
+
+
+<h2 id="2.5">2.5 作用域的路由规则</h2>
+
+
+<p>Rails提供各种方法给相关路由规则捆绑在一起。这都基于使用scope方法和它的各种快捷方式。打个比方，你想要给auctions添加如下路由：</p>
+
+<p><code>ru
+get 'auctions/new' =&gt; 'auctions#new'
+get 'auctions/edit/:id' =&gt; 'auctions#edit'
+post 'auctions/pause/:id' =&gt; 'auctions#pause'
+</code></p>
+
+<p>你可以dry你的routes.rb文件，使用scope方法代替:</p>
+
+<p>``` ru
+scope controller: :auctions do</p>
+
+<pre><code>get 'auctions/new' =&gt; :new
+get 'auctions/edit/:id' =&gt; :edit 
+post 'auctions/pause/:id' =&gt; :pause
+</code></pre>
+
+<p>end
+```</p>
+
+<p>接着，你可以再次dry它，通过在scope方法添加:path参数：</p>
+
+<p><code>ru
+scope path: '/auctions', controller: :auctions do
+  get 'new' =&gt; :new
+  get 'edit/:id' =&gt; :edit
+  post 'pause/:id' =&gt; :pause
+end
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.1">2.5.1 Controller</h3>
+
+
+<hr />
+
+<p>scope方法接收一个:controller项（或者可以理解为接收一个符号作为第一个参数并且会被假定为controller）。因此，下面两种定义方式是相同的：</p>
+
+<p><code>ru
+scope controller: :auctions do
+scope :auctions do
+</code></p>
+
+<p>为了使之更为明显，你可以使用controller方法替代scope方法，本质上也是一种语法糖：</p>
+
+<p><code>ru
+controller :auctions do
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.2">2.5.2 路径前缀</h3>
+
+
+<hr />
+
+<p>scope方法接收一个:path选项进行限制（或者你可以理解为接收一字符串作为第一个参数并且会被作为路径的前缀），
+因此，下面两种定义是相同的：</p>
+
+<p><code>ru
+scope path: '/auctions' do
+scope '/auctions' do
+</code></p>
+
+<p>Rails4有一个新功能，可以给:path传递符号代替原来的字符串作为参数，看下面定义：</p>
+
+<p><code>ru
+scope :auctions, :archived do
+</code></p>
+
+<p>将scope下地所有路由嵌套在"/auctions/archived"路径下</p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.3">2.5.3 命名前缀</h3>
+
+
+<hr />
+
+<p>scope方法也可以接收:as选项,它可以影响产生命名路由的helper方法。
+例如，路由：</p>
+
+<p><code>ru
+scope :auctions, as: 'admin' do
+  get 'new' =&gt; :new, as: 'new_auction'
+end
+</code>
+将会产生URL的helper方法admin_new_auction_url.</p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.4">2.5.4 命名空间</h3>
+
+
+<hr />
+
+<p>URL可以使用命名空间namespace方法进行分组，这是一个语法糖，被module包裹，将命名前缀和路径前缀设置为一个声明。
+命名空间namespace方法将第一个参数转化为字符串，这就是为什么一些代码例子你会看到它接收一个符号：</p>
+
+<p><code>ru
+namespace :auctions, :controller =&gt; :auctions do
+  get 'new' =&gt; :new
+  get 'edit/:id' =&gt; :edit
+  post 'pause/:id' =&gt; :pause
+end
+</code></p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.5">2.5.5 捆绑约束</h3>
+
+
+<hr />
+
+<p>如果你发现你在相关的路由中重复写了一些相似的段键约束，你可以将它们捆绑在一起，然后在scope方法中使用:constraints选项</p>
+
+<p><code>ru
+scope controller: :auctions, constraints: {:id=&gt;/\d+/} do
+  get 'edit/:id' =&gt; :edit
+  post 'pause/:id' =&gt; :pause
+end
+</code></p>
+
+<p>它就像是给定的scope需要一个路由子规则来约束。事实上，如果你给一个没有接收段键值的规则加上约束，将会导致路由破坏。
+既然你是嵌套的，你可能要使用的约束方法:constraints，它只是一种使规则定义更紧凑的语法糖。</p>
+
+<p>``` ru
+scope path: &lsquo;/auctions&rsquo;, controller: :auctions do
+  get &lsquo;new&rsquo; => :new
+  constraints id: /\d+/ do</p>
+
+<pre><code>get 'edit/:id' =&gt; :edit
+post 'pause/:id' =&gt; :pause
+</code></pre>
+
+<p>  end
+end
+```</p>
+
+<p>为了重用模块化，你可以提供一个约束方法与有matches?方法的对象。</p>
+
+<p>``` ru
+class DateFormatConstraint
+  def self.matches?(request)</p>
+
+<pre><code>request.params[:date] =~ /\A\d{4}-\d\d-\d\d\z/ # YYYY-MM-DD
+</code></pre>
+
+<p>  end
+end</p>
+
+<h1>inroutes.rb</h1>
+
+<p>constraints(DateFormatConstraint) do
+  get &lsquo;since/:date&rsquo; => :since
+end
+```</p>
+
+<p>在这个特殊的例子中（DateFormatConstraint），如果一个图谋不轨或怀有恶意的用户在URL中输入不好的格式的日期作为参数，Rails将会返回404状态码代替抛出异常。</p>
+
+<br/>
+
+
+
+
+<h2 id="2.6">2.6 路由列表</h2>
+
+
+<p>一个好用的路由列表在Rails项目中被作为标准的rake任务使用，通过在你的应用目录下输入rake routes调用它。举个例子，这里输出一个routes文件包含仅仅一个resources :products规则：</p>
+
+<p>``` bash
+$ rake routes
+  products      GET   /products(.:format)            products#index</p>
+
+<pre><code>            POST   /products(.:format)           products#create
+</code></pre>
+
+<p>  new_product   GET    /products/new(.:format)       products#new
+  edit_product  GET    /products/:id/edit(.:format)  products#edit
+  product       GET    /products/:id(.:format)       products#show</p>
+
+<pre><code>            PATCH  /products/:id(.:format)       products#update
+            PUT    /products/:id(.:format)       products#update
+            DELETE /products/:id(.:format)       products#destroy
+</code></pre>
+
+<p>```</p>
+
+<p>输出分为四列，前两列是可选的并且包含路由名和http方法约束，当提供这两列的内容，第三列包含URL映射的字符串。最后，第四列指示路由应该映射哪个controller和哪个action，加上已经定义的路由段键约束。</p>
+
+<p>注意路由任务可以选择一个controller作为环境来查找，看下面例子：</p>
+
+<p><code>bash
+$ rake routes CONTROLLER=products
+</code></p>
+
+<p>这将会列出所有与ProductsController相关的路由。</p>
+
+<br/>
+
+
+
+
+<h2>总结</h2>
+
+
+<p>上半篇帮助你全面了解Rails的普通路由规则和路由系统的两个怎样的目的。</p>
+
+<ul>
+<li><p>识别传入的请求并且映射到相应的controller和action，以及额外的变量。</p></li>
+<li><p>识别URL参数方法（例如link_to）匹配相应路径，以便生成适当的HTML链接。</p></li>
+</ul>
+
+
+<p>我们通过在定义路由时使用一些先进的技术如正则表达式和通配符，还有在scope方法下捆绑共享相关路由来创立属于我们自己的路由。</p>
+
+<p>最后，再继续进行之前，我们应该确保你理解如何命名路由工作，以及为什么它们让你变成更容易，让你的视图代码更加简洁。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rails Enviroments and Configuration]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration/"/>
+    <updated>2015-07-25T13:03:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration</id>
+    <content type="html"><![CDATA[<p>对于 Rails 的环境和配置，这里翻译了一篇文章。如果有翻译错的地方，欢迎指出。</p>
+
+<h2>目录：</h2>
+
+<h4><a href="#1.1">1.1 Bunlder</a></h4>
+
+<h5><a href="#1.1.1">1.1.1 Gemfile</a></h5>
+
+<h6><a href="#1.1.1.1">1.1.1.1 直接从Git仓库加载 gems</a></h6>
+
+<h6><a href="#1.1.1.2">1.1.1.2 从文件系统加载gem</a></h6>
+
+<h5><a href="#1.1.2">1.1.2 安装Gem</a></h5>
+
+<h5><a href="#1.1.3">1.1.3 Gem Locking</a></h5>
+
+<h5><a href="#1.1.4">1.1.4 Gem Packages</a></h5>
+
+<h4><a href="#1.2">1.2 启动和应用设置</a></h4>
+
+<h5><a href="#1.2.1">1.2.1 application.rb</a></h5>
+
+<h6><a href="#1.2.1.1">1.2.1.1 修改加载路径</a></h6>
+
+<h6><a href="#1.2.1.2">1.2.1.2 Time Zones</a></h6>
+
+<h6><a href="#1.2.1.3">1.2.1.3 Localization</a></h6>
+
+<h6><a href="#1.2.1.4">1.2.1.4 Generator 的默认设置</a></h6>
+
+<h5><a href="#1.2.2">1.2.2 Initializers</a></h5>
+
+<h6><a href="#1.2.2.1">1.2.2.1 Backtrace Silencers</a></h6>
+
+<h6><a href="#1.2.2.2">1.2.2.2 过滤参数日志</a></h6>
+
+<h6><a href="#1.2.2.3">1.2.2.3 Inflections</a></h6>
+
+<h6><a href="#1.2.2.4">1.2.2.4 自定义MIME Types</a></h6>
+
+<h6><a href="#1.2.2.5">1.2.2.5 Secret Token</a></h6>
+
+<h6><a href="#1.2.2.6">1.2.2.6 Session Store</a></h6>
+
+<h6><a href="#1.2.2.7">1.2.2.7 参数包装</a></h6>
+
+<h5><a href="#1.2.3">1.2.3 额外的配置</a></h5>
+
+<h6><a href="#1.2.3.1">1.2.3.1 Log-Level覆盖</a></h6>
+
+<h6><a href="#1.2.3.2">1.2.3.2 Schema Dumper</a></h6>
+
+<h4><a href="#1.3">1.3 开发模式</a></h4>
+
+<h5><a href="#1.3.1">1.3.1 自动加载类</a></h5>
+
+<h5><a href="#1.3.2">1.3.2 Eager Load</a></h5>
+
+<h5><a href="#1.3.3">1.3.3 错误报告</a></h5>
+
+<h5><a href="#1.3.4">1.3.4 缓存</a></h5>
+
+<h5><a href="#1.3.5">1.3.5 抛出发送错误</a></h5>
+
+<h5><a href="#1.3.6">1.3.6 反对通知</a></h5>
+
+<h5><a href="#1.3.7">1.3.7 慢查询的解释</a></h5>
+
+<h5><a href="#1.3.8">1.3.8 待迁移错误页面</a></h5>
+
+<h5><a href="#1.3.9">1.3.9 Assets的Debug模式</a></h5>
+
+<h4><a href="#1.4">1.4 测试模式</a></h4>
+
+<h4><a href="#1.5">1.5生产模式</a></h4>
+
+<h5><a href="#1.5.1">1.5.1 Assets</a></h5>
+
+<h4><a href="#1.6">1.6 日志</a></h4>
+
+<h5><a href="#1.6.1">1.6.1 Rails的日志文件</a></h5>
+
+<h5><a href="#1.6.2">1.6.2 标记日志</a></h5>
+
+<h5><a href="#1.6.3">1.6.3 日志文件分析</a></h5>
+
+<h6><a href="#1.6.3.1">1.6.3.1 Rails::Subscriber.colorize_logging</a></h6>
+
+<h4><a href="#1.6.4">1.6.4 总结</a></h4>
+
+<p>除了 RAILS_ENV 可以开启所需的环境，你也可以通过设置RACK_ENV 可以设置默认环境(development, production, test)</p>
+
+<h2 id="1.1"> 1.1 Bundler</h2>
+
+
+<p>Bundler 虽然不是Rails4 的特定工具，但是它却能够很好地解决你应用的gems依赖。
+Bundler 通过一个配置文件Gemfile 中解决一些列版本的gems依赖。</p>
+
+<h3 id="1.1.1"> 1.1.1 Gemfile</h3>
+
+
+<hr />
+
+<p>在你的Rails应用的根目录下，这个文件定义了你的Rails应用所有依赖，包括你所用的Rails 版本。Gemfile的基础语法很简单，如下：</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'kaminari'
+gem 'nokogiri'
+</code></pre>
+
+<p>```</p>
+
+<p>可以将这些gem依赖放在一个或多个环境中，具体做法是定义一个或多个环境符号的块，如下例子：</p>
+
+<p>``` ru</p>
+
+<pre><code>group :development do
+  gem 'pry-rails'
+end
+
+group :test do
+  gem 'capybara'
+  gem 'database_cleaner'
+end
+
+group :development, :test do
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+end
+</code></pre>
+
+<p>```</p>
+
+<p>这个gem 方法还接受第二个可选参数，也就是Rubygem的版本号，如果此参数为空，则会自动下载最新稳定的版本。
+如何定义这第二个参数呢？看以下例子：</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'nokogiri', '1.5.6'
+gem 'pry-rails', '&gt; 0.2.2'
+gem 'decent_exposure', '~&gt;2.0.1'
+gem 'draper', '1.0.0.beta6'
+</code></pre>
+
+<p>```</p>
+
+<p>有些时候，你的gem需要用require语句加载进来，在这种情况下，你只需要在gem 的最右边声明就行了。
+如：</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'webmock', require: 'webmock/rspec'
+</code></pre>
+
+<p>```</p>
+
+<h4 id="1.1.1.1"> 1.1.1.1 直接从Git仓库加载 gems</h4>
+
+
+<hr />
+
+<p>现在我们可以从<a href="https://rubygems.org">https://rubygems.org</a> 下载gems,也可以非常简单的从gem的仓库获取这个gem，如下代码：</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'carrierwave', git: 'git@github.com:jnicklas/carrierwave.git'
+</code></pre>
+
+<p>```</p>
+
+<p>如果这个gem的源代码放在github上面，可以直接用:github ：</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'carrierwave', github:'jnicklas/carrierwave'
+</code></pre>
+
+<p>```</p>
+
+<p>如果有几个gemspec共用一个git仓库，可以像如下代码操作:mZ    git &lsquo;git://github.com/rails/rails.git&rsquo;</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'railties'
+gem 'action_pack'
+gem 'active_model'
+</code></pre>
+
+<p>```</p>
+
+<p>另外，你可以通过gem的所属仓库，指定对应的ref，branch或者是tag：</p>
+
+<p>``` ru</p>
+
+<pre><code>git 'git://github.com/rails/rails.git', ref: "4aded"
+git 'git://github.com/rails/rails.git', branch: '3-2-stable'
+git 'git://github.com/rails/rails.git', tag: 'v3.2.11'
+
+gem 'nokogiri', git: 'git://github.com/tenderlove/nokogiri.git', ref =&gt; '0eec4'
+</code></pre>
+
+<p>```</p>
+
+<h4 id="1.1.1.2"> 1.1.1.2 从文件系统加载gem</h4>
+
+
+<hr />
+
+<p>有时候你在开发模式下，想要加载一个gem（例如你fork了一个gem，作了修改，但是没有提交，想测试一下）可以使用:path：</p>
+
+<p>``` ru</p>
+
+<pre><code>gem 'nokogiri', path: '~/code/nokogiri'
+</code></pre>
+
+<p>```</p>
+
+<h3 id="1.1.2"> 1.1.2 安装Gem</h3>
+
+
+<hr />
+
+<p>当你对Gemfile做了修改，调用install命令确保Gemfile所有依赖都有效。</p>
+
+<p>``` sh</p>
+
+<pre><code>$ bundle install
+Fetching gem metadata from https://rubygems.org/.........
+Fetching gem metadata from https://rubygems.org/.........
+Fetching git://github.com/rails/rails.git
+Fetching git://github.com/rails/activerecord-deprecated_finders.git
+Fetching git://github.com/rails/arel.git
+Fetching git://github.com/rails/coffee-rails.git
+Fetching git://github.com/rails/sprockets-rails.git
+Fetching git://github.com/rails/sass-rails.git
+Installing rake (10.0.3)
+Installing i18n (0.6.1)
+.........
+</code></pre>
+
+<p>```</p>
+
+<p>install命令会更新所有你的Gemfile中不与其他依赖冲突的最新版本依赖。</p>
+
+<h3 id="1.1.3"> 1.1.3 Gem Locking</h3>
+
+
+<hr />
+
+<p>每一次更新或安装Gem，Bundler都会计算你项目的gem依赖树，并将结果存储在Gemfile.lock文件中。所以，从这点看，在使用Gem时，Gemfile将会被锁定，Bundler只会加载特定的版本的Gem。</p>
+
+<h3 id="1.1.4"> 1.1.4 Gem Packages</h3>
+
+
+<hr />
+
+<p>你可以将你所有的gems打包到vendor/cache目录中，使用如下命令：</p>
+
+<p>``` sh</p>
+
+<pre><code>bundle Package
+</code></pre>
+
+<p>```</p>
+
+<p>当运行bundle install时，将会直接使用vendor/cache目录中的gem而不连接<a href="https://rubygems.org">https://rubygems.org</a></p>
+
+<p>注意：无Rails的脚本运行要加上bundle exec 来初始化，如：</p>
+
+<p>``` sh</p>
+
+<pre><code>bundle exec guard
+</code></pre>
+
+<p>```</p>
+
+<p>Bundler还可以为你所有的可执行bundle创建binstubs。通过调用bundle install带上参数&mdash;binstubs，就会在你的根目录下创建一个bin目录，其中包括一些RubyGems环境的可执行脚本：</p>
+
+<p>``` ru</p>
+
+<pre><code>#!/usr/bin/env ruby
+#
+# This file was generated by Bundler.
+#
+# The application 'guard' is installed as part of a gem, and
+# this file is here to facilitate running it.
+require 'pathname'
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path("../../Gemfile",
+                                           Pathname.new(__FILE__).realpath)
+</code></pre>
+
+<p>mZ    require &lsquo;rubygems&rsquo;</p>
+
+<pre><code>require 'bundler/setup'
+
+load Gem.bin_path('guard','guard')
+</code></pre>
+
+<p>```</p>
+
+<p>使用binstubs，可以不用加bundle exec 而直接从bin/目录执行脚本.</p>
+
+<p>``` sh</p>
+
+<pre><code>$ bin/guard
+</code></pre>
+
+<p>```</p>
+
+<p>你还可以将./bin加入$PATH路径，然后就可以轻松的执行：</p>
+
+<p>``` sh</p>
+
+<pre><code>$ guard
+</code></pre>
+
+<p>```</p>
+
+<p>使用Rails4创建项目，会自动创建binstubs，创建了bin/bundle, bin/rails,bin/rake，更新特定的stubs，可以使用下列命令：</p>
+
+<p>``` sh</p>
+
+<pre><code>rake rails:update:bin
+</code></pre>
+
+<p>```</p>
+
+<h2 id="1.2"> 1.2 启动和应用设置</h2>
+
+
+<hr />
+
+<p>用Rails开启进程处理请求（例如：rails sever），第一件事就是加载config/boot.rb文件。
+建立整个rails栈，主要引用三个文件：</p>
+
+<blockquote><p>boot.rb: 建立bunlder和加载路径
+application.rb: 加载rails的gems，为gems定义rails环境，进行应用配置
+environments.rb:运行所有初始化</p></blockquote>
+
+<h3 id="1.2.1"> 1.2.1 application.rb</h3>
+
+
+<hr />
+
+<p>config/application.rb是Rails应用设置的主要文件，也是config/environments.rb最先加载的文件。
+让我们一步一步来看这个文件，application.rb的下一行，一旦config/boot.rb加载，轮子就转动</p>
+
+<p>``` ru</p>
+
+<pre><code>require File.expand_path('../boot',__FILE__)
+</code></pre>
+
+<p>```</p>
+
+<p>对于下面这行代码：</p>
+
+<p>``` ru</p>
+
+<pre><code>require 'rails/all'
+</code></pre>
+
+<p>```</p>
+
+<p>这你可以更改，将你所想要的组件加载进来，而不是加载所有的rails组件。</p>
+
+<p>``` ru</p>
+
+<pre><code># To pick the frameworks you want, remove 'require "rails/all"'
+# and list the framework railties that you want:
+# 
+# require "active_model/railtie"
+# require "active_record/railtie"
+# require "action_controller/railtie"
+# require "action_mailer/railtie" 
+# require "action_view/railtie"
+# require "sprockets/railtie"
+# require "rails/test_unit/railtie"
+</code></pre>
+
+<p>```</p>
+
+<h4 id="1.2.1.1"> 1.2.1.1 修改加载路径</h4>
+
+
+<hr />
+
+<p>默认的rails会寻找标准目录如：app/models 或是app/controllers,自动作为加载路径，你也可以自己添加目录到加载路径：</p>
+
+<p>``` ru</p>
+
+<pre><code># Custom directories with classes and modules you want to be auto loadable
+#config.autoload_paths += %W(#{config.root}/extras)
+</code></pre>
+
+<p>```</p>
+
+<p>注意：config.root指向你的rails应用的根目录，因此如果你需要，想要用一个presenters的目录代替原有的models，可以这么做：</p>
+
+<p>``` ru</p>
+
+<pre><code>config.autoload_paths += %W(#{config.root}/app/presenters)
+</code></pre>
+
+<p>```</p>
+
+<p>这里的%W方法作为以空白隔开元素的数组，使代码构建更加方便。</p>
+
+<h4 id="1.2.1.2"> 1.2.1.2 Time Zones</h4>
+
+
+<hr />
+
+<p>rails4默认的time zones是utc，你也可以覆盖它的默认值：</p>
+
+<p>``` ru</p>
+
+<pre><code># Set Time.zone default to the specified zone and make activerecord
+# auto-convert to this zone.
+# Run "rake-Dtime" for a list of tasks for finding time zone names.
+config.time_zone = 'CentralTime(US&amp;Canada)'
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.1.3"> 1.2.1.3 Localization</h3></p>
+
+<hr />
+
+<p>Rails默认的语言Locale是:en 英文，你也可以在配置文件进行修改：</p>
+
+<p>``` ru</p>
+
+<pre><code># The default locale is :en and all translations from
+# config/locales/*.rb,yml are auto loaded.
+# config.i18n.load_path += Dir[Rails.root.join('my','locales',
+                                             # '*.{rb,yml}')]
+# config.i18n.default_locale = :de
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.1.4"> 1.2.1.4 Generator 的默认设置</h4></p>
+
+<hr />
+
+<p>generator脚本可以根据你的工具链做出特定假定；在这里设置确定的值可以减少命令行参数的输入。
+例如：运用没有features的Rspec和haml作为模板引擎时，我们可以这么做：</p>
+
+<p>``` ru</p>
+
+<pre><code># Configure generators values. Many other options are available,
+# be sure to check the documentation.
+config.generators do |g|
+  g.template_engine :haml
+  g.test_framework :rspec, fixture: false
+end
+</code></pre>
+
+<p>```</p>
+
+<p>注意：rubygems的一些gems像rspec-rails,haml-rails,factory_gril_rails已经为你做了这些处理的。</p>
+
+<p><h3 id="1.2.2"> 1.2.2 Initializers</h3></p>
+
+<hr />
+
+<p>Rails2介绍了一个概念，将配置设置放入config/initializers目录中建立的一个小的ruby文件，config/initializers目录中的文件会在程序启动后被自动加载。</p>
+
+<p>你可以增加自己需要的配置设置，通过再initializers目录中建立ruby文件，很多人喜欢在这个目录中建立文件设置常量，为了安全这些常量的值放在yml文件中，通过initializers目录中的rb文件进行引入并赋予常量。</p>
+
+<p><h4 id="1.2.2.1">1.2.2.1 Backtrace Silencers</h4></p>
+
+<hr />
+
+<p>没人喜欢很长的exception的回溯跟踪，rails 有个机制可以减少回溯的层数（这种方法是删除行）。</p>
+
+<p>``` ru</p>
+
+<pre><code># You can add backtrace silencers for libraries that you're using but
+# don't wish to see in your backtraces.
+Rails.backtrace_cleaner.add_silencer{|line|line=~/my_noisy_library/}
+
+# You can also remove all the silencers if you're trying to debug a
+# problem that might stem from framework code.
+Rails.backtrace_cleaner.remove_silencers!
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.2.2"> 1.2.2.2 过滤参数日志</h4></p>
+
+<hr />
+
+<p>当有请求到你的rails应用，默认的，rails的logs文件有一些细节：请求路径,http 方法，Ip地址和参数。倘若黑客利用某些方法得到你的日志文件，那么他就能看到这些敏感信息，包括密码信息。</p>
+
+<p>filter_parameter_logging.rb 初始化器可以让你设置哪些请求参数需要从你的log文件中过滤掉。
+如果rails 接收到请求参数被你设置的filter_parameters收集了，将会在你的log文件中标记为[FILTERED]。</p>
+
+<p>``` ru</p>
+
+<pre><code># Configure sensitive parameters which will be filtered from the log file.
+Rails.application.config.filter_parameters += [:password]
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.2.3"> 1.2.2.3 Inflections<h4></p>
+
+<hr />
+
+<p>Rails 有一个Infector类，它负责将字符串变为单复数，类名变表名，模块化类名，类名变外键名等（其中一些操作有滑稽的名字，如：dasherize）
+默认的，对于一些不可数的名词，ActiveSupport这个gem的infections.rb文件中。
+大多数时候，Infector类有一份得体的工作，就是把类名转化为相应复数的表名。</p>
+
+<p>``` sh</p>
+
+<pre><code>$ rails console
+&gt;&gt; ActiveSupport::Inflector.pluralize "project"
+=&gt; "projects"
+&gt;&gt; ActiveSupport::Inflector.pluralize "virus"
+=&gt; "viri"
+&gt;&gt; "pensum".pluralize # Inflector features are mixed into String by default
+=&gt; "pensums"
+</code></pre>
+
+<p>```</p>
+
+<p>然而，你可以为infector添加新规则：在config/initializers/inflections.rb 文件：</p>
+
+<p>``` ru</p>
+
+<pre><code>ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.plural /^(ox)$/i, '\1en'
+  inflect.singular /^(ox)en/i, '\1'
+  inflect.irregular 'person', 'people'
+  inflect.uncountable %w( fish sheep  )
+end
+</code></pre>
+
+<p>```</p>
+
+<p>``` ru
+activesupport/test/inflector_test_cases.rb文件有一长串用Infector正确处理的复数转化列表，例如：</p>
+
+<pre><code>"datum" =&gt; "data",
+"medium" =&gt; "media",
+"analysis" =&gt; "analyses"
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.2.4"> 1.2.2.4 自定义MIME Types</h4></p>
+
+<hr />
+
+<p>Rails支持标准的MIME TYPES设置(*/*, text/html, text/plain, text/javascript, text/css, text/calendar, text/csv, application/xml, application/rss+xml, application/atom+xml, application/x-yaml, multipart/form-data, application/x-www-form-urlencoded, application/json)：</p>
+
+<p><table><tbody>
+<tr><td><em>Short name</em></td> <td>respond_to<em> symbol</em></td>  <td><em>Aliases and Explanations</em> </td></tr>
+<tr><td>text/html</td>  <td>:html, :xhtml </td>      <td>application/xhtml+xml</td></tr>
+<tr><td>text/plain</td> <td>:text, :txt  </td>   <td>                 </td></tr>
+<tr><td>text/javascript</td> <td>:js      </td> <td> application/javascript, application/x-javascript </td></tr>
+<tr><td>text/css</td> <td>:css</td>   <td> Cascading style sheets     </td></tr>
+<tr><td>text/calendar</td> <td>:ics</td>  <td>iCalendar format for sharing meeting requests and tasks </td></tr>
+<tr><td>text/csv</td>  <td>:csv</td> <td> Comma-separated values </td></tr>
+<tr><td>application/xml</td> <td>:xml</td> <td>   text/xml, application/x-xml </td></tr>
+<tr><td>application/rss+xml</td> <td>:rss</td> <td>Really Simple Syndication format for web feeds</td></tr>
+<tr><td>application/atom+xml</td> <td>:atom</td> <td>Atom Syndication Format for web feeds</td></tr>
+<tr><td>application/x-yaml</td> <td>:yaml</td> <td>text/yaml &ndash; The human-readable data serialization format</td></tr>
+<tr><td>application/x-www-form- urlencoded</td> <td>url_encoded_form</td> <td>The default content type of HTML forms</td></tr>
+<tr><td>multipart/form-data</td> <td>:multipart_form</td> <td>Used for HTML forms that contain files, non-ASCII data, and
+binary data</td></tr>
+<tr><td>application/json</td> <td>:json</td> <td>text/x-json, application/jsonrequest-JavaScript Object Notation</td></tr>
+</tbody></table></p>
+
+<p>如果项目需要响应其他MIME TYPE，你需要再mime_types.rb文件中进行登记：</p>
+
+<p>``` ru</p>
+
+<pre><code># Add new mime types for use in respond_to blocks:
+# Mime::Type.register "text/richtext" ,:rtf
+# Mime::Type.register_alias "text/html", :iphone
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.2.5">1.2.2.5 Secret Token</h4></p>
+
+<hr />
+
+<p>有些的黑客可以在服务器不知情的情况下修改该cookies内容，通过数字签名发送给浏览器cookies,而Rails能探测他们是否被捣鼓。
+这和secret_token.rb文件有关，这个initializer有secret key，伴随着你的应用随机产生，用来标记cookie。</p>
+
+<p>``` ru</p>
+
+<pre><code># Your secret key for verifying the integrity of signed cookies.
+# If you change this key, all old signed cookies will become invalid!
+
+# Make sure the secret is at least 30 characters and all random,
+# no regular words or you'll be exposed to dictionary attacks.
+# You can use `rake secret` to generate a secure secret key.
+
+# Make sure your secret_key_base is kept private
+# if you're sharing your code publicly.
+Example::Application.config.secret_key_base = 'f32b1a3755e05a3d...'
+</code></pre>
+
+<p>```</p>
+
+<p>rake secret 可以重新生成secret key。</p>
+
+<p><h4 id="1.2.2.6">1.2.2.6 Session Store</h4></p>
+
+<hr />
+
+<p>Rails4 session cookies加密使用的是最新cookis加密存储策略，session_store.rb这个initializer通过设置session store的type和key来配置你的应用的session存储。</p>
+
+<p>``` ru</p>
+
+<pre><code>Example::Application.config.session_store :encrypted_cookie_store, key: '_example_session'
+</code></pre>
+
+<p>```</p>
+
+<p>session cookies 是用secret_token.rb中的secret_key_base来标记的，如果你感到困惑，可以更改secret_token.rb 的secret key值，或者运行rake secret 来重新生成secret key。</p>
+
+<p><h4 id="1.2.2.7">1.2.2.7 参数包装<h4></p>
+
+<hr />
+
+<p>Rails3.1后引入的，wrap_parameters.rb这个initializer能配置你的应用与javascript mvc框架交互。（例如：backbone.js）</p>
+
+<p>``` ru</p>
+
+<pre><code># Enable parameter wrapping for JSON. You can disable this by setting
+# :format to an empt yarray.
+ActiveSupport.on_load(:action_controller) do
+  wrap_parameters format: [:json] if respond_to?(:wrap_parameters)
+end
+
+# To enable root element in JSON for ActiveRecord objects.
+# ActiveSupport.on_load(:active_record) do
+#   self.include_root_in_json = true
+# end
+</code></pre>
+
+<p>```</p>
+
+<p>这样到底会发生什么呢？当你向controller提交json参数时，rails将参数包裹到一个嵌套的hash中，并用controller的名字作为这个hash的key，例如：</p>
+
+<p>``` ru</p>
+
+<pre><code>{"title": "The Rails4 Way"}
+</code></pre>
+
+<p>```</p>
+
+<p>将上诉代码提交到ArticlesController,将会转化成下列样子：</p>
+
+<p>``` ru</p>
+
+<pre><code>{ "title": "The Rails 4 Way","article"=&gt;{"title":" The Rails 4 Way"}  }
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.2.3">1.2.3 额外的配置</h3></p>
+
+<hr />
+
+<p>大多数配置选项我们可以在application.rb文件和标准的initializers文件中找到例子，这里还有一些额外的选项，你可以将它添加到额外的intializers文件中。</p>
+
+<p><h4 id="1.2.3.1">1.2.3.1 Log-Level覆盖</h4></p>
+
+<hr />
+
+<p>默认的log Level是:debug，如果你有需要，也可以覆盖它；</p>
+
+<p>``` ru</p>
+
+<pre><code># Force all environments to use the same logger level
+# (by default production uses:info, the others :debug)
+config.log_level = :debug
+</code></pre>
+
+<p>```</p>
+
+<p><h4 id="1.2.3.2">1.2.3.2 Schema Dumper</h4></p>
+
+<hr />
+
+<p>每一次，当你运行测试代码，Rails将会用自动导出schema.rb的脚本把你的development数据库的schema导出到你的test数据库中，类似ActiveRecord的迁移脚本，事实上，他们用了相同的API。</p>
+
+<p>如果你正在做一个与schema dumper有冲突的事，你有可能需要用SQL将它转化为旧方式schema dumper。（见注释）</p>
+
+<p>``` ru</p>
+
+<pre><code># Use SQL instead of ActiveRecord's schema dumper when creating the
+# test database. This is necessary if your schema can't be completely
+# dumped by the schema dumper, for example, if you have constraints
+# or db-specific column types
+config.active_record.schema_format = :sql
+</code></pre>
+
+<p>```</p>
+
+<p><h2 id="1.3">1.3 开发模式</h2></p>
+
+<p>开发模式是rails的默认模式，也是作为开发者最长时间使用的模式，</p>
+
+<p>``` ru</p>
+
+<pre><code># File: config/environments/development.rb
+Example::Application.configure do
+  # Settings specified here will take precedence over those in
+  # config/application.rb.
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.3.1">1.3.1 自动加载类</h3></p>
+
+<hr />
+
+<p>当你在开发模式下的一个好处是快速反馈机制，当你改变代码时，只要重新刷新浏览器，就能立即看见所改的变化。</p>
+
+<p>这个行为是由config.cache_classes设置的：</p>
+
+<p>``` ru</p>
+
+<pre><code># In the development environment your application's code is reloaded on
+# every request. This slows down response time but is perfect for
+# development since you don't have to restart the webserver when you
+# make code changes.
+config.cache_classes = false
+</code></pre>
+
+<p>```</p>
+
+<p>当cache_classes为true时，Rails会运用Ruby的require去加载类，如果是false，则会用load去加载类。</p>
+
+<ul>
+<li><p>当require 一个ruby文件时，ruby解释器会执行它并且进行缓存；如果文件再次被requirmZ会忽略这次require。</p></li>
+<li><p>而当你load 一个ruby文件时，不管它之前被load过几次，ruby解释器都会再次执行它。</p></li>
+</ul>
+
+
+<p><h4 id="1.3.1.1">1.3.1.1 The Rails Class Loader类加载器</h4></p>
+
+<hr />
+
+<p>在平常老版本的ruby中，不需要为了匹配脚本的内容而更改脚本的名字。在Rails中你会发现Ruby文件的名字与类或模块有联系。
+Rails利用了Ruby对未知常量的回调机制，当Rails遇到未定义的常量时，它会利用类加载器(Class Loader)基于文件名的惯例去寻找并require需要的Ruby脚本。</p>
+
+<p>那么你一定会问了，类加载器是如何找到需要的Ruby脚本的？我们已经在前面讨论了initializer.rb在Rails启动进程中的作用，Rails有一个加载路径(LOAD_PATH)的概念，默认加载路径包括你的Rails应用中任何地方的目录。</p>
+
+<p>想要看到项目加载路径的内容，在console中输入：$LOAD_PATH</p>
+
+<p>``` sh</p>
+
+<pre><code>$rails console
+Loading development environment.
+&gt;&gt;$LOAD_PATH
+=&gt; ["/usr/local/lib/ruby/... # about 20 lines of output"]
+</code></pre>
+
+<p>```</p>
+
+<p>典型的Rails项目至少有60条加载路径，你可以试一试。</p>
+
+<p><h4 id="1.3.1.2">1.3.1.2 Rails, Modules, and Auto-Loading Code</h4></p>
+
+<hr />
+
+<p>在Ruby中，如果你想从应用中加载其他文件的代码，你需要require声明；然而，Rails为Ruby增加一个默认行为通过建立一个简单的惯例能让Rails在大多数情况下自动加载你的代码。
+如果你用过rails console，你就会发现你不用明确地require 任何代码。</p>
+
+<p>现在我来告诉你这是如何实现的：
+如果Rails遇到未定义的类或模块，它将会用以下惯例去猜测如何加载该类或模块：</p>
+
+<p>如果该类或模块没有嵌套，则在常量名之间插入下划线：</p>
+
+<ul>
+<li><p>EstimationCalculator 将会插入：require &ldquo;estimation_calculator&rdquo;</p></li>
+<li><p>KittTurboBoost 将会插入：require &ldquo;kitt_turbo_boost&rdquo;</p></li>
+</ul>
+
+
+<p>如果类或模块被嵌套，则会对每个模块做如上操作，并且形成对应的子目录，例如：
+&ndash; MacGyver::SwissArmyKnife 变成：require &ldquo;mac_gyver/swiss_army_knife&rdquo;</p>
+
+<ul>
+<li>Example::ReallyRatherDeeply::NestedClass 变成："example/really_rather_deeply/nested_class"，如果还没加载，Rails将会去example/really_rather_deeply/目录下寻找nested_class.rb文件，这个example/really_rather_deeply/目录会在Ruby的加载路径中查找（app/,lib/或者插件的lib/目录）</li>
+</ul>
+
+
+<p>所以，如果你按照rails这个规则，就基本不用怎么明确地指mZe)要加载的文件了。</p>
+
+<p><h3 id="1.3.2">1.3.2 Eager Load</h3></p>
+
+<hr />
+
+<p>为了在开发模式下加快启动Rails服务的时间，你的代码一般被禁止eager loaded，你可以通过config.eager_load进行设置。</p>
+
+<p>``` ru</p>
+
+<pre><code># Do not eager load code on boot.
+config.eager_load = false
+</code></pre>
+
+<p>```</p>
+
+<p>在生产模式下，你会将这个值设置为true，它会复制你的应用的大部分内容到内存中，提高web服务器的读写性能，就像Unicorn一样。</p>
+
+<p><h3 id="1.3.3">1.3.3 错误报告</h3></p>
+
+<p>&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;来自localhost的请求，当你想要在开发时，能够产生有用的错误信息包括debug信息（错误出现的行号等）那么设置consider_all_requests_local为true就能使rails产生这些友好的信息。</p>
+
+<p>``` ru</p>
+
+<pre><code>config.consider_all_requests_local = true
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.3.4">1.3.4 缓存</h3></p>
+
+<hr />
+
+<p>在开发模式下你一般不希望缓存行为，你真正需要它的时候是你想要去测试缓存是否正确。</p>
+
+<p>``` ru</p>
+
+<pre><code>config.action_controller.perform_caching = true # for testing in development model.
+</code></pre>
+
+<p>```</p>
+
+<p>记住：当你测试完要设置为false。</p>
+
+<p><h3 id="1.3.5">1.3.5 抛出发送错误</h3></p>
+
+<hr />
+
+<p>在开发模式下，rails会假定你不需要ActionMailer去抛出发送错误的异常，这个是基于config.action_mailer.raise_delivery_errors设置的。邮件发送功能不需要在开发模式下运行，特别是windows等其他平台。</p>
+
+<p>``` ru</p>
+
+<pre><code># Don't care if the mailer can't send.
+config.action_mailer.raise_delivery_errors = false
+</code></pre>
+
+<p>```</p>
+
+<p>如果你真的需要在开发模式下发送邮件用来测试或排除错误，那么你可以将它设置为true。</p>
+
+<p><h3 id="1.3.6">1.3.6 反对通知</h3></p>
+
+<hr />
+
+<p>当你想停止使用特定功能时，反对警告是非常有用的，config.active_support.deprecation允许你设置如何收到反对警告。在开发模式下，默认是出现在log文件中。</p>
+
+<p>``` ru</p>
+
+<pre><code># Print deprecation notices to the Rails logger.
+config.active_support.deprecation = :log
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.3.7">1.3.7 慢查询的解释</h3></p>
+
+<hr />
+
+<p>Rails3.2后引入的，Active Record现在监视SQL查询的门槛已经被设立。当查询花费时间超过这个设定的门槛，这个查询计划将被记录为警告。
+而这个门槛的时间是由config.active_record.auto_explain_threshold_in_seconds 设置的：</p>
+
+<p>``` ru</p>
+
+<pre><code># Log the query plan for queries taking more than this (works)
+# with SQLite, MySQL, and PostgreSQL).
+config.active_record.auto_explain_threshold_in_seconds = 0.5
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.3.8">1.3.8 待迁移错误页面</h3></p>
+
+<hr />
+
+<p>在Rails前面版本中，如果待迁移任务需要执行，web服务将会启动失败。
+在Rails4中将会以一个错误页面展示，指示开发者运行rake db:migrate RAILS_ENV=development去解决这个问题。</p>
+
+<p>``` ru</p>
+
+<pre><code># Raise an error on page load if there are pending migrations
+config.active_record.migration_error = :page_load
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.3.9">1.3.9 Assets的Debug模式</h3></p>
+
+<hr />
+
+<p>Rails3.1引入Assets Pipeline，一个可以连接和缩小javascript和css的assets。
+默认的，在开发模式下，javascript和css还是放在各自不同的目录中。
+设置config.assets.debug 为false，将会导致Sprockets对所有assets进行连接和运行预处理器。</p>
+
+<p>``` ru</p>
+
+<pre><code># Debug mode disables concatenation and preprocessing of assets.
+config.assets.debug = true
+</code></pre>
+
+<p>```</p>
+
+<p><h2 id="1.4">1.4 测试模式</h2></p>
+
+<p>无论你在测试环境下运行rails， RAILS_ENV的值为test，然后下面的设置将会起作用。</p>
+
+<p>``` ru</p>
+
+<pre><code># File: config/environments/test.rb
+Example::Application.configure do
+  # Settings specified here will take precedence over those in
+  # config/application.rb.
+
+  # The test environment is used exclusively to run your application's
+  # test suite. You never need to work with it otherwise. Remember that
+  # your test database is "scratch space" for the test suite and is wiped
+  # and recreated between test runs. Don't rely on the data there!
+  config.cache_classes = true
+
+  # Do not eager load code on boot. This avoids loading your whole
+  # application just for the purpose of running a single test. If you are
+  # using a tool that preloads Rails for running tests, you may have to
+  # set it to true.
+  config.eager_load = false
+
+  # Configure static asset server for tests with Cache-Control for
+  # performance.
+  config.serve_static_assets = true
+  config.static_cache_control = "public, max-age=3600"
+
+  # Show full error reports and disable caching.
+  config.consider_all_requests_local = true
+  config.action_controller.perform_caching = false
+
+  # Raise exceptions instead of rendering exception templates.
+  config.action_dispatch.show_exceptions = false
+
+  # Disable request forgery protection in test environment.
+  config.action_controller.allow_forgery_protection = false
+
+  # Tell Action Mailer not to deliver emails to the real world.
+  # The :test delivery method accumulates sent emails in the
+  # ActionMailer::Base.deliveries array.
+  config.action_mailer.delivery_method = :test
+
+  # Print deprecation notices to the stderr.
+  config.active_support.deprecation = :stderr
+end
+</code></pre>
+
+<p>```</p>
+
+<h3>i: 自定义环境</h3>
+
+<p><em>如果有需要，你可以给你的rails应用自定一个额外的环境，通过复制一个已经存在的环境文件(在config/environments目录中)。
+自定义环境的一个共同的用法是建立一个额外的生产模式配置（例如：staging和QA development模式）。
+在开发平台，你拥有进入正式环境数据库的权利吗？哈哈，使用 triage 环境就在合理不过了。运用开发模式作为正常的环境，但是数据库连接生产服务器的数据库。当你想要快速诊断生产环境下的问题，这非常有用。</em></p>
+
+<p><h2 id="1.5">生产模式</h2></p>
+
+<p>最后，当你部署自己的项目并接受公共请求时，生产模式是你的rails应用运行的环境。
+生产模式与其他模式有一些显著的区别，不仅仅是速度的提升。</p>
+
+<p>``` ru</p>
+
+<pre><code># File:config/environments/production.rb
+  # Settings specified here will take precedence over those in
+  # config/application.rb.
+
+  # Code is not reloaded between requests.
+  config.cache_classes = true
+
+  # Eager load code on boot. This eager loads most of Rails and
+  # your application in memory, allowing both thread web servers
+  # and those relying on copy on write to perform better.
+  # Rake tasks automatically ignore this option for performance.
+  config.eager_load = true
+
+  # Full error reports are disabled and caching is turned on.
+  config.consider_all_requests_local = false
+  config.action_controller.perform_caching = true
+
+  # Enable Rack::Cache to put a simple HTTP cache in front of your
+  # application
+  # Add `rack-cache` to your Gemfile before enabling this.
+  # For large-scale production use, consider using a caching reverse proxy
+  # like nginx, varnish or squid.
+  # config.action_dispatch.rack_cache = true
+
+  # Disable Rails's static asset server (Apache or nginx will
+  # already do this).
+  config.serve_static_assets = false
+
+  # Compress JavaScripts and CSS.
+  config.assets.js_compressor = :uglifier
+  # config.assets.css_compressor = :sass
+
+  # Whether to fallback to assets pipeline if a precompiled
+  # asset is missed.
+  config.assets.compile = false
+
+  # Generate digests for assets URLs.
+  config.assets.digest = true
+
+  # Version of your assets, change this if you want to expire
+  # all your assets.
+  config.assets.version = '1.0'
+
+  # Specifies the header that your server uses for sending files.
+  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+  # for nginx
+
+  # Force all access to the app over SSL, use Strict-Transport-Security,
+  # and use secure cookies.
+  # config.force_ssl = true
+
+  # Set to :debug to see everything in the log.
+  config.log_level = :info
+
+  # Prepend all log lines with the following tags.
+  # config.log_tags = [ :subdomain, :uuid  ]
+
+  # Use a different logger for distributed setups.
+  # config.logger = ActiveSupport::TaggedLogging.new(SyslogLogger.new)
+
+  # Use a different cache store in production
+  # config.cache_store = :mem_cache_store
+
+  # Enable serving of images, stylesheets, and JavaScripts from an
+  # asset server.
+  # config.action_controller.asset_host = "http://assets.example.com"
+
+  # Precompile additional assets.
+  # application.js, application.css, and all non-JS/CSS in app/assets
+  # folder are already added.
+  # config.assets.precompile += %w( search.js  )
+
+  # Ignore bad email addresses and do not raise email delivery errors.
+  # Set this to true and configure the email server for immediate delivery
+  # to raise delivery errors.
+  # config.action_mailer.raise_delivery_errors = false
+
+  # Enable locale fallbacks for I18n (makes lookups for any locale fall
+  # back to the I18n.default_locale when a translation can not be found).
+  config.i18n.fallbacks = true
+
+  # Send deprecation notices to registered listeners.
+  config.active_support.deprecation = :notify
+
+  # Log the query plan for queries taking more than this (works
+  # with SQLite, MySQL, and PostgreSQL).
+  # config.active_record.auto_explain_threshold_in_seconds = 0.5
+
+  # Disable automatic flushing of the log to improve performance.
+  # config.autoflush_log = false
+
+  # Use default logging formatter so that PID and timestamp
+  # are not suppressed.
+  config.log_formatter = ::Logger::Formatter.new
+end
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.5.1">1.5.1 Assets</h3></p>
+
+<hr />
+
+<p>在生产模式下，assets是默认由assets pipeline预处理的。所有的文件包括application.js和application.css的assets清单被压缩和连接到他们各自的同名文件中，位于public/assets目录中。</p>
+
+<p>如果被请求的assets不存在public/assets目录中，rails将会抛出异常。
+设置config.assets.compile为true，可以在生产模式下启用live assets做后备。</p>
+
+<p>在assets pipeline预处理时，application.css和application.js是被唯一加载的stylesheets/javascript清单文件。
+想要加载其他assets，在定义config.assets.precompile的地方设置就行了：</p>
+
+<p>``` ru</p>
+
+<pre><code>config.assets.precompile += %w( administration.css  )
+</code></pre>
+
+<p>```</p>
+
+<p>像Rails大多数特征一样，Asset Pipeline 的用法完全是可选的，config.assets.enabled设置为false</p>
+
+<p><h3 id="1.5.2">1.5.2 Asset 主机</h3></p>
+
+<hr />
+
+<p>默认地，Rails通过当前主机的public/ 目录连接assets，但是你可以直接将assets连接到一个assets服务器。config.action_controller.asset_host在后面章节会讲到。</p>
+
+<p><h2 id="1.6">1.6 日志</h2></p>
+
+<p>Rails的大多数编程环境<em>（models, controllers, view templates）有logger属性</em>，遵从Log4r接口或默认Ruby1.8+Logger类。</p>
+
+<p>无法在你的代码中获得日志的引用？利用Rails.logger 方法你可以在任何地方引用日志。
+我们非常容易创建一个新的日志，见下面例子：</p>
+
+<p>``` sh</p>
+
+<pre><code>$ irb
+&gt; require 'logger'
+=&gt; true
+
+irb(main):002:0&gt; logger = Logger.new STDOUT
+=&gt;#&lt;Logger:0x32db4c@level=0,@progname=nil,@logdev=
+#&lt;Logger::LogDevice:0x32d9bc...&gt;
+
+&gt; logger.warn "do not want!!!"
+W, [2013-02-01T10:59:26.896825 #6243] WARN -- : do not want!!!
+=&gt; true
+
+&gt; logger.info "in your logger, giving info"
+I, [2013-02-01T10:59:42.478325 #6243] INFO -- : in your logger, giving info
+=&gt; true
+</code></pre>
+
+<p>```</p>
+
+<p>你可以利用logger将信息加入日志无论它什么时候产生，这些日志信息运用对应程度的方法。
+标准的日志程度有：</p>
+
+<ul>
+<li><p><strong>debug</strong> : 运用debug捕获数据和有用的应用状态来排除错误。这种级别通常不会被捕获到production日志中。</p></li>
+<li><p><strong>info</strong> : 运用info捕获信息报文。我喜欢运用这种日志级别在良好应用程序情况下记录非正常事件的时间戳。</p></li>
+<li><p><strong>warn</strong> : 用warn级别捕获那些不平常的可能值得调查的事件。有时候，我会抛出warning日志去阻止用户做一些我不允许做的事情。
+我的目的是对那些坏恶意的用户或是漏洞继续保持我的应用的界面友好性。如下例子：</p></li>
+</ul>
+
+
+<p>``` ru</p>
+
+<pre><code>def create
+  begin
+    group.add_member(current_user)
+    flash[:notice] = "Successfully joined #{scene.display_name}"
+  rescue ActiveRecord::RecordInvalid
+    flash[:error] = "You are already a member of #{group.name}"
+    logger.warn "A user tried to join a group twice. UI should
+    not have allowed it."
+  end
+  redirect_to :back
+end
+</code></pre>
+
+<p>```</p>
+
+<ul>
+<li><p><strong>error</strong> : 运用error级别捕获那些不需要重新启动服务的错误信息。</p></li>
+<li><p><strong>fatal</strong> : 可以想象最坏情况的发生：你的应用挂了，并且需要手动重启。</p></li>
+</ul>
+
+
+<p><h3 id="1.6.1">1.6.1 Rails的日志文件</h3></p>
+
+<hr />
+
+<p>Rails的log目录中有三个对应三种标准环境的log文件，随着时间的增长，这些文件会不断变大。这里介绍一个rake任务，可以简单地清理这些log文件：</p>
+
+<p>``` sh</p>
+
+<pre><code>$ rake log:clear # Truncates all *.log files in log/ to zero bytes
+</code></pre>
+
+<p>```</p>
+
+<p>当你在工作时，log/development.log显得非常有用，许多程序员会在他们编程时打开另一个终端并持续显示开发模式下的日志尾部信息：</p>
+
+<p>``` sh</p>
+
+<pre><code>$ tail -f log/development.log
+
+Article Load (0.2ms)  SELECT "articles".* FROM "articles" WHERE
+  "articles"."id" = $1 LIMIT 1  [["id", "1"]]
+</code></pre>
+
+<p>```</p>
+
+<p>在development的日志中各种有价值的信息是非常有用的。举个例子，每次你发一个请求，一串有用的信息将会出现在你的日志中，这是我项目的样本：</p>
+
+<p>``` sh</p>
+
+<pre><code>Started GET"/user_photos/1" for 127.0.0.1 at 2007-06-0617:43:13
+  Processing by UserPhotosController#show as HTML
+  Parameters: {"/users/8-Obie-Fernandez/photos/406"=&gt;nil,
+  "action"=&gt;"show", "id"=&gt;"406", "controller"=&gt;"user_photos",
+  "user_id"=&gt;"8-Obie-Fernandez"}
+  User Load (0.4ms)  SELECT * FROM users WHERE (users.'id' = 8)
+  Photo Load (0.9ms)  SELECT * FROM photos WHERE (photos.'id' = 406
+  AND (photos.resource_id = 8 AND photos.resource_type = 'User'))
+  CACHE (0.0ms)   SELECT * FROM users WHERE (users.'id' = 8)
+Rendered adsense/_medium_rectangle(1.5ms)
+  User Load (0.5ms) SELECT * FROM users WHERE (users.'id' = 8)
+  LIMIT 1
+  SQL (0.4ms) SELECT count(*) AS count_all FROM messages WHERE
+  (messages.receiver_id = 8 AND (messages.'read' = 0))
+Rendered layouts/_header(25.3ms)
+Rendered adsense/_leaderboard(0.4ms)
+Rendered layouts/_footer(0.8ms)
+Rendered photos/show.html.erb within layouts/application.html.erb(38.9ms)
+Completed in 99ms(Views:37.4ms|ActiveRecord:12.3ms) with 200
+</code></pre>
+
+<p>```</p>
+
+<p>下列列出日志中所有数据项包括的内容：</p>
+
+<ul>
+<li><p>controller和action的调用</p></li>
+<li><p>发出请求的的远程计算机IP地址</p></li>
+<li><p>请求发生的时间戳</p></li>
+<li><p>请求的<em>session ID</em></p></li>
+<li><p>请求的参数hash</p></li>
+<li><p>请求的数据库信息，包括话费的时间和数据库执行语句</p></li>
+<li><p>缓存查询的命中信息：包括话费的时间和SQL语句从缓存中触发结果而不是往返数据库。</p></li>
+<li><p>渲染每个模板视图的输出及其话费的时间</p></li>
+<li><p>完成一个请求的合计时间</p></li>
+<li><p>数据库操作和渲染的时间分析</p></li>
+<li><p>HTTP的状态码和响应客户端的URL</p></li>
+</ul>
+
+
+<p><h3 id="1.6.2">1.6.2 标记日志</h3></p>
+
+<hr />
+
+<p>日志信息有大范围数量信息，想要跟踪问题或特殊请求显得非常困难。为了减轻这种情况，Rails3.2引入了一种可以标记日志信息的能力。
+最简单的方法去添加标记到你的日志文件，就是去包含一个响应请求对象的方法，设置config.log_tags。
+举例，设置config.log_tags 去包含:subdomain：</p>
+
+<p>``` ru</p>
+
+<pre><code>config.log_tags = [:subdomain]
+</code></pre>
+
+<p>```</p>
+
+<p>这将导致对每个日志信息请求前面都加上一个子域：</p>
+
+<p>``` sh</p>
+
+<pre><code>[admin]Started GET "/articles" for 127.0.0.1 at 2013-02-01 11:49:09-0500
+</code></pre>
+
+<p>```</p>
+
+<p><h3 id="1.6.3">1.6.3 日志文件分析</h3></p>
+
+<hr />
+
+<p>一些非正式的分析，可以使用development日志的输出和一些常识判断。
+<strong>性能：</strong> 更明显的分析之一是研究你的应用的性能。你的请求越快，你的rails进程就能处理越多的请求。这就是为什么性能数据通常用每秒来表示请求，这样你就可以通过查找渲染和查询语句来分析为什么花费那么长时间。</p>
+
+<p>要意识到日志文件记录的报告并不是非常准确，这点很重要。事实上，如果单单从内部本身很难衡量事物的时间，错误可能更多。
+为任何给定的请求加上渲染和数据库时间百分比，不会总是接近100%的。</p>
+
+<p>但是，尽管在纯粹客观的意义上不准确，在同一个应用中对数据报告时间进行主观判断也是完美的。它给你一个途径去判断这个action是不是比之前花费更长的时间；或者是不是比其他的action速度更快或更慢，等等。</p>
+
+<p><strong>SQL查询：</strong>
+Active Record 没有像预期的那样执行？事实上，记录在日志文件的Active Record可以帮助你排除一些由复杂的查询导致的问题。</p>
+
+<p><strong>鉴别N+1选择问题：</strong>
+无论什么时候，当你在展示一条关联其他记录的记录时，你可能会面对一种叫做N+1的选择问题。你将会意识到这些<em>选择语句只有主键的值是不同的</em>。</p>
+
+<p>举个例子，下面是一个真实的项目中日志文件片段，当FlickrPhoto 实例被加载时产生的N+1问题：</p>
+
+<p>``` sh</p>
+
+<pre><code>FlickrPhoto Load (1.3ms) SELECT * FROM flickr_photos WHERE
+(flickr_photos.resource_id = 15749 AND flickr_photos.resource_type =
+ 'Place' AND (flickr_photos.'profile' = 1)) ORDER BY updated_at desc
+LIMIT 1
+
+FlickrPhoto Load (1.7ms) SELECT * FROM flickr_photos WHERE
+(flickr_photos.resource_id = 15785 AND flickr_photos.resource_type =
+'Place' AND (flickr_photos.'profile' = 1)) ORDER BY updated_at desc
+LIMIT 1
+
+FlickrPhoto Load (1.4ms) SELECT * FROM flickr_photos WHERE
+(flickr_photos.resource_id = 15831 AND flickr_photos.resource_type =
+'Place' AND (flickr_photos.'profile' = 1)) ORDER BY updated_at desc
+LIMIT 1
+</code></pre>
+
+<p>```</p>
+
+<p>等等，是不是觉得很熟悉？
+幸运的是，这些语句执行速度还是非常快的，每条接近0.0015 秒。缺少减轻的因素，我将面临一连串待处理的性能问题。当你的数据库在一个单独的机器上，这个问题将非常严重，他将处理每一条查询而造成网络延迟。</p>
+
+<p>N+1问题并不可怕，很多时候只需要在特定的查询语句使用includes方法就能解决问题。</p>
+
+<h3>i: 关注分离（Separation of Concerns）</h3>
+
+<p> <em>一个精心设计的MVC应用遵循一定的协议：逻辑层数据库操作必然在model中执行，视图完成渲染任务。一般而言，你的controller需要渲染视图，必须通过model到数据库获取数据。在Rails中，controller完成对model查询的数据的处理并进行视图的渲染。</em></p>
+
+<p>在渲染过程中进行数据库的访问是一种非常不好的做法。直接从模板的代码中调用数据库方法背离了<strong>关注分离</strong>原则，简直是一个恶梦。</p>
+
+<p>然而有其他方法可以在你渲染模板时含蓄的访问数据库，通过model进行封装，可能用lazy loading关联触发。
+我们可以不容置疑地说这是不好的做法吗？其实这很难说。有一些情况是需要在渲染时访问数据库的（如利用片段缓存的）。</p>
+
+<h3>i: 使用备用的Logging schemes</h3>
+
+<p>这很简单，仅仅只要指定一个和Ruby的Logger兼容的类，像ActiveRecord::Base.logger。David曾经说过一个厉害的黑客必须具备交换日志的能力。在控制台会话期间，为了在控制台看到你的SQL语句生成正确，需要指定一个新的Logger实例指向STDOUT到ActiveRecord::Base.logger。
+Jamis也完整地写了关于这个的技术博文：<a href="http://weblog.jamisbuck.org/2007/1/31/more-on-watching-activerecord">http://weblog.jamisbuck.org/2007/1/31/more-on-watching-activerecord</a></p>
+
+<p><h4 id="1.6.3.1">1.6.3.1  Rails::Subscriber.colorize_logging</h4></p>
+
+<hr />
+
+<p>告诉Rails是否使用ANSI代码使日志语句有颜色，颜色可以帮助我们更好地阅读日志文件（除了windows），当你使用系统日志时，也可能使问题复杂化。
+默认是true，如果你发现你的软件不支持ANSI代码日志文件颜色化功能，请将它改为false。</p>
+
+<p>以下片段是带有ANSI代码的日志片段：</p>
+
+<p>``` sh</p>
+
+<pre><code>^[[4;36;1mSQL (0.0ms)^[[0m ^[[0;1mMysql::Error: Unknown table
+'expense_reports':DROPTABLEexpense_reports^[[0m
+  ^[[4;35;1mSQL (3.2ms)^[[0m ^[[0mCREATE TABLE expense_reports ('id'
+int(11) DEFAULT NULL auto_increment PRIMARYKEY,'user_id' int(11))
+                    ...]]..]]..]]..]]..]]..]]..]]
+</code></pre>
+
+<p>```</p>
+
+<h4>Wilson 说：</h4>
+
+<blockquote><p>我见过的几乎没有人知道怎样将日志颜色化，-R选项。</p></blockquote>
+
+<h4>i: 系统日志syslog</h4>
+
+<p>像Unix系统的系统都有一个系统服务叫做系统日志。因为各种原因，它可能是一个更好的选择。</p>
+
+<ul>
+<li><p>更细粒度控制日志级别和内容</p></li>
+<li><p>多个Rails应用的日志整合输出</p></li>
+<li><p>如果你使用多系统远程日志功能，多个rails应用的日志整合输出是可能的，比起单独处理每个应用程序服务器上的单独日志文件好得多。</p></li>
+</ul>
+
+
+<p><h3 id="1.6.4">1.6.4 总结</h3></p>
+
+<hr />
+
+<p>我们结束了Rails之旅，这章简要覆盖了bundler的一些细节，并且评估了不同环境下rails的执行，和如何加载它的依赖，包括你的应用代码。并且深入查看application.rb文件和如何更改每种模式来自定义符合我们胃口的Rails的行为。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rails Assets Pipeline]]></title>
@@ -47,13 +2689,21 @@
 
 <p>assets pipeline是默认启动的，如果想关闭也可以到config/application.rb文件中将如下代码放入：</p>
 
-<pre><code>    config.assets.enable = false
+<p>``` ru</p>
+
+<pre><code>config.assets.enable = false
 </code></pre>
+
+<p>```</p>
 
 <p>当然，我们也可以在创建项目时，就不产生assets:</p>
 
-<pre><code>    rails new appname --skip-sprockets
+<p>``` ru</p>
+
+<pre><code>rails new appname --skip-sprockets
 </code></pre>
+
+<p>```</p>
 
 <hr />
 
@@ -112,12 +2762,21 @@
 
 <p><img src="/images/posts/2013-10-26/resource_list.png" title="JS资源清单" alt="无法显示图片" /></p>
 
-<p>刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：</p>
+<p>刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：</p></li>
+</ol>
 
-<pre><code>config.assets.paths &lt;&lt; Rails.root.join("app", "assets", "flash")
+
+<p>``` ru</p>
+
+<pre><code>    config.assets.paths &lt;&lt; Rails.root.join("app", "assets", "flash")
 </code></pre>
 
-<p><em>注意：想在<strong>资源清单外引用</strong>的文件必须加载到<strong>预编译列表</strong>里，否则它们在<strong>生产环境</strong>将不可以用。</em></p></li>
+<p>```</p>
+
+<pre><code>_注意：想在**资源清单外引用**的文件必须加载到**预编译列表**里，否则它们在**生产环境**将不可以用。_
+</code></pre>
+
+<ol type="a">
 <li><p>使用索引文件:</p>
 
 <p>如果你了解数据库，就应该对索引很熟悉。如果一个字段<strong>经常被查找</strong>，你可以将它<strong>建立索引</strong>从而提高访问速度。</p>
@@ -131,22 +2790,31 @@
 
 <p>pipeline(在当前的环境上下文中没有被关闭)提供标签访问你的资源,这些文件通过Sprockets获得。</p>
 
-<p>Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。</p>
+<p>Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。</p></li>
+</ol>
+
+
+<p>``` ru</p>
 
 <pre><code>&lt;%= stylesheet_link_tag "application" %&gt;
 &lt;%= javascript_include_tag "application" %&gt;
 &lt;%= image_tag "rails.png" %&gt;
 </code></pre>
 
-<p><strong>CSS:</strong></p>
+<p>```</p>
 
-<p>assets pipeline会<strong>自动解析erb</strong>，你可以在CSS增加扩展名.erb，这样资源中就可以<strong>使用helpers</strong>方法(如：asset_path)。</p>
+<pre><code>**CSS:**
 
-<p>使用assets pipeline，<strong>资源路径必须重写</strong>并且sass-rails提供两个helpers方法：-url和-path。</p>
+assets pipeline会**自动解析erb**，你可以在CSS增加扩展名.erb，这样资源中就可以**使用helpers**方法(如：asset\_path)。
 
-<p><strong>JS:</strong></p>
+使用assets pipeline，**资源路径必须重写**并且sass-rails提供两个helpers方法：-url和-path。
 
-<p>使用erb扩展名可以使用asset_path的helpers方法。你也可以在coffeescript增加扩展名erb。</p></li>
+**JS:**
+
+使用erb扩展名可以使用asset\_path的helpers方法。你也可以在coffeescript增加扩展名erb。
+</code></pre>
+
+<ol type="a">
 <li><p>资源清单和指令：</p>
 
 <p><strong>作用：</strong>Sprockets 使用资源清单文件去<strong>确认哪些资源要引入并供应</strong>的。</p>
@@ -166,27 +2834,38 @@
 
 <p>那些<strong>以//=开头的注释就是指令</strong>，而 <strong>require 指令</strong>是用于告诉 Sprockets <strong>需要加入</strong>的文件,也不用加扩展名，当资源清单是js文件，Sprockets会假设你加入的是一个.js文件。</p>
 
-<p>  <strong>require_tree</strong> 指令告诉 Sprockets <strong>递归</strong>地去包含在<strong>指定目录下<em>所有</em></strong> 的 JavaScript 文件到<strong>输出里</strong>。 这些<strong>路径必须在资源清单文件中有相关的指定</strong>。 有也可以使用 require_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。</p>
+<p>  <strong>require_tree</strong> 指令告诉 Sprockets <strong>递归</strong>地去包含在<strong>指定目录下<em>所有</em></strong> 的 JavaScript 文件到<strong>输出里</strong>。 这些<strong>路径必须在资源清单文件中有相关的指定</strong>。 有也可以使用 require_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。</p></li>
+</ol>
 
-<pre><code>//= require jquery
-//= require jquery_ujs
-//= require_tree .
+
+<p>``` css</p>
+
+<pre><code>    //= require jquery
+    //= require jquery_ujs
+    //= require_tree .
 </code></pre>
 
-<ul>
-<li>CSS资源清单：</li>
-</ul>
+<p>```</p>
 
+<pre><code>  - CSS资源清单：
 
-<p>  用css的注释开头，同样用require引入文件，指令<strong>require_tree</strong>和JS中的一样（<strong>加入当前目录所有stylesheets文件</strong>），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。</p>
-
-<pre><code>/* ...
-*= require_self
-*= require_tree .
-*/
+  用css的注释开头，同样用require引入文件，指令**require_tree**和JS中的一样（**加入当前目录所有stylesheets文件**），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。
 </code></pre>
 
-<p><em>注意：用到多个sass文件时，用<strong>@import rule</strong>替代Sprockets</em>指令，Sprockets 指令在 Sass 文件中定义的<strong>变量和 mixins</strong> 都只能在其<strong>被定义的文档</strong>中可用。_</p></li>
+<p>``` javascript</p>
+
+<pre><code>    /* ...
+    *= require_self
+    *= require_tree .
+    */
+</code></pre>
+
+<p>```</p>
+
+<pre><code>_注意：用到多个sass文件时，用**@import rule**替代Sprockets_指令，Sprockets 指令在 Sass 文件中定义的**变量和 mixins** 都只能在其**被定义的文档**中可用。_
+</code></pre>
+
+<ol type="a">
 <li><p>预处理：</p>
 
 <p>文件的<strong>扩展名</strong>被用于判断某个资源文件要进入<strong>哪个预处理过程</strong>。</p>
@@ -214,12 +2893,16 @@
 
 <blockquote><p>如果你设置 config.assets.initialize_on_precomile 为 false,在<strong>开发模式</strong>范围内会<strong>忽略这个标记的值</strong>. 改变这个标记也会影响到 engines. Engines 也可以<strong>指定预编译资源.</strong> 因为完整的环境还没有加载完, <strong>engines (或者其他的 gems) 将不会被加载</strong>, 这会引起<strong>资源丢失</strong>.</p></blockquote>
 
-<p>所以，你可以通过以下命令生成已编译版本的资源文件:</p>
-
-<pre><code>bundle exec rake assets:precompile
-</code></pre></li>
+<p>所以，你可以通过以下命令生成已编译版本的资源文件:</p></li>
 </ul>
 
+
+<p>``` ru</p>
+
+<pre><code>bundle exec rake assets:precompile
+</code></pre>
+
+<p>```</p>
 
 <hr />
 ]]></content>
@@ -232,8 +2915,12 @@
     <id>http://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails</id>
     <content type="html"><![CDATA[<p>在上一篇文章<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>,最后加载的config/application.rb文件中显示：</p>
 
-<pre><code>    require 'rails/all'
+<p>``` ru</p>
+
+<pre><code>require 'rails/all'
 </code></pre>
+
+<p>```</p>
 
 <p>这个文件在railties/lib/rails/all.rb。</p>
 
@@ -243,21 +2930,25 @@
 
 <p>这个文件非常重要，它加载了rails的所有个体框架，从中可以知道这些<strong>框架的加载顺序</strong>：</p>
 
+<p>``` ru</p>
+
 <pre><code>require "rails"
 
-    %{
-        active_record
-        action_controller
-        action_mail
-        rails/test_unit
-        sprockets
-    }.each do |framework|
-        begin
-            require "#{framework}/railtie"          # 文件active_record/railtie等
-      rescue LoadError
-        end
+%{
+    active_record
+    action_controller
+    action_mail
+    rails/test_unit
+    sprockets
+}.each do |framework|
+    begin
+        require "#{framework}/railtie"          # 文件active_record/railtie等
+  rescue LoadError
     end
+end
 </code></pre>
+
+<p>```</p>
 
 <blockquote><p><strong>railtie 是Rails的核心框架</strong>，并且提供hooks来修改启动时的载入流程，
 如果需要在启动过程或之后与rails框架进行交互，就需要加载Railtie。</p></blockquote>
@@ -278,13 +2969,17 @@
 
 <p>以下为初始化代码：(你的Application类继承Rails::Application类，而这个类就在railties/lib/rails/application.rb文件中)</p>
 
-<pre><code>    def initialize!(group=:default) #:nodoc:
-        raise "Application has been already initialized." if @initialized
-        run_initializers(group, self)
-        @initialized = true
-        self
-    end
+<p>``` ru</p>
+
+<pre><code>def initialize!(group=:default) #:nodoc:
+    raise "Application has been already initialized." if @initialized
+    run_initializers(group, self)
+    @initialized = true
+    self
+end
 </code></pre>
+
+<p>```</p>
 
 <p>Rails会贯穿这整个Rails::Application祖先类，重新排序和运行他们。</p>
 
@@ -292,72 +2987,88 @@
 
 <p>在<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">上一篇</a>时,有提到Rack::Server类，它里面有一个app方法是这么定义的：</p>
 
-<pre><code>    def app
-        @app ||= begin
-            if !::File.exist? options[:config]
-                abort "configuration #{options[:config]} not found"
-            end
+<p>``` ru</p>
 
-            app, options = Rack::Builder.parse_file(self.options[:config], opt_parser)
-            self.options.merge! options
-            app
+<pre><code>def app
+    @app ||= begin
+        if !::File.exist? options[:config]
+            abort "configuration #{options[:config]} not found"
         end
+
+        app, options = Rack::Builder.parse_file(self.options[:config], opt_parser)
+        self.options.merge! options
+        app
     end
+end
 </code></pre>
+
+<p>```</p>
 
 <p>这里所指的app就是Rails的app（一种中间件），Rack将会调用所有提供的中间件。</p>
 
-<pre><code>    def build_app(app)
-        middleware[options[:environment]].reverse_each do |middleware|
-            middleware = middleware.call(self) if middleware.respond_to?(:call)
-            next unless middleware
-            klass = middleware.shift
-            app = klass.new(app, *middleware)
-        end
-        app
+<p>``` ru</p>
+
+<pre><code>def build_app(app)
+    middleware[options[:environment]].reverse_each do |middleware|
+        middleware = middleware.call(self) if middleware.respond_to?(:call)
+        next unless middleware
+        klass = middleware.shift
+        app = klass.new(app, *middleware)
     end
+    app
+end
 </code></pre>
+
+<p>```</p>
 
 <p>以上代码build_app是被Server#start方法调用的，通过这个代码调用：</p>
 
-<pre><code>    server.run wrapped_app, options, &amp;blk
+<p>``` ru</p>
+
+<pre><code>server.run wrapped_app, options, &amp;blk
 </code></pre>
+
+<p>```</p>
 
 <p>所以，server.run将会依赖于你所使用的server程序(以上代码有传入一个程序块&amp;blk,他将关系到你运行的服务),
 像是如果你是用的是Mongrel数据库，将会通过传入如下程序块运行：</p>
 
-<pre><code>    def self.run(app, options={})
-        server = ::Mongrel::HttpServer.new(
-            options[:Host]           || '0.0.0.0',
-            options[:Port]           || 8080,
-            options[:num_processors] || 950,
-            options[:throttle]       || 0,
-            options[:timeout]        || 60)
-        # Acts like Rack::URLMap, utilizing Mongrel's own path finding methods.
-        # Use is similar to #run, replacing the app argument with a hash of
-        # { path=&gt;app, ... } or an instance of Rack::URLMap.
-        if options[:map]
-            if app.is_a? Hash
-                app.each do |path, appl|
-                    path = '/'+path unless path[0] == ?/
-                    server.register(path, Rack::Handler::Mongrel.new(appl))
-                end
-            elsif app.is_a? URLMap
-                app.instance_variable_get(:@mapping).each do |(host, path, appl)|
-                 next if !host.nil? &amp;&amp; !options[:Host].nil? &amp;&amp; options[:Host] != host
-                 path = '/'+path unless path[0] == ?/
-                 server.register(path, Rack::Handler::Mongrel.new(appl))
-                end
-            else
-                raise ArgumentError, "first argument should be a Hash or URLMap"
+<p>``` ru</p>
+
+<pre><code>def self.run(app, options={})
+    server = ::Mongrel::HttpServer.new(
+        options[:Host]           || '0.0.0.0',
+        options[:Port]           || 8080,
+        options[:num_processors] || 950,
+        options[:throttle]       || 0,
+        options[:timeout]        || 60)
+    # Acts like Rack::URLMap, utilizing Mongrel's own path finding methods.
+    # Use is similar to #run, replacing the app argument with a hash of
+    # { path=&gt;app, ... } or an instance of Rack::URLMap.
+    if options[:map]
+        if app.is_a? Hash
+            app.each do |path, appl|
+                path = '/'+path unless path[0] == ?/
+                server.register(path, Rack::Handler::Mongrel.new(appl))
+            end
+        elsif app.is_a? URLMap
+            app.instance_variable_get(:@mapping).each do |(host, path, appl)|
+             next if !host.nil? &amp;&amp; !options[:Host].nil? &amp;&amp; options[:Host] != host
+             path = '/'+path unless path[0] == ?/
+             server.register(path, Rack::Handler::Mongrel.new(appl))
             end
         else
-            server.register('/', Rack::Handler::Mongrel.new(app))
+            raise ArgumentError, "first argument should be a Hash or URLMap"
         end
-        yield server  if block_given?
-        server.run.join
+    else
+        server.register('/', Rack::Handler::Mongrel.new(app))
     end
+    yield server  if block_given?
+    server.run.join
+end
 </code></pre>
+
+<p>```</p>
 
 <p>以上代码使用Mongrel::HttpServer定义了server实例，然后使用server.run运行.</p>
 ]]></content>
@@ -378,11 +3089,15 @@
 
 <p><em>如：example_</em>app/bin/rails_</p>
 
-<pre><code>    #!/usr/bin/env ruby
-    APP_PATH = File.expand_path('../../config/application',  __FILE__)
-    require_relative '../config/boot'
-    require 'rails/commands'
+<p>``` ru</p>
+
+<pre><code>#!/usr/bin/env ruby
+APP_PATH = File.expand_path('../../config/application',  __FILE__)
+require_relative '../config/boot'
+require 'rails/commands'
 </code></pre>
+
+<p>```</p>
 
 <p>APP_PATH常量将会在rails/commands中用到，而config/boot指向<strong>config/boot.rb</strong>文件，这个文件<strong>会加载和设置Bundler</strong>。</p>
 
@@ -393,11 +3108,15 @@
 <p>前面bin/rails引入两个文件,现在我们先说第一个文件
 config/boot.rb:</p>
 
-<pre><code>    # Set up gems listed in the Gemfile.
-    ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+<p>``` ru</p>
 
-    require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+<pre><code># Set up gems listed in the Gemfile.
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
+
+require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 </code></pre>
+
+<p>```</p>
 
 <p>config/boot.rb用ENV[&lsquo;BUNDLE_GEMFILE&rsquo;]定位Gemfile文件，当Gemfile文件存在时，就将它引入。这样一来，gem就被引入了。</p>
 
@@ -408,43 +3127,55 @@ config/boot.rb:</p>
 <p>前面config/boot.rb引入的第二个文件,但这个文件必须在第一个文件config/boot.rb文件引入后才被引入。
 rails/commands.rb:</p>
 
-<pre><code>    ARGV &lt;&lt; '--help' if ARGV.empty?
+<p>``` ru</p>
 
-    aliases = {
-        "g"  =&gt; "generate",
-        "d"  =&gt; "destroy",
-        "c"  =&gt; "console",
-        "s"  =&gt; "server",
-        "db" =&gt; "dbconsole",
-        "r"  =&gt; "runner"
-    }
+<pre><code>ARGV &lt;&lt; '--help' if ARGV.empty?
 
-    command = ARGV.shift
-    command = aliases[command] || command
+aliases = {
+    "g"  =&gt; "generate",
+    "d"  =&gt; "destroy",
+    "c"  =&gt; "console",
+    "s"  =&gt; "server",
+    "db" =&gt; "dbconsole",
+    "r"  =&gt; "runner"
+}
+
+command = ARGV.shift
+command = aliases[command] || command
 </code></pre>
+
+<p>```</p>
 
 <p>当你输入的是rails server的话，将会执行下列代码匹配你的命令：</p>
 
-<pre><code>    when 'server'
-        # Change to the application's path if there is no config.ru file in current dir.
-        # This allows us to run `rails server` from other directories, but still get
-        # the main config.ru and properly set the tmp directory.
-        Dir.chdir(File.expand_path('../../', APP_PATH)) unless File.exists?(File.expand_path("config.ru"))
+<p>``` ru
+when &lsquo;server&rsquo;</p>
 
-        require 'rails/commands/server'
-        Rails::Server.new.tap do |server|
-            # We need to require application after the server sets environment,
-            # otherwise the --environment option given to the server won't propagate.
-            require APP_PATH
-            Dir.chdir(Rails.application.root)
-            server.start
-        end
+<pre><code># Change to the application's path if there is no config.ru file in current dir.
+# This allows us to run `rails server` from other directories, but still get
+# the main config.ru and properly set the tmp directory.
+Dir.chdir(File.expand_path('../../', APP_PATH)) unless File.exists?(File.expand_path("config.ru"))
+
+require 'rails/commands/server'
+Rails::Server.new.tap do |server|
+    # We need to require application after the server sets environment,
+    # otherwise the --environment option given to the server won't propagate.
+    require APP_PATH
+    Dir.chdir(Rails.application.root)
+    server.start
+end
 </code></pre>
+
+<p>``` ru</p>
 
 <p>刚才我们的bin/rails脚本中已经定义了常量APP_PATH为"config/application.rb",而</p>
 
-<pre><code>    Dir.chdir(File.expand\_path('../../', APP\_PATH)) unless File.exists?(File.expand\_path("config.ru"))
+<p>``` ru</p>
+
+<pre><code>Dir.chdir(File.expand\_path('../../', APP\_PATH)) unless File.exists?(File.expand\_path("config.ru"))
 </code></pre>
+
+<p>```</p>
 
 <p>表示如果<strong>没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb</strong>。</p>
 
@@ -457,23 +3188,31 @@ application.rb这个文件将会加载Rails。</p>
 
 <p>来看一下rails/commands/server中定义的类Rails::Server吧。</p>
 
-<pre><code>    require 'fileutils'
-    require 'optparse'
-    require 'action_dispatch'
+<p>``` ru</p>
 
-    module Rails
-        class Server &lt; ::Rack::Server
+<pre><code>require 'fileutils'
+require 'optparse'
+require 'action_dispatch'
+
+module Rails
+    class Server &lt; ::Rack::Server
 </code></pre>
+
+<p>```</p>
 
 <p>这里引入的<strong>fileutils和optparse</strong>是<strong>标准的ruby库</strong>，分别提供文件的辅助方法和转化选择。</p>
 
 <p>Rails::Server继承了Rack::Server,当<strong>Rack::Server被初始化(设置环境)</strong>时，Rack::Server也被初始化。</p>
 
-<pre><code>    def initialize(*)
-        super
-        set_environment
-    end
+<p>``` ru</p>
+
+<pre><code>def initialize(*)
+    super
+    set_environment
+end
 </code></pre>
+
+<p>```</p>
 
 <hr />
 
@@ -482,76 +3221,105 @@ application.rb这个文件将会加载Rails。</p>
 <ul>
 <li><p>初始化设置环境：</p>
 
-<p>  刚才提到的初始化代码如下：</p>
-
-<pre><code>  def set_environment
-      ENV["RAILS_ENV"] ||= options[:environment]
-  end
-</code></pre>
-
-<p>  不要以为set_environment很少，options干了很多事情：</p>
-
-<pre><code>  def options
-      @options ||= parse_options(ARGV)
-  end
-</code></pre>
-
-<p>  parse_options定义如下：</p>
-
-<pre><code>  def parse_options(args)
-      options = default_options
-
-      # Don't evaluate CGI ISINDEX parameters.
-      # http://hoohoo.ncsa.uiuc.edu/cgi/cl.html
-      args.clear if ENV.include?("REQUEST_METHOD")
-
-      options.merge! opt_parser.parse! args
-      options[:config] = ::File.expand_path(options[:config])
-      ENV["RACK_ENV"] = options[:environment]
-      options
-  end
-</code></pre>
-
-<p>  我们将一行一行解释，</p>
-
-<p>  (1)选择default_options如下设置：</p>
-
-<pre><code>  def default_options
-      {
-          :environment =&gt; ENV['RACK_ENV'] || "development",
-          :pid         =&gt; nil,
-          :Port        =&gt; 9292,
-          :Host        =&gt; "0.0.0.0",
-          :AccessLog   =&gt; [],
-          :config      =&gt; "config.ru"
-      }
-  end
-</code></pre>
-
-<p>  它<strong>(Rack::Server)提供了默认环境和端口号等信息</strong>，还记得当rails/commands.rb中，如果存在config.ru时，就加载config/applicaton.rb文件吗？</p>
-
-<p>  (2)当ENV哈希环境中没有REQUEST_METHOD这个键时，跳过而去执行合并选项。</p>
-
-<p>  Rack::Server中的opt_server</p>
-
-<pre><code>  def opt_parser
-      Options.new
-  end
-</code></pre>
-
-<p>  (3)Rails::Server重写parse!</p>
-
-<pre><code>  def parse!(args)
-      args, options = args.dup, {}
-
-      opt_parser = OptionParser.new do |opts|
-          opts.banner = "Usage: rails server [mongrel, thin, etc] [options]"
-          opts.on("-p", "--port=port", Integer,
-                          "Runs Rails on the specified port.", "Default: 3000") { |v| options[:Port] = v }
-      ...
-</code></pre></li>
+<p>  刚才提到的初始化代码如下：</p></li>
 </ul>
 
+
+<p>``` ru</p>
+
+<pre><code>def set_environment
+    ENV["RAILS_ENV"] ||= options[:environment]
+end
+</code></pre>
+
+<p>```</p>
+
+<pre><code>不要以为set_environment很少，options干了很多事情：
+</code></pre>
+
+<p>``` ru</p>
+
+<pre><code>def options
+    @options ||= parse_options(ARGV)
+end
+</code></pre>
+
+<p>```</p>
+
+<pre><code>parse_options定义如下：
+</code></pre>
+
+<p>``` ru</p>
+
+<pre><code>def parse_options(args)
+    options = default_options
+
+    # Don't evaluate CGI ISINDEX parameters.
+    # http://hoohoo.ncsa.uiuc.edu/cgi/cl.html
+    args.clear if ENV.include?("REQUEST_METHOD")
+
+    options.merge! opt_parser.parse! args
+    options[:config] = ::File.expand_path(options[:config])
+    ENV["RACK_ENV"] = options[:environment]
+    options
+end
+</code></pre>
+
+<p>```</p>
+
+<pre><code>我们将一行一行解释，
+
+(1)选择default_options如下设置：
+</code></pre>
+
+<p>``` ru</p>
+
+<pre><code>def default_options
+    {
+        :environment =&gt; ENV['RACK_ENV'] || "development",
+        :pid         =&gt; nil,
+        :Port        =&gt; 9292,
+        :Host        =&gt; "0.0.0.0",
+        :AccessLog   =&gt; [],
+        :config      =&gt; "config.ru"
+    }
+end
+</code></pre>
+
+<p>```</p>
+
+<pre><code>它**(Rack::Server)提供了默认环境和端口号等信息**，还记得当rails/commands.rb中，如果存在config.ru时，就加载config/applicaton.rb文件吗？
+
+(2)当ENV哈希环境中没有REQUEST_METHOD这个键时，跳过而去执行合并选项。
+</code></pre>
+
+<p>``` ru</p>
+
+<pre><code>Rack::Server中的opt_server
+
+    def opt_parser
+        Options.new
+    end
+</code></pre>
+
+<p>```</p>
+
+<pre><code>(3)Rails::Server重写parse!
+</code></pre>
+
+<p>``` ru</p>
+
+<pre><code>def parse!(args)
+    args, options = args.dup, {}
+
+    opt_parser = OptionParser.new do |opts|
+        opts.banner = "Usage: rails server [mongrel, thin, etc] [options]"
+        opts.on("-p", "--port=port", Integer,
+                        "Runs Rails on the specified port.", "Default: 3000") { |v| options[:Port] = v }
+    ...
+</code></pre>
+
+<p>```</p>
 
 <p>刚才说default_options已经有了config.ru，这是回到之前rails.commands.rb文件，它加载了config/application.rb文件</p>
 
@@ -562,35 +3330,39 @@ application.rb这个文件将会加载Rails。</p>
 <p>当require APP_PATH被执行，<strong>config/applicaton.rb被加载，server.start就被调用</strong>了。
 方法如下：</p>
 
-<pre><code>    def start
-        url = "#{options[:SSLEnable] ? 'https' : 'http'}://#{options[:Host]}:#{options[:Port]}"
-        puts "=&gt; Booting #{ActiveSupport::Inflector.demodulize(server)}"
-        puts "=&gt; Rails #{Rails.version} application starting in #{Rails.env} on #{url}"
-        puts "=&gt; Run `rails server -h` for more startup options"
-        trap(:INT) { exit }
-        puts "=&gt; Ctrl-C to shutdown server" unless options[:daemonize]
+<p>``` ru</p>
 
-        #Create required tmp directories if not found
-        %w(cache pids sessions sockets).each do |dir_to_make|
-            FileUtils.mkdir_p(Rails.root.join('tmp', dir_to_make))
-        end
+<pre><code>def start
+    url = "#{options[:SSLEnable] ? 'https' : 'http'}://#{options[:Host]}:#{options[:Port]}"
+    puts "=&gt; Booting #{ActiveSupport::Inflector.demodulize(server)}"
+    puts "=&gt; Rails #{Rails.version} application starting in #{Rails.env} on #{url}"
+    puts "=&gt; Run `rails server -h` for more startup options"
+    trap(:INT) { exit }
+    puts "=&gt; Ctrl-C to shutdown server" unless options[:daemonize]
 
-        unless options[:daemonize]
-            wrapped_app # touch the app so the logger is set up
-
-            console = ActiveSupport::Logger.new($stdout)
-            console.formatter = Rails.logger.formatter
-
-            Rails.logger.extend(ActiveSupport::Logger.broadcast(console))
-        end
-
-        super
-    ensure
-        # The '-h' option calls exit before @options is set.
-        # If we call 'options' with it unset, we get double help banners.
-        puts 'Exiting' unless @options &amp;&amp; options[:daemonize]
+    #Create required tmp directories if not found
+    %w(cache pids sessions sockets).each do |dir_to_make|
+        FileUtils.mkdir_p(Rails.root.join('tmp', dir_to_make))
     end
+
+    unless options[:daemonize]
+        wrapped_app # touch the app so the logger is set up
+
+        console = ActiveSupport::Logger.new($stdout)
+        console.formatter = Rails.logger.formatter
+
+        Rails.logger.extend(ActiveSupport::Logger.broadcast(console))
+    end
+
+    super
+ensure
+    # The '-h' option calls exit before @options is set.
+    # If we call 'options' with it unset, we get double help banners.
+    puts 'Exiting' unless @options &amp;&amp; options[:daemonize]
+end
 </code></pre>
+
+<p>```</p>
 
 <blockquote><ul>
 <li><p>这个方法非常重要，我们可以看到前面有一堆提示，而后面<strong>创建了tmp/cache,tmp/pids,tmp/sessions和tmp/sockets文件夹</strong>,</p></li>
@@ -601,11 +3373,15 @@ application.rb这个文件将会加载Rails。</p>
 
 <p>还记得<strong>options[:config]默认指向config.ru</strong>吗？这个文件中包含了：</p>
 
-<pre><code>    # This file is used by Rack-based servers to start the application.
+<p>``` ru</p>
 
-    require ::File.expand_path('../config/environment',  __FILE__)
-    run &lt;%= app_const %&gt;
+<pre><code># This file is used by Rack-based servers to start the application.
+
+require ::File.expand_path('../config/environment',  __FILE__)
+run &lt;%= app_const %&gt;
 </code></pre>
+
+<p>```</p>
 
 <p>它<strong>引进了config/environment.rb</strong>文件，而<strong>environment.rb这个文件引入了config/application.rb</strong>文件</p>
 
@@ -622,159 +3398,6 @@ application.rb这个文件将会加载Rails。</p>
 <h4>总结：(自己所画的rails初始化过程图片)</h4>
 
 <p><img src="/images/posts/2013-10-23/rails_initialize.png" title="rails初始化过程" alt="图片无法显示" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rails表的关联]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian/"/>
-    <updated>2013-10-22T21:47:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian</id>
-    <content type="html"><![CDATA[<p>一段时间没有用到表的关联，回想如何使用时，知识却模糊不清，所以将它记下以便以后查看。
-Rails中表的关联主要有三种：单表继承,多态关联,自引用。</p>
-
-<p>个人觉得：</p>
-
-<ul>
-<li><p><strong>单表继承</strong>是通过增加<strong>冗余字段</strong>来<strong>减少表的数量</strong>。</p></li>
-<li><p><strong>多态关联</strong>是通过建立<strong>虚拟表</strong>来<strong>减少关联数</strong>（belongs_to）和<strong>字段</strong>（外键），方便于以后又有表要关联。</p></li>
-<li><p><strong>自引用</strong>也是利用<strong>冗余</strong>而共用<strong>一张表</strong>。</p></li>
-</ul>
-
-
-<p>共同特点：</p>
-
-<blockquote><p>都需要增加type字段，即增加冗余字段。</p></blockquote>
-
-<p>差别：</p>
-
-<blockquote><p>多态可以让子类有自己的行为特征（通过type字段呈现"多重形态"）。
-单表继承必须拥有共同属性。
-自引用必须牺牲一些字段（不需用到的字段的值为null）。</p></blockquote>
-
-<hr />
-
-<h3>详述</h3>
-
-<h4>单表继承：</h4>
-
-<p>一个继承体系<strong>所有类映射到同一张数据库表</strong>，这张表包含<strong>所有类拥有的属性</strong>。记住：所有属性哦，他们可以为null值（:null=>true，即null是可有可无的）。
-它通过一个<strong>附加字段type来确认当前记录的对象</strong>属于什么<strong>类型</strong>&mdash;&mdash;ActiveRecord约定。</p>
-
-<p>顾名思义，单表就是一张表，那么怎么呈现多种表的形态呢。当其他表引用它时，可以给予其他名字，但是要声明它实际是那张表(belongs_to :manager, :class_name => &ldquo;Person&rdquo;)，举例：</p>
-
-<p>person.rb:</p>
-
-<pre><code>Class Person &lt; ActiveRecord::Base
-        belongs_to XXX
-end
-</code></pre>
-
-<p>manager.rb:(继承Person类)</p>
-
-<pre><code>Class Manager &lt; Person
-end
-</code></pre>
-
-<p>rails console:</p>
-
-<pre><code>XXX.first.manager
-</code></pre>
-
-<p>mysql:</p>
-
-<pre><code>select people.* from people where people.type in ("Manager") and people.id=1
-</code></pre>
-
-<hr />
-
-<h4>多态关联：</h4>
-
-<p>通过建立虚拟表，通过虚拟表（先通过<strong>类型找到关联表</strong>，再通过<strong>外键找到对应的记录</strong>）访问。</p>
-
-<p><strong>举例：</strong></p>
-
-<p>假设我們已经有了Article与Photo这两个Model，然后我们希望这两个Model都可以被留言。不用多态关联的话，你得分別建立ArticleComment和PhotoComment的model。或者一个comment中要有两个外键：article_id和photo_id，虽然用多态也是两个字段，但当表多了就可以看出多态的好处。</p>
-
-<p>现有个场景，有两个model：person和album，需要添加一个图片来做为其头像/封面。添加一个image model，按照以往需要对这几个model做以下关联设置：</p>
-
-<p>没用多态关联前：不复杂，但是麻烦，如果<strong>以后加个book model之类</strong>的，也需要有个图做封面的，那又要<strong>改image model里的关联和migration</strong>了，一点都不DRY。</p>
-
-<pre><code>class Person &lt; ActiveRecord::Base
-  has_one :image, :dependent =&gt; :destroy
-end
-
-  class Album &lt; ActiveRecord::Base
-         has_one :image, :dependent =&gt; :destroy
-  end
-
-  class Image &lt; ActiveRecord::Base
-     belongs_to :person
-         belongs_to :album
-end
-</code></pre>
-
-<p>相应的image的migration要添加上关联字段：</p>
-
-<pre><code>t.column :person_id, :integer, :null =&gt; false, :default =&gt; 0
-    t.column :album_id, :integer, :null =&gt; false, :default =&gt; 0
-</code></pre>
-
-<p>使用多态关联后：</p>
-
-<pre><code>    class Person &lt; ActiveRecord::Base
-        has_one :image, :as =&gt; :iconable, :dependent =&gt; :destroy
-    end
-    class Album &lt; ActiveRecord::Base
-        has_one :image, :as =&gt; :iconable, :dependent =&gt; :destroy
-    end
-    class Image &lt; ActiveRecord::Base
-        belongs_to :iconable, :polymorphic =&gt; true
-    end
-</code></pre>
-
-<p>Person和Album有了<strong>共同的一个虚拟的名字</strong>叫做iconable,image表就可以直接用外键iconable_id关联它,</p>
-
-<p><strong>使用方法：</strong></p>
-
-<p>添加：</p>
-
-<pre><code>    @person = Person.new(params[:person])
-    @person.build_image(params[:image])
-    @person.save
-</code></pre>
-
-<p>读取：</p>
-
-<pre><code>    @person.image
-</code></pre>
-
-<p>image 的属主：</p>
-
-<pre><code>    @person.iconable
-</code></pre>
-
-<hr />
-
-<h4>自引用：</h4>
-
-<p>自引用就是<strong>一条记录可能引用同一张表的另一条记录</strong>：公司员工都有主管，主管也是员工。使用:class_name 和foregin_key加上has_many/has_one和belongs_to.</p>
-
-<pre><code>class Employee &lt; ActiveRecord::Base
-    belongs_to :manager,
-      :class_name =&gt; "Employee",
-      :foregin_key =&gt; "manager_id"
-    belongs_to :mentor,
-        :class_name =&gt; "Employee",
-        :foregin_key =&gt; "mentor_id"
-    has_many ：mentored_employees,
-      :class_name =&gt; "Employee",
-      :foreign_key =&gt; "mentor_id"
-    has_many ：managed_employees,
-      :class_name =&gt; "Employee",
-      :foreign_key =&gt; "manager_id"
-end
-</code></pre>
 ]]></content>
   </entry>
   

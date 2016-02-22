@@ -87,6 +87,12 @@
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -206,8 +212,10 @@
 
 <p><strong>使用格式如下：</strong></p>
 
-<pre><code>  $ find &lt;指定目录&gt; &lt;指定条件&gt; &lt;指定动作&gt;
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'> <span class="nv">$ </span>find &lt;指定目录&gt; &lt;指定条件&gt; &lt;指定动作&gt;
+</span></code></pre></td></tr></table></div></figure>
+
 
 <ul>
 <li><p>&lt;指定目录>： 所要搜索的目录及其所有子目录。默认为当前目录。</p></li>
@@ -218,9 +226,12 @@
 
 <p><strong>举例：</strong></p>
 
-<pre><code>$ find . -name 'my*' -ls        # 搜索当前目录中，所有文件名以my开头的文件，并显示它们的详细信息。
-$ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中更新过的普通文件。如果不加-type f参数，则搜索普通文件+特殊文件+目录。
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>find . -name <span class="s1">&#39;my*&#39;</span> -ls     <span class="c"># 搜索当前目录中，所有文件名以my开头的文件，并显示它们的详细信息。</span>
+</span><span class='line'><span class="nv">$ </span>find . -type f -mmin -10    <span class="c"># 搜索当前目录中，所有过去10分钟中更新过的普通文件。如果不加-type f参数，则搜索普通文件+特殊文件+目录。</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 
@@ -236,10 +247,14 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p><strong>命令格式如下：</strong></p>
 
-<pre><code>    grep [选项] 查找模式 [文件名1, 文件名2, ...]
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>grep <span class="o">[</span>选项<span class="o">]</span> 查找模式 <span class="o">[</span>文件名1, 文件名2, ...<span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>grep <span class="o">[</span>选项<span class="o">]</span> <span class="o">[</span>-e 查找模式|-f 文件<span class="o">][</span>文件名1, 文件名2, ...<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
 
-    grep [选项] [-e 查找模式|-f 文件][文件名1, 文件名2, ...]
-</code></pre>
 
 <blockquote><p>当然：最好用的参数</p>
 
@@ -267,8 +282,10 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p>注意：ubuntu下要安装<strong>ack-grep</strong>，因为在debian系中，ack这个名字被其他的软件占用了。</p>
 
-<pre><code>sudo apt-get install ack-grep
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install ack-grep
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 
@@ -278,10 +295,14 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p><strong>命令格式如下：</strong></p>
 
-<pre><code>    netstat -tulpn              # 显示服务器进程
-    sudo netstat -antup   # 查看进程
-    ack-grep function     # 查找函数位置（必须在文件目录下）
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>netstat -tulpn         <span class="c"># 显示服务器进程</span>
+</span><span class='line'>sudo netstat -antup   <span class="c"># 查看进程</span>
+</span><span class='line'>ack-grep <span class="k">function</span>     <span class="c"># 查找函数位置（必须在文件目录下）</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <hr />
 
@@ -291,10 +312,14 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p>参数就几个很简单：</p>
 
-<pre><code>    crontab -l # 显示现有任务条目 
-    crontab -r # 删除当前的任务 
-    crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>crontab -l <span class="c"># 显示现有任务条目 </span>
+</span><span class='line'>crontab -r <span class="c"># 删除当前的任务 </span>
+</span><span class='line'>crontab -e <span class="c"># 编辑任务单，一般使用 nano 编辑，如DH。</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p><strong>时间参数：</strong></p>
 
@@ -337,7 +362,7 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

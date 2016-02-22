@@ -4,7 +4,7 @@
   <title><![CDATA[Category: nosql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/nosql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2015-07-25T11:34:55+08:00</updated>
+  <updated>2016-02-22T22:48:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -144,57 +144,89 @@
 <hr />
 
 <ol>
-<li><p><strong>安装并编译redis:</strong></p>
-
-<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
- tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
- cd redis-2.2.13
- make                              # 编译
- sudo make install               # 安装redis
-</code></pre></li>
+<li><strong>安装并编译redis:</strong></li>
 </ol>
 
+
+<p>``` sh</p>
+
+<pre><code>wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
+tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
+cd redis-2.2.13
+make                              # 编译
+sudo make install               # 安装redis
+</code></pre>
+
+<p>```</p>
 
 <blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
 
 <p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
 
 <ol>
-<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
-
-<pre><code> cp redis.conf /etc/
-</code></pre></li>
-<li><p><strong>启动服务并验证：</strong></p>
-
-<pre><code> redis-server /etc/redis.conf
-</code></pre></li>
-<li><p><strong>查看是否成功启动：</strong></p>
-
-<pre><code> ps -ef | grep redis
-</code></pre></li>
-<li><p><strong>测试set方法和get方法：</strong></p>
-
-<pre><code> $redis-cli
- redis&gt; set foo bar
- OK
- redis&gt; get foo
- "bar"
-</code></pre></li>
+<li><strong>拷贝指定配置文件到指定目录：</strong></li>
 </ol>
 
 
-<hr />
+<p>``` sh</p>
+
+<pre><code>cp redis.conf /etc/
+</code></pre>
+
+<p>```</p>
+
+<ol>
+<li><strong>启动服务并验证：</strong></li>
+</ol>
+
+
+<p>``` sh</p>
+
+<pre><code>redis-server /etc/redis.conf
+</code></pre>
+
+<p>```</p>
+
+<ol>
+<li><strong>查看是否成功启动：</strong></li>
+</ol>
+
+
+<p>``` sh</p>
+
+<pre><code>    ps -ef | grep redis
+</code></pre>
+
+<p>```
+5. <strong>测试set方法和get方法：</strong></p>
+
+<p>``` sh</p>
+
+<pre><code>$redis-cli
+redis&gt; set foo bar
+OK
+redis&gt; get foo
+"bar"
+</code></pre>
+
+<h2>```</h2>
 
 <h3>其他设置：</h3>
 
 <h4>设置开机自动启动，关机自动关闭：</h4>
 
-<pre><code>    sudo update-rc.d redis-server defaults
+<p>``` sh</p>
+
+<pre><code>sudo update-rc.d redis-server defaults
 </code></pre>
+
+<p>```</p>
 
 <h4>初始化用户和日志路径：</h4>
 
 <p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
+
+<p>``` sh</p>
 
 <pre><code>sudo useradd redis
 sudo mkdir -p /var/lib/redis
@@ -202,6 +234,8 @@ sudo mkdir -p /var/log/redis
 sudo chown redis.redis /var/lib/redis
 sudo chown redis.redis /var/log/redis
 </code></pre>
+
+<p>```</p>
 ]]></content>
   </entry>
   

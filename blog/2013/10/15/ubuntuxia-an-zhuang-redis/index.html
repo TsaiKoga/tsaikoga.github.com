@@ -6,7 +6,14 @@
 	<title>Ubuntu下安装redis - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="安装步骤： 安装并编译redis: wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz # 下载压缩包 tar -zxf redis-2.2.13.tar.gz # 解压该压缩包 cd redis-2.2.13 make # 编译 &hellip;">
+	<meta name="description" content="安装步骤： 安装并编译redis: 1
+2
+3
+4
+5
+wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz # 下载压缩包
+tar -zxf redis-2.2.13.tar.gz # 解压该压缩包
+cd redis-2.2.13 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -87,6 +94,12 @@
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -97,15 +110,21 @@
 <hr />
 
 <ol>
-<li><p><strong>安装并编译redis:</strong></p>
-
-<pre><code> wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    # 下载压缩包
- tar -zxf redis-2.2.13.tar.gz    # 解压该压缩包
- cd redis-2.2.13
- make                              # 编译
- sudo make install               # 安装redis
-</code></pre></li>
+<li><strong>安装并编译redis:</strong></li>
 </ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    <span class="c"># 下载压缩包</span>
+</span><span class='line'>tar -zxf redis-2.2.13.tar.gz    <span class="c"># 解压该压缩包</span>
+</span><span class='line'><span class="nb">cd </span>redis-2.2.13
+</span><span class='line'>make                              <span class="c"># 编译</span>
+</span><span class='line'>sudo make install               <span class="c"># 安装redis</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
@@ -113,27 +132,51 @@
 <p><img src="/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
 
 <ol>
-<li><p><strong>拷贝指定配置文件到指定目录：</strong></p>
-
-<pre><code> cp redis.conf /etc/
-</code></pre></li>
-<li><p><strong>启动服务并验证：</strong></p>
-
-<pre><code> redis-server /etc/redis.conf
-</code></pre></li>
-<li><p><strong>查看是否成功启动：</strong></p>
-
-<pre><code> ps -ef | grep redis
-</code></pre></li>
-<li><p><strong>测试set方法和get方法：</strong></p>
-
-<pre><code> $redis-cli
- redis&gt; set foo bar
- OK
- redis&gt; get foo
- "bar"
-</code></pre></li>
+<li><strong>拷贝指定配置文件到指定目录：</strong></li>
 </ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp redis.conf /etc/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li><strong>启动服务并验证：</strong></li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>redis-server /etc/redis.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li><strong>查看是否成功启动：</strong></li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>   ps -ef | grep redis
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li><strong>测试set方法和get方法：</strong></li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nv">$redis</span>-cli
+</span><span class='line'>redis&gt; <span class="nb">set </span>foo bar
+</span><span class='line'>OK
+</span><span class='line'>redis&gt; get foo
+</span><span class='line'><span class="s2">&quot;bar&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <hr />
@@ -142,19 +185,27 @@
 
 <h4>设置开机自动启动，关机自动关闭：</h4>
 
-<pre><code>    sudo update-rc.d redis-server defaults
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo update-rc.d redis-server defaults
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h4>初始化用户和日志路径：</h4>
 
 <p>第一次启动Redis前，建议为Redis单独建立一个用户，并新建data和日志文件夹</p>
 
-<pre><code>sudo useradd redis
-sudo mkdir -p /var/lib/redis
-sudo mkdir -p /var/log/redis
-sudo chown redis.redis /var/lib/redis
-sudo chown redis.redis /var/log/redis
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo useradd redis
+</span><span class='line'>sudo mkdir -p /var/lib/redis
+</span><span class='line'>sudo mkdir -p /var/log/redis
+</span><span class='line'>sudo chown redis.redis /var/lib/redis
+</span><span class='line'>sudo chown redis.redis /var/log/redis
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 <div class="meta">
@@ -185,7 +236,7 @@ sudo chown redis.redis /var/log/redis
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

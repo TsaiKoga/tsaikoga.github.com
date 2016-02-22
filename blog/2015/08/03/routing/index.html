@@ -1,0 +1,1698 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Routing - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="目录： 2.1 路由的两个目标 2.2 routes.rb文件 2.2.1 路由规则 2.2.2 限制请求方法 2.2.3 URL 模式 2.2.4 段键 2.2.5 聚焦于id字段 2.2.6 可选的段键 2.2.7 重定向路由 2.2.8 格式段format 2.2.9 路由作为Rack的端点 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Routing</h2>
+	<div class="entry-content"><h3>目录：</h3>
+
+<h4><a href="#2.1">2.1 路由的两个目标</a></h4>
+
+<h4><a href="#2.2">2.2 routes.rb文件</a></h4>
+
+<h5><a href="#2.2.1">2.2.1 路由规则</a></h5>
+
+<h5><a href="#2.2.2">2.2.2 限制请求方法</a></h5>
+
+<h5><a href="#2.2.3">2.2.3 URL 模式</a></h5>
+
+<h5><a href="#2.2.4">2.2.4 段键</a></h5>
+
+<h5><a href="#2.2.5">2.2.5 聚焦于id字段</a></h5>
+
+<h5><a href="#2.2.6">2.2.6 可选的段键</a></h5>
+
+<h5><a href="#2.2.7">2.2.7 重定向路由</a></h5>
+
+<h5><a href="#2.2.8">2.2.8 格式段format</a></h5>
+
+<h5><a href="#2.2.9">2.2.9 路由作为Rack的端点</a></h5>
+
+<h5><a href="#2.2.10">2.2.10 接收头</a></h5>
+
+<h5><a href="#2.2.11">2.2.11 段键约束</a></h5>
+
+<h5><a href="#2.2.12">2.2.12 根路由</a></h5>
+
+<h4><a href="#2.3">2.3 路径匹配</a></h4>
+
+<h4><a href="#2.4">2.4 命名路由</a></h4>
+
+<h5><a href="#2.4.1">2.4.1 创建一个命名路由</a></h5>
+
+<h5><a href="#2.4.2">2.4.2 name_path vs name_url</a></h5>
+
+<h5><a href="#2.4.3">2.4.3 给你的路由命名</a></h5>
+
+<h5><a href="#2.4.4">2.4.4 参数糖</a></h5>
+
+<h5><a href="#2.4.5">2.4.5 你的糖中还有糖吗？</a></h5>
+
+<h4><a href="#2.5">2.5 作用域的路由规则</a></h4>
+
+<h5><a href="#2.5.1">2.5.1 Controller</a></h5>
+
+<h5><a href="#2.5.2">2.5.2 路径前缀</a></h5>
+
+<h5><a href="#2.5.3">2.5.3 命名前缀</a></h5>
+
+<h5><a href="#2.5.4">2.5.4 命名空间</a></h5>
+
+<h5><a href="#2.5.5">2.5.5 捆绑约束</a></h5>
+
+<h4><a href="#2.6">2.6 路由列表</a></h4>
+
+<h2 id='2.1'>2.1 路由的两个目标</h2>
+
+
+<p>路由系统做两件事：</p>
+
+<ol>
+<li><p>通过请求匹配对应的controller的action方法</p></li>
+<li><p>为你的方法（像link_to  redirect_to）动态生成URL</p></li>
+</ol>
+
+
+<p>路由定义了一个规则，用来作为匹配URL的模板和作为创建url的蓝图，这种规则会按照惯例自动生成（例如REST资源）。这种规则包括静态子字符串和斜杠（模仿URL的写法），和作为与url的值相符合的位置(segment key)段参数的key。</p>
+
+<p>一个路由包括一个或多个硬编码的段参数key形成键值对，然后通过params方法进入对应的controller的action中。键（:controller和:action）决定哪个controller的哪个action被调用。路由中的其他键值对的定义得到了参考。</p>
+
+<p>来看一个例子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;recipes/:ingredient&#39;</span> <span class="o">=&gt;</span> <span class="s2">&quot;recipes#index&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个例子中，你可以找到：</p>
+
+<ul>
+<li><p>静态字符串（recipes）</p></li>
+<li><p>斜杠（/）</p></li>
+<li><p>段参数key（:ingredient）</p></li>
+<li><p>controller和action的映射（recipes#index）</p></li>
+<li><p>HTTP动词抑制方法（get）</p></li>
+</ul>
+
+
+<p>路由有许多丰富的语法，但不是意味着这个是最复杂的，也不是最简单的；由于实在是太多了，一个简单的路由，想这个例子，必须<strong>提供足够的信息去匹配现存的url</strong>并且<strong>可以生成新的url</strong>，路由语法的设计就是来解决这两个过程的。</p>
+
+<br />
+
+
+
+
+<h2 id="2.2">2.2 routes.rb文件</h2>
+
+
+<hr />
+
+<p>路由定义在config/routes.rb文件中，根据 Listing2.1 这个文件创建于你创建你的Rails应用时并且还有命令教你如何使用，</p>
+
+<h6>Listing 2.1: The default routes.rb file</h6>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">Example</span><span class="p">:</span><span class="ss">:Application</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">draw</span> <span class="k">do</span>
+</span><span class='line'>  <span class="c1"># The priority is based upon order of creation: first created -&gt; highest</span>
+</span><span class='line'>  <span class="c1"># priority.</span>
+</span><span class='line'>  <span class="c1"># See how all your routes lay out with &quot;rake routes&quot;.</span>
+</span><span class='line'>  <span class="c1"># You can have the root of your site routed with &quot;root&quot;</span>
+</span><span class='line'>  <span class="c1"># root to: &#39;welcome#index&#39;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example of regular route:</span>
+</span><span class='line'>  <span class="c1">#   get &#39;products/:id&#39; =&gt; &#39;catalog#view&#39;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example of named route that can be invoked with</span>
+</span><span class='line'>  <span class="c1"># purchase_url(id: product.id)</span>
+</span><span class='line'>  <span class="c1">#  get &#39;products/:id/purchase&#39; =&gt; &#39;catalog#purchase&#39;, as: :purchase</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example resource route (maps HTTP verbs to controller actions</span>
+</span><span class='line'>  <span class="c1">#automatically):</span>
+</span><span class='line'>  <span class="c1">#   resources :products</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example resource route with options:</span>
+</span><span class='line'>  <span class="c1"># resources :products do</span>
+</span><span class='line'>  <span class="c1">#   member do</span>
+</span><span class='line'>  <span class="c1">#     get &#39;short&#39;</span>
+</span><span class='line'>  <span class="c1">#     post &#39;toggle&#39;</span>
+</span><span class='line'>  <span class="c1">#   end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">#   collection do</span>
+</span><span class='line'>  <span class="c1">#     get &#39;sold&#39;</span>
+</span><span class='line'>  <span class="c1">#   end</span>
+</span><span class='line'>  <span class="c1"># end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example resource route with sub-resources:</span>
+</span><span class='line'>  <span class="c1">#   resources :products do</span>
+</span><span class='line'>  <span class="c1">#       resources :comments, :sales</span>
+</span><span class='line'>  <span class="c1">#       resource :seller</span>
+</span><span class='line'>  <span class="c1">#   end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example resource route with more complex sub-resources:</span>
+</span><span class='line'>  <span class="c1">#   resources :products do</span>
+</span><span class='line'>  <span class="c1">#     resources :comments</span>
+</span><span class='line'>  <span class="c1">#     resources :sales do</span>
+</span><span class='line'>  <span class="c1">#        get &#39;recent&#39;, on: :collection</span>
+</span><span class='line'>  <span class="c1">#     end</span>
+</span><span class='line'>  <span class="c1">#   end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1"># Example resource route within a namespace:</span>
+</span><span class='line'>  <span class="c1">#   namespace :admin do</span>
+</span><span class='line'>  <span class="c1">#     # Directs /admin/products/* to Admin::ProductsController</span>
+</span><span class='line'>  <span class="c1">#     # (app/controllers/admin/products_controller.rb)</span>
+</span><span class='line'>  <span class="c1">#     resources :products</span>
+</span><span class='line'>  <span class="c1">#   end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个文件由Example::Application.routes 的draw 方法调用构成的，方法用到一个块，从文件的第二行到倒数第二行都是块的内容，
+在运行时，块在ActionDispatch::Routing::Mapper实例中估值，你可以通过它设置整个路由系统。</p>
+
+<p>路由系统不得不寻找一个匹配URL的模式，它尝试着辨识或匹配url产生的参数，按着定义的顺序执行；也就是，按照 routes.rb 里面的顺序。
+如果所给的路由匹配失败，匹配历程将查找下一个再匹配，直到成功匹配，查询才结束。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.1">2.2.1 路由规则</h3>
+
+
+<hr />
+
+<p>最基础的定义路由方法是提供URL的模式加上一个通过特殊参数:to 映射的controller类action方法。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;products/:id&#39;</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="s1">&#39;products#show&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这是比较通用的，提供一个简写形式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;products/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>David曾经公开评价过这种简写形式背后的设计决定，他说这是从2个来源汲取灵感的：</p>
+
+<ol>
+<li>因为我们一直在使用controller作为小写这种模式，而且在:controller => “main”的定义中也没有“Controller”这部分。</li>
+<li>采用Ruby模式#表示你正在谈论一个实例方法，它的影响甚至被部分混合。Main#index会让你认为存在Main这个对象，然而没有；
+每次输出MainController#index将会成为一个麻烦。也是同样地原因我们考虑过:controller => “main” 和 :controller => “MainController”。给了这些限制，我想“main#index”是迄今为止最好的选择。</li>
+</ol>
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.2">2.2.2 限制请求方法</h3>
+
+
+<hr />
+
+<p>Rails4，限制HTTP方法被用来操作路由。
+如果你用match 命令去定义一个路由，你会通过via这个可选参数来完成：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s1">&#39;products/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="ss">:get</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Rails提供更简洁的方法去表达这种限制，通过设计好的http方法来替换原来的match命令：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;products/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span>
+</span><span class='line'><span class="n">post</span><span class="s1">&#39; products&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#create&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果，处于某些原因，你想使用多个http方法限制路由，可以通过将这些动词方法构造成数组，然后传递给:via即可：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s1">&#39;products/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="o">[</span><span class="ss">:get</span><span class="p">,</span><span class="ss">:post</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>定义一个路由没有定义他的http方法，将会使Rails抛出RuntimeError 异常。
+然而这里不作为推荐，一个路由仍然可以匹配任何的http方法，只要传递:any到:via即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s1">&#39;products&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#index&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="ss">:any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.3">2.2.3 URL 模式</h3>
+
+
+<hr />
+
+<p>请记住，模式字符串中不需要对应每个字段，段键(segment keys ：表示url字符串中得参数符号)；事实上每个连接都需要controller和action，举个例子，你可以写如下的路由：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;:id&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;products#show&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>它将会被如下的URL辨别：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">http</span><span class="p">:</span><span class="sr">//</span><span class="ss">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="mi">8</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个路由系统将设置params[:id]为8（基于:id的段键位置与url中得8位置相匹配），并且它会执行product这个controller的show方法。当然，在视觉上看这个路由有点微小。另一方面，下面例子的路由包含静态字符串products/，在URL模式中：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s1">&#39;products/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个字符串锚文本的识别过程中，任何左边不包含products/的URL将不符合此路由。</p>
+
+<p>至于URL的产生，路由中的静态字符串将会简单地代替路由系统生成URL。URL生成器生成URL是使用路由的模式字符串作为蓝图的。模式字符串规定了子串products。</p>
+
+<p>讲到这里，你心中应该了解到路由的这两种双重的意图了&mdash;识别/生成，这也是为什么之前强调了几次的目的。
+这也有专门用来记住的两个原则：</p>
+
+<ol>
+<li><p>同样的规则决定了识别和生成。整个系统都是这样建立起来的，你不再需要去写规则。你每写一次规则，逻辑将在两个方向流动。</p></li>
+<li><p>URL将由路由系统生成（link_to 等），url <a href="http://example.com/products/19201">http://example.com/products/19201</a> 的结果没有包含当用户遵循它时应该发生的一丝线索&mdash;除了它的路由规则。路由规则提供了必要的信息去触发controller和action。有些人看着URL但是不知道路由规则，将不知道url映射到哪个controller和action。</p></li>
+</ol>
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.4">2.2.4 段键</h3>
+
+
+<hr />
+
+<p>URL的模式字符串可以包含参数（用一个符号表示），并称为段键。
+在下面的路由声明中，:id就是段键：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;products/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当这个路由去匹配url请求时，该模式的:id部分将作为匹配部分，并且挑选片段的值。
+举个例子，下面这个url的:id的值将会是4：<a href="http://example.com/products/4">http://example.com/products/4</a></p>
+
+<p>这个路由，当他匹配的时候，将会总是带着用户到product controller的show这个action方法，你不久将会看到基于片段匹配controller和action的技术。在单引号中得:id符号将是路由的段键（可以将它视为一种变量类型），它的工作就是被一个值锁上。</p>
+
+<p>上面例子的意思是params[:id]的值将会被设置成4，你可以在product controller中的show方法中读取这个值。</p>
+
+<p>当你需要生成一串url，你必须提供一个值能连接url中模式字符串的段键。一个最简单的理解（并且最原始）的方式是使用hash，像这样：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Products&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="ss">controller</span><span class="p">:</span> <span class="s2">&quot;products&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="ss">action</span><span class="p">:</span> <span class="s2">&quot;show&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nb">id</span><span class="p">:</span> <span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就像你知道的那样，它确实有像当今共同的生成路由的方法，名叫具名路由，在hash中明确地提供了controller和action。然而，现在我们是回顾路由的基本知识。</p>
+
+<p>在上面的link_to中，我们提供了三个参数，其中两个将会匹配路由中得硬编码和段键；第三个，:id将会分配给url模式中相符合的段键值。</p>
+
+<p>非常重要的是理解link_to不需要知道是否提供硬编码或是段值。只需要知道（或者希望）那三个值，绑定着那三个键，就能足够精确一个路由和模式字符串；因此，能够生成自动生成URL的蓝图。</p>
+
+<h4>i:硬编码参数</h4>
+
+<p>你总是有可能插入额外的硬编码参数到定义的路由的，尽管这个它对url的匹配无任何作用：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;products/special&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#show&#39;</span><span class="p">,</span> <span class="ss">special</span><span class="p">:</span> <span class="s1">&#39;true&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>提醒你，我不支持上述这个例子的做法；对我来说（从风格问题上讲）指出不同的action，而不是插入一个分句，</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;products/special&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;products#special&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.5">2.2.5 聚焦于id字段</h3>
+
+
+<hr />
+
+<p>注意，对待URL中的:id字段并不是魔法，它只是一个当做一个值的名字对待而已。如果你想要，可以改变Rails的规则，例如将:id改为:blah，但是你也不得不在你的controller中得action像下面这样做：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@product</span><span class="o">=</span><span class="no">Product</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:blah</span><span class="o">]</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>:id这个字段仅仅是一个惯例，它映射了一个action的普遍行为，就是操作一条特定的数据库记录。路由主要的工作是确定controller和对应的action被执行。通过:id的hash，你去数据库获取想要的记录：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ProductsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">show</span>
+</span><span class='line'>    <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.6">2.2.6 可选的段键</h3>
+
+
+<hr />
+
+<p>Rails3 引入定义URL可选部分的模式，最简单的阐述这种方法的方式是看下面例子，这是从旧版本的config/routes.rb 文件底部的例子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s1">&#39;:controller(/:action(/:id(.:format)))&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="ss">:any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>注意圆括号是用来定义可选段键的，有点像正则表达式中的可选组合。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.2.7">2.2.7 重定向路由</h3>
+
+
+<hr />
+
+<p>你可以在直接在路由定义中直接编写一个redirect重定向，只要使用redirect方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;/foo&quot;</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;/bar&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>redirect的参数url可以是一个相对地址也可以是一个绝对地址。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;/google&quot;</span><span class="p">,</span><span class="ss">to</span><span class="p">:</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;http://google.com/&#39;</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>redirect方法可以使用一个块，接收params请求作为他的参数；举个例子，做一个web服务端api的快速版本：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span><span class="s2">&quot;/api/v1/:api&quot;</span><span class="p">,</span><span class="ss">to</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">redirect</span> <span class="p">{</span><span class="o">|</span><span class="n">params</span><span class="o">|</span> <span class="s2">&quot;/api/v2/</span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="ss">:api</span><span class="o">].</span><span class="n">pluralize</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">},</span> <span class="ss">via</span><span class="p">:</span> <span class="ss">:any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>redirect也接受:status参数：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s2">&quot;/api/v1/:api&quot;</span><span class="p">,</span> <span class="ss">:to</span><span class="o">=&gt;</span>
+</span><span class='line'>  <span class="n">redirect</span><span class="p">(</span><span class="ss">status</span><span class="p">:</span> <span class="mi">302</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">params</span><span class="o">|</span> <span class="s2">&quot;/api/v2/</span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="ss">:api</span><span class="o">].</span><span class="n">pluralize</span><span class="si">}</span><span class="s2">&quot;</span> <span class="p">},</span> <span class="ss">via</span><span class="p">:</span> <span class="ss">:any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>redirect 返回的是ActionDispatch::Routing::Redirect的实例，看一下它的源代码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">ActionDispatch</span>
+</span><span class='line'>  <span class="k">module</span> <span class="nn">Routing</span>
+</span><span class='line'>    <span class="k">class</span> <span class="n">redirect</span>
+</span><span class='line'>      <span class="c1"># :nodoc: ...</span>
+</span><span class='line'>      <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>        <span class="n">req</span> <span class="o">=</span> <span class="no">Request</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1"># If any of the path parameters has a invalid encoding then </span>
+</span><span class='line'>        <span class="c1"># raise since it&#39;s likely to trigger errors further on.</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">req</span><span class="o">.</span><span class="n">symbolized_path_parameters</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="o">|</span>
+</span><span class='line'>          <span class="k">unless</span> <span class="n">value</span><span class="o">.</span><span class="n">valid_encoding?</span>
+</span><span class='line'>          <span class="k">raise</span> <span class="ss">ActionController</span><span class="p">:</span><span class="ss">:BadRequest</span><span class="p">,</span>
+</span><span class='line'>          <span class="s2">&quot;Invalid parameter: </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">#{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">uri</span> <span class="o">=</span> <span class="no">URI</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">symbolized_path_parameters</span><span class="p">,</span> <span class="n">req</span><span class="p">))</span> <span class="n">uri</span><span class="o">.</span><span class="n">scheme</span> <span class="o">||=</span> <span class="n">req</span><span class="o">.</span><span class="n">scheme</span>
+</span><span class='line'>      <span class="n">uri</span><span class="o">.</span><span class="n">host</span> <span class="o">||=</span> <span class="n">req</span><span class="o">.</span><span class="n">host</span>
+</span><span class='line'>      <span class="n">uri</span><span class="o">.</span><span class="n">port</span> <span class="o">||=</span> <span class="n">req</span><span class="o">.</span><span class="n">port</span> <span class="k">unless</span> <span class="n">req</span><span class="o">.</span><span class="n">standard_port?</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">body</span> <span class="o">=</span> <span class="sx">%(&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;</span><span class="si">#{</span><span class="ss">ERB</span><span class="p">:</span><span class="ss">:Util</span><span class="o">.</span><span class="n">h</span><span class="p">(</span><span class="n">uri</span><span class="o">.</span><span class="n">to_s</span><span class="p">)\</span> <span class="si">}</span><span class="sx">&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;)</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>              <span class="s1">&#39;Location&#39;</span> <span class="o">=&gt;</span> <span class="n">uri</span><span class="o">.</span><span class="n">to_s</span><span class="p">,</span>
+</span><span class='line'>              <span class="s1">&#39;Content-Type&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;text/html&#39;</span><span class="p">,</span>
+</span><span class='line'>              <span class="s1">&#39;Content-Length&#39;</span> <span class="o">=&gt;</span> <span class="n">body</span><span class="o">.</span><span class="n">length</span><span class="o">.</span><span class="n">to_s</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="o">[</span><span class="n">status</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="o">[</span><span class="n">body</span><span class="o">]</span> <span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>      <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.8">2.2.8 格式段format</h3>
+
+
+<hr />
+
+<p>我们来重新访问之前的默认路由：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">match</span> <span class="s1">&#39;:controller(/:action(/:id(.:format)))&#39;</span><span class="p">,</span> <span class="ss">via</span><span class="p">:</span> <span class="ss">:any</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>.:format将匹配id字段后面.之后的值，举个例子，像如下的url：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">http</span><span class="p">:</span><span class="sr">//</span><span class="ss">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">products</span><span class="o">/</span><span class="n">show</span><span class="o">/</span><span class="mi">3</span><span class="o">.</span><span class="n">json</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这里，params[:format]将会被设置成为json。:format很特别，它在controller的action中有一个作用，这个作用与调用respond_to方法有关。</p>
+
+<p>respond_to方法允许你的action依据请求的格式返回不同的结果，这里的product_controller的show方法提供了html和json两种格式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">show</span>
+</span><span class='line'>  <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+</span><span class='line'>    <span class="nb">format</span><span class="o">.</span><span class="n">html</span>
+</span><span class='line'>    <span class="nb">format</span><span class="o">.</span><span class="n">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">json</span><span class="p">:</span> <span class="vi">@product</span><span class="o">.</span><span class="n">to_json</span>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个respond_to的块中有两个分句，html分句是由format.html组成，对于html格式的请求将采用正常渲染方式，而json分句包含一个代码块；如果json被请求，那么json中的代码块将会被执行，并且其结果将会返回到客户端。</p>
+
+<p>这里有个使用curl命令的结果：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>curl http://localhost:3000/products/show/1.json -i
+</span><span class='line'>HTTP/1.1 200 OK
+</span><span class='line'>Content-Type: application/json; <span class="nv">charset</span><span class="o">=</span>utf-8
+</span><span class='line'>Content-Length:81
+</span><span class='line'>Connection:Keep-Alive
+</span><span class='line'>
+</span><span class='line'><span class="o">{</span><span class="s2">&quot;created_at&quot;</span>:<span class="s2">&quot;2013-02-09T18:25:03.513Z&quot;</span>,
+</span><span class='line'> <span class="s2">&quot;description&quot;</span>:<span class="s2">&quot;Keyboard&quot;</span>,
+</span><span class='line'> <span class="s2">&quot;id&quot;</span>:<span class="s2">&quot;1&quot;</span>,
+</span><span class='line'> <span class="s2">&quot;maker&quot;</span>:<span class="s2">&quot;Apple&quot;</span>,
+</span><span class='line'> <span class="s2">&quot;updated_at&quot;</span>:<span class="s2">&quot;2013-02-09T18:25:03.513Z&quot;</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>URL最后以.json结尾会导致respond_to选择json分支，并且返回json表达的结果。</p>
+
+<p>如果请求的格式不包含在respond_to的块里面，rails不会抛出异常，Rails会返回406 Not Acceptable status，告诉你无法处理这种请求。</p>
+
+<p>如果你想要在respond_to的块里设置其他情况的处理，你可以使用any方法，这将会告诉rails处理那些没有被清晰定义的其他请求格式。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">show</span>
+</span><span class='line'>  <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+</span><span class='line'>    <span class="nb">format</span><span class="o">.</span><span class="n">html</span>
+</span><span class='line'>    <span class="nb">format</span><span class="o">.</span><span class="n">json</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">json</span><span class="p">:</span> <span class="vi">@product</span><span class="o">.</span><span class="n">to_json</span>  <span class="p">}</span>
+</span><span class='line'>    <span class="nb">format</span><span class="o">.</span><span class="n">any</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你只要告诉any方法该如何处理那个格式的请求或者有那个对应格式的视图模板，否则你将会得到 MissingTemplate 异常。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ActionView::MissingTemplate<span class="o">(</span>Missingtemplateproducts/show, application/show with <span class="o">{</span>:locale<span class="o">=</span>&gt;<span class="o">[</span>:en<span class="o">]</span>, :formats<span class="o">=</span>&gt;<span class="o">[</span>:xml<span class="o">]</span>, :handlers<span class="o">=</span>&gt;<span class="o">[</span>:erb, :builder, :raw, :ruby, :jbuilder, :coffee<span class="o">]}</span>.<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.9">2.2.9 路由作为Rack的端点</h3>
+
+
+<hr />
+
+<p>在这一章的路由中你会见到可选的参数:to的用法，最有意思的是:to的值将会作为指向Rack的端点(Rack Endpoint)，看看下面简单的例子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;/hello&quot;</span><span class="p">,</span> <span class="ss">to</span><span class="p">:</span> <span class="nb">proc</span><span class="p">{</span><span class="o">|</span><span class="n">env</span><span class="o">|</span> <span class="o">[</span> <span class="mi">200</span><span class="p">,</span> <span class="p">{},</span> <span class="o">[</span><span class="s2">&quot;Helloworld&quot;</span><span class="o">]</span> <span class="o">]</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>路由到controllers是非常松耦合的！最简洁的语法是（像&#8221;items#show&#8221;）依靠controller类的action方法去返回执行action请求的Rack Endpoint。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&gt;&gt;</span> <span class="no">ItemsController</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="ss">:show</span><span class="p">)</span>
+</span><span class='line'><span class="o">=&gt;</span> <span class="c1">#&lt;Proc:0x01e96cd0@...&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>派发基于Rack应用的能力，像由Sinatra创建的app，可以实现使用amount方法。
+amount方法接收一个:at可选项可以说明基于Rack的应用映射的路由。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">HelloApp</span> <span class="o">&lt;</span> <span class="ss">Sinatra</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s2">&quot;/&quot;</span> <span class="k">do</span>
+</span><span class='line'>    <span class="s2">&quot;Hello World!&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="ss">Example</span><span class="p">:</span><span class="ss">:Application</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">draw</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">mount</span> <span class="no">HelloApp</span><span class="p">,</span> <span class="ss">at</span><span class="p">:</span> <span class="s1">&#39;/hello&#39;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然，更简洁的方式是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">mount</span> <span class="no">HelloApp</span> <span class="o">=&gt;</span> <span class="s1">&#39;/hello&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.10">2.2.10 接收头</h3>
+
+
+<hr />
+
+<p>你可以通过设置请求的接收头（Accept Headers）来触发respond_to的其他分句，当你这样做了，就不需要在URL末尾加上.:format。（然而，由于http客户端的不一致，现实使用这种技术并不是很可靠）。</p>
+
+<p>下面使用curl的例子，没有定义.json格式，但是不需要将接收头设置成application/json。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vg">$curl</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">H</span> <span class="s2">&quot;Accept: application/json&quot;</span>
+</span><span class='line'><span class="ss">http</span><span class="p">:</span><span class="sr">//</span><span class="ss">localhost</span><span class="p">:</span><span class="mi">3000</span><span class="o">/</span><span class="n">products</span><span class="o">/</span><span class="n">show</span><span class="o">/</span><span class="mi">1</span>
+</span><span class='line'><span class="no">HTTP</span><span class="o">/</span><span class="mi">1</span><span class="o">.</span><span class="mi">1</span> <span class="mi">200</span> <span class="no">OK</span>
+</span><span class='line'><span class="no">Content</span><span class="o">-</span><span class="ss">Type</span><span class="p">:</span> <span class="n">application</span><span class="o">/</span><span class="n">json</span><span class="p">;</span><span class="n">charset</span><span class="o">=</span><span class="n">utf</span><span class="o">-</span><span class="mi">8</span>
+</span><span class='line'><span class="no">Content</span><span class="o">-</span><span class="ss">Length</span><span class="p">:</span> <span class="mi">81</span>
+</span><span class='line'><span class="ss">Connection</span><span class="p">:</span> <span class="no">Keep</span><span class="o">-</span><span class="no">Alive</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">{</span><span class="s2">&quot;created_at&quot;</span><span class="ss">:&quot;2013-02-09T18:25:03.513Z&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="s2">&quot;description&quot;</span><span class="ss">:&quot;Keyboard&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="s2">&quot;id&quot;</span><span class="ss">:&quot;1&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="s2">&quot;maker&quot;</span><span class="ss">:&quot;Apple&quot;</span><span class="p">,</span>
+</span><span class='line'>   <span class="s2">&quot;updated_at&quot;</span><span class="ss">:&quot;2013-02-09T18:25:03.513Z&quot;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.11">2.2.11 段键约束</h3>
+
+
+<hr />
+
+<p>有时候你不仅仅需要辨认一个路由，还需要辨别比现在更细粒度的组件或字段，你可以使用:constraint选项进行限制（可能需要正则表达式）。</p>
+
+<p>举个例子，如果id为非数值，你可以路由许多show 请求到一个错误的action。你可以创建两个路由，一个处理id为数值的路由，另一个处理错误的路由。</p>
+
+<h4>i:隐式锚文本</h4>
+
+<blockquote><p>如果我们使用下面的限制：</p>
+
+<p>constraints: {:id => /\d+/}</p>
+
+<p>乍一看，好像会匹配&#8221;foo32bar&#8221;。其实不会，因为rails隐式锚文本会在表达式前后增加终结符。</p>
+
+<p>事实上，像这样在表达式前后增加\A 和 \Z会导致Rails抛出异常。</p></blockquote>
+
+<p>事实上，我们经常给:id增加限制，rails提供了更加简洁的方式：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;:controller/show/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:show</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="sr">/\d+/</span>
+</span><span class='line'><span class="n">get</span> <span class="s1">&#39;:controller/show/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:show_error</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>正则表达式中的路由非常有用，特别是当你的路由中组件只是值不同时。但是，它们并不能作为数据完整性检查的替代品。你可能仍然需要确定你所处理的值是对于你的项目是有用或合适的。</p>
+
+<p>从例子看，你可能总结为:constraints 检查params中的元素。然而，你也可以利用:constraints来检查任何一个请求“返回字符串的属性”，就像:subdomain和:referrer。对于匹配请求的方法，则不支持返回为数值或布尔型的，并且将会抛出神秘的异常。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># only allow users admin subdomain to do old-school routing</span>
+</span><span class='line'><span class="n">get</span> <span class="s1">&#39;:controller/:action/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:show</span><span class="p">,</span> <span class="ss">constraints</span><span class="p">:</span> <span class="p">{</span><span class="ss">subdomain</span><span class="p">:</span> <span class="s1">&#39;admin&#39;</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>如果由于某些原因，你需要更加强大的限制性检查，有时候需要访问请求req，然后通过接受一个块或其他相应call的对象作为值来限制。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># protect records with id under 100</span>
+</span><span class='line'> <span class="n">get</span><span class="s1">&#39;records/:id&#39;</span><span class="o">=&gt;</span><span class="s2">&quot;records#protected&quot;</span><span class="p">,</span>
+</span><span class='line'> <span class="ss">constraints</span><span class="p">:</span> <span class="nb">proc</span> <span class="p">{</span><span class="o">|</span><span class="n">req</span><span class="o">|</span> <span class="n">req</span><span class="o">.</span><span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">].</span><span class="n">to_i</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.2.12">2.2.12 根路由</h3>
+
+
+<hr />
+
+<p>config/routes.rb文件的默认第8行，你会见到：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># You can have the root of your site routed with &quot;root&quot;</span>
+</span><span class='line'><span class="c1"># root to: &#39;welcome#index&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述代码的作用是，当你的浏览器连接：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">http</span><span class="p">:</span><span class="sr">//ex</span><span class="n">ample</span><span class="o">.</span><span class="n">com</span> <span class="c1"># Note the lack of &quot;/anything&quot; at the end!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>路由会说：“我不需要任何值，我不需要任何东西，我已经知道是哪个controller的哪个action了，我现在就去触发它。”</p>
+
+<p>在一个最新创建的路由中，这一行是被注释掉的，因为并不是默认需要到的。你需要确定你写的应用URL不应该做什么。
+下面是简单的对于空路由的例子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">root</span> <span class="ss">:to</span> <span class="o">=&gt;</span> <span class="s2">&quot;welcome#index&quot;</span>
+</span><span class='line'><span class="n">root</span> <span class="ss">:to</span> <span class="o">=&gt;</span> <span class="s2">&quot;pages#home&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">#Shorthand syntax</span>
+</span><span class='line'><span class="n">root</span> <span class="s2">&quot;user_sessions#new&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>定义空路由给那些只用域名的url连接你的站点的用户有东西可以看。</p>
+
+<p>当你没有建立根路由，默认Rails会连接到因特网controller为Rails::WelcomeController 的页面。</p>
+
+<p>在之前rails版本中，新创建的Rails项目通过引入public/目录下地index.html文件都把这些自动完成了。所有public/目录下的静态文本的层次结构将匹配你的应用中提出的URL方案，结果导致静态内容被服务而不是触发路由规则。
+事实上，Web服务器会服务这些静态内容而而不需要Rails参与。</p>
+
+<h3>注意路由顺序：</h3>
+
+<blockquote><p>路由都是为了“辨别”和“产生”而按顺序排列在config/routes.rb文件中。</p></blockquote>
+
+<br/>
+
+
+
+
+<h2 id="2.3">2.3 路径匹配</h2>
+
+
+<p>在某些情况下，你可能需要抓取一个或更多的路由组件并且不需要一个个匹配它们的位置参数。举个例子，你的URL可能映射成一个目录结构。如果有人连接：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/items/list/base/books/fiction/dickens
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你想通过items/list这action访问剩下的三个字段，但是，有时可能仅有三个字段：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/items/list/base/books/fiction
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者5个：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/items/list/base/books/fiction/dickens/little_dorrit
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>所以，在特殊情况下，你需要一个路由去匹配URI的第二个组件后面的所有东西，你可以通过星号通配符进行路径匹配。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;items/list/*specs&#39;</span><span class="p">,</span><span class="ss">controller</span><span class="p">:</span> <span class="s1">&#39;items&#39;</span><span class="p">,</span> <span class="ss">action</span><span class="p">:</span> <span class="s1">&#39;list&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在items/list这个action可以访问一串不同数量的以/分开字段的URL了，可以通过params[:specs]访问：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">list</span>
+</span><span class='line'> <span class="n">specs</span> <span class="o">=</span> <span class="n">params</span><span class="o">[</span><span class="ss">:specs</span><span class="o">]</span> <span class="c1"># e.g, &quot;base/books/fiction/dickens&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>匹配键值对</h3>
+
+<blockquote><p>路径匹配应该对字段的临时查询提供一个普遍的机制基础。如果让你通过下面形式设计的URI方案：</p>
+
+<p><a href="http://localhost:3000/items/q/field1/value1/field2/value2/...">http://localhost:3000/items/q/field1/value1/field2/value2/&#8230;</a></p>
+
+<p>用这种方法发出的请求会返回一连串所有匹配每个字段的产品。</p>
+
+<p>换句话说， <a href="http://localhost:3000/items/q/year/1939/material/wood">http://localhost:3000/items/q/year/1939/material/wood</a> 会产生一系列在1993年生产的木材。完成这个路由将是这个样子：</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;items/q/*specs&#39;</span><span class="p">,</span> <span class="ss">controller</span><span class="p">:</span> <span class="s2">&quot;items&quot;</span><span class="p">,</span> <span class="ss">action</span><span class="p">:</span> <span class="s2">&quot;query&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>当然，你将不得不像这样去写action查询：</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">query</span>
+</span><span class='line'>  <span class="vi">@items</span> <span class="o">=</span> <span class="no">Item</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="no">Hash</span><span class="o">[</span><span class="n">params</span><span class="o">[</span><span class="ss">:specs</span><span class="o">].</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">]</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">if</span> <span class="vi">@items</span><span class="o">.</span><span class="n">empty?</span>
+</span><span class='line'>    <span class="n">flash</span><span class="o">[</span><span class="ss">:error</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;Can&#39;t find items with those properties&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>  <span class="n">render</span> <span class="ss">:index</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Hash的类方法中括号是几个意思啊？他将一维数组转化成键值对hash！进一步证明，深入了解ruby是一个先决条件，让你成为一个专业的rails开发者。</p>
+
+<br/>
+
+
+
+
+<h2 id="2.4">2.4 命名路由</h2>
+
+
+<p>事实上，你在这里学习的东西将直接进入我们在第3章中的相关路由的检查中。</p>
+
+<p>命名路由这个方法是为了让作为程序员的你的生活更加简单，就应用程序而言，没有什么表面上看得见的效果。当你命名一个路由，一个新的方法将被定义并且在你的controller和view中使用，这个方法叫做name_url（name是你给路由的name），并且调用这个方法，使用合理的参数使路由产生相应的URL。</p>
+
+<p>另外，有一个方法叫做name_path也会被创建，它会产生URL中没有协议和host的部分。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.1">2.4.1 创建一个命名路由</h3>
+
+
+<hr />
+
+<p>为路由命名的方法是在路由规则中使用:as参数：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;help&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;help#index&#39;</span><span class="p">,</span> <span class="ss">as</span><span class="p">:</span> <span class="s1">&#39;help&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个例子中，你将可以得到两个方法：help_url和help_path，你可以在使用到url时用这两个方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="n">help_path</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然，对辨识和产生也有效，该模式字符串包括静态字符串组件“help”。因此，你看到超链接的路径是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/help
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当有人点击这个link，help controller的index方法将会被调用。</p>
+
+<h3>Xavier 说：</h3>
+
+<blockquote><p>你可以在 console 中直接使用app 对象测试命名路由：</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="o">&gt;&gt;</span> <span class="n">app</span><span class="o">.</span><span class="n">clients_path</span>
+</span><span class='line'> <span class="o">=&gt;</span> <span class="s2">&quot;/clients&quot;</span>
+</span><span class='line'>
+</span><span class='line'> <span class="o">&gt;&gt;</span> <span class="n">app</span><span class="o">.</span><span class="n">clients_url</span>
+</span><span class='line'> <span class="o">=&gt;</span> <span class="s2">&quot;http://www.example.com/clients&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>命名路由给你省下很多生成路由的功夫，虽然如此，但是你还是需要为你的路由模式字符串任何段键提供相对应的值。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.2"> 2.4.2 name_path vs name_url</h3>
+
+
+<hr />
+
+<p>当你创建一个命名路由，你几乎就是创建了两个helper方法，在之前的例子中，那两个路由方法分别是helper_path 和 helper_url，不同的是helper_url产生的是整个url，包括域名和协议。然而，_path产生的仅仅是路径部分。（有时候作为绝对路径或相对路径）</p>
+
+<p>根据HTTP规范，重定向可以定义一个可以被编译的URI，这意味着它是一个完全合格的网址。因此，如果你想要坚持严谨，当你使用命名路由作为redirect_to的参数时，你可能需要总是运用_url版本。</p>
+
+<p>其实redirect_to可以完美支持命名路由helper方法<em>path生成的相对路径。事实上，除了重定向(redirect)，还有永久链接（permalink）和一些其他情况，Rails都建议用</em>path代替_url方法，每当你这么做，基于HTTP头部请求、document的一个元素或是URL，他都会产生较短的字符串和用户代理（浏览器或其他的东西）可以推断出完全合格的URL。</p>
+
+<p>如果你在练习这篇文章的代码之时，你可能会发现基本上<em>url和</em>path没什么区别。但是，我更倾向于在一般讨论中使用<em>url这种风格，而在view中使用</em>path风格（例如link_to或form_for）。这基本是书写风格方面的问题。使用<em>url更普遍，使用</em>path则更专业。</p>
+
+<h3>使用字面的URL</h3>
+
+<blockquote><p>如果你想要，你可以将路径或URL硬编码作为link_to或是redirect_to的字符串参数，举个例子：</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="ss">controller</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="ss">action</span><span class="p">:</span> <span class="s2">&quot;help&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>可以使用下面来替代：</p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="s2">&quot;/main/help&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<blockquote><p>然而，在路由系统中使用字面路径或字面URL，你需要自己维护他（如果这是适合你做的方法，你当然可以使用Ruby的字符串插值技术插入值，但这真的符合Rails的两大原则吗？）</p></blockquote>
+
+<br/>
+
+
+
+
+<h3 id="2.4.3">2.4.3 给你的路由命名</h3>
+
+
+<hr />
+
+<p>最好的命名方法是按照REST的惯例，在另一个方面，你还需要自上而下的考虑，那就是，你需要在你的应用中写怎样的代码让创建路由成为可能。</p>
+
+<p>举个例子，调用link_to:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Auction of </span><span class="si">#{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="ss">controller</span><span class="p">:</span> <span class="s2">&quot;items&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="ss">action</span><span class="p">:</span> <span class="s2">&quot;show&quot;</span><span class="p">,</span>
+</span><span class='line'>  <span class="nb">id</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这个路由规则匹配路径是（最普通的路由）</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;item/:id&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;items#show&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以确定的是这样简短的路由会更加好看，毕竟，路由规则总是定义了controller和action。
+下面这是item命名路由的很好的候选：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;item/:id&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;items#show&quot;</span><span class="p">,</span> <span class="ss">as</span><span class="p">:</span> <span class="s2">&quot;item&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>通过在link_to中引入item_path来改善产生路由：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Auctionof</span><span class="si">#{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">item_path</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>给路由一个简短的命名，使我们省略一些查询路由的工作，提高效率，</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.4">2.4.4 参数糖</h3>
+
+
+<hr />
+
+<p>事实上，你给item_path的参数可以更短。如果你需要像命名路由提供一个id参数，完全可以直接将这个:id的值作为参数。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Auction of </span><span class="si">#{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">item_path</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>语法糖更加牛B：你可以传一个对象，Rails自动获取其中的id：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Auction of </span><span class="si">#{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">item_path</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这些原则继承命名路由中模式字符串的其他段键，举个例子，如果你有一个路由像：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s2">&quot;auction/:auction_id/item/:id&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;items#show&quot;</span><span class="p">,</span> <span class="ss">as</span><span class="p">:</span> <span class="s2">&quot;item&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以这样调用它：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">link_to</span> <span class="s2">&quot;Auction of </span><span class="si">#{</span><span class="n">item</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">item_path</span><span class="p">(</span><span class="n">auction</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后你会得到像下面的路径：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/auction/5/item/11
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这里，我们让Rails自动推断auction和item的id值，它是通过你所传递给命名路由helper方法的参数（这个参数不管是否hash）调用to_param方法。只要你按照顺序给他们传递参数，就能获得对应的id值。</p>
+
+<br/>
+
+
+
+
+<h3 id="2.4.5">2.4.5 你的糖中还有糖吗？</h3>
+
+
+<hr />
+
+<p>而且，你不需要让Rails路由生成id值插入URL中，你可以通过在你的model中覆盖 to_param 方法来改变这个值。</p>
+
+<p>假设你想要你的auction的item的描述信息出现在你的URL中。那么，在你的model中item.rb文件，请覆盖to_params方法；
+在这里，我们覆盖它，让它提供一个“munged” （除去标点符号和加入连字符）。使用parameterize方法添加到Active Support的string中，它会使你的字符串转化成适合url的漂亮字符串。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">to_param</span>
+</span><span class='line'> <span class="n">description</span><span class="o">.</span><span class="n">parameterize</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>随后，调用item_path(auction, item)方法，将会产生如下内容：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>/auction/3/item/cello-bow
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>当然，如果你在调用处区域用“cello-bow”代替id值，你将需要再次挖出对象。
+博客应用利用这种技术创建slugs用来作为永久链接通常有一个单独字段来存储毁掉版本的部分路径的标题。
+这样，我们可以这样做：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Item</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">munged_description</span><span class="p">:</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">first!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>去查找正确的item记录。（没错，你可以在路由中调用id以外的其他东西使他更加清楚）</p>
+
+<h3>Courtenay 说：</h3>
+
+<blockquote><p>为什么在URL中不使用数字表示呢？</p>
+
+<p>首先，你的竞争者可以通过url知道你创建了多少个auction。</p>
+
+<p>连续数字的id也允许蜘蛛自动偷窃你的内容，成为进入你数据库的窗口。</p>
+
+<p>使用文字使url更加好看。</p></blockquote>
+
+<br/>
+
+
+
+
+<h2 id="2.5">2.5 作用域的路由规则</h2>
+
+
+<p>Rails提供各种方法给相关路由规则捆绑在一起。这都基于使用scope方法和它的各种快捷方式。打个比方，你想要给auctions添加如下路由：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">get</span> <span class="s1">&#39;auctions/new&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auctions#new&#39;</span>
+</span><span class='line'><span class="n">get</span> <span class="s1">&#39;auctions/edit/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auctions#edit&#39;</span>
+</span><span class='line'><span class="n">post</span> <span class="s1">&#39;auctions/pause/:id&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;auctions#pause&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>你可以dry你的routes.rb文件，使用scope方法代替:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">controller</span><span class="p">:</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">get</span> <span class="s1">&#39;auctions/new&#39;</span> <span class="o">=&gt;</span> <span class="ss">:new</span>
+</span><span class='line'>    <span class="n">get</span> <span class="s1">&#39;auctions/edit/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:edit</span>
+</span><span class='line'>    <span class="n">post</span> <span class="s1">&#39;auctions/pause/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:pause</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接着，你可以再次dry它，通过在scope方法添加:path参数：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">path</span><span class="p">:</span> <span class="s1">&#39;/auctions&#39;</span><span class="p">,</span> <span class="ss">controller</span><span class="p">:</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;new&#39;</span> <span class="o">=&gt;</span> <span class="ss">:new</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;edit/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:edit</span>
+</span><span class='line'>  <span class="n">post</span> <span class="s1">&#39;pause/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:pause</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.5.1">2.5.1 Controller</h3>
+
+
+<hr />
+
+<p>scope方法接收一个:controller项（或者可以理解为接收一个符号作为第一个参数并且会被假定为controller）。因此，下面两种定义方式是相同的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">controller</span><span class="p">:</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span><span class='line'><span class="n">scope</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为了使之更为明显，你可以使用controller方法替代scope方法，本质上也是一种语法糖：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">controller</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.5.2">2.5.2 路径前缀</h3>
+
+
+<hr />
+
+<p>scope方法接收一个:path选项进行限制（或者你可以理解为接收一字符串作为第一个参数并且会被作为路径的前缀），
+因此，下面两种定义是相同的：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">path</span><span class="p">:</span> <span class="s1">&#39;/auctions&#39;</span> <span class="k">do</span>
+</span><span class='line'><span class="n">scope</span> <span class="s1">&#39;/auctions&#39;</span> <span class="k">do</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Rails4有一个新功能，可以给:path传递符号代替原来的字符串作为参数，看下面定义：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">:auctions</span><span class="p">,</span> <span class="ss">:archived</span> <span class="k">do</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将scope下地所有路由嵌套在&#8221;/auctions/archived&#8221;路径下</p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.3">2.5.3 命名前缀</h3>
+
+
+<hr />
+
+<p>scope方法也可以接收:as选项,它可以影响产生命名路由的helper方法。
+例如，路由：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">:auctions</span><span class="p">,</span> <span class="ss">as</span><span class="p">:</span> <span class="s1">&#39;admin&#39;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;new&#39;</span> <span class="o">=&gt;</span> <span class="ss">:new</span><span class="p">,</span> <span class="ss">as</span><span class="p">:</span> <span class="s1">&#39;new_auction&#39;</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>将会产生URL的helper方法admin_new_auction_url.</p>
+
+<br/>
+
+
+
+
+<h3 id="2.5.4">2.5.4 命名空间</h3>
+
+
+<hr />
+
+<p>URL可以使用命名空间namespace方法进行分组，这是一个语法糖，被module包裹，将命名前缀和路径前缀设置为一个声明。
+命名空间namespace方法将第一个参数转化为字符串，这就是为什么一些代码例子你会看到它接收一个符号：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">namespace</span> <span class="ss">:auctions</span><span class="p">,</span> <span class="ss">:controller</span> <span class="o">=&gt;</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;new&#39;</span> <span class="o">=&gt;</span> <span class="ss">:new</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;edit/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:edit</span>
+</span><span class='line'>  <span class="n">post</span> <span class="s1">&#39;pause/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:pause</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.5.5">2.5.5 捆绑约束</h3>
+
+
+<hr />
+
+<p>如果你发现你在相关的路由中重复写了一些相似的段键约束，你可以将它们捆绑在一起，然后在scope方法中使用:constraints选项</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">controller</span><span class="p">:</span> <span class="ss">:auctions</span><span class="p">,</span> <span class="ss">constraints</span><span class="p">:</span> <span class="p">{</span><span class="ss">:id</span><span class="o">=&gt;</span><span class="sr">/\d+/</span><span class="p">}</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;edit/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:edit</span>
+</span><span class='line'>  <span class="n">post</span> <span class="s1">&#39;pause/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:pause</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>它就像是给定的scope需要一个路由子规则来约束。事实上，如果你给一个没有接收段键值的规则加上约束，将会导致路由破坏。
+既然你是嵌套的，你可能要使用的约束方法:constraints，它只是一种使规则定义更紧凑的语法糖。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">scope</span> <span class="ss">path</span><span class="p">:</span> <span class="s1">&#39;/auctions&#39;</span><span class="p">,</span> <span class="ss">controller</span><span class="p">:</span> <span class="ss">:auctions</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;new&#39;</span> <span class="o">=&gt;</span> <span class="ss">:new</span>
+</span><span class='line'>  <span class="n">constraints</span> <span class="nb">id</span><span class="p">:</span> <span class="sr">/\d+/</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">get</span> <span class="s1">&#39;edit/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:edit</span>
+</span><span class='line'>    <span class="n">post</span> <span class="s1">&#39;pause/:id&#39;</span> <span class="o">=&gt;</span> <span class="ss">:pause</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>为了重用模块化，你可以提供一个约束方法与有matches?方法的对象。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">DateFormatConstraint</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">matches?</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span><span class="o">.</span><span class="n">params</span><span class="o">[</span><span class="ss">:date</span><span class="o">]</span> <span class="o">=~</span> <span class="sr">/\A\d{4}-\d\d-\d\d\z/</span> <span class="c1"># YYYY-MM-DD</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># inroutes.rb</span>
+</span><span class='line'><span class="n">constraints</span><span class="p">(</span><span class="no">DateFormatConstraint</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">get</span> <span class="s1">&#39;since/:date&#39;</span> <span class="o">=&gt;</span> <span class="ss">:since</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在这个特殊的例子中（DateFormatConstraint），如果一个图谋不轨或怀有恶意的用户在URL中输入不好的格式的日期作为参数，Rails将会返回404状态码代替抛出异常。</p>
+
+<br/>
+
+
+
+
+<h2 id="2.6">2.6 路由列表</h2>
+
+
+<p>一个好用的路由列表在Rails项目中被作为标准的rake任务使用，通过在你的应用目录下输入rake routes调用它。举个例子，这里输出一个routes文件包含仅仅一个resources :products规则：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake routes
+</span><span class='line'>  products      GET   /products<span class="o">(</span>.:format<span class="o">)</span>            products#index
+</span><span class='line'>                POST   /products<span class="o">(</span>.:format<span class="o">)</span>           products#create
+</span><span class='line'>  new_product   GET    /products/new<span class="o">(</span>.:format<span class="o">)</span>       products#new
+</span><span class='line'>  edit_product  GET    /products/:id/edit<span class="o">(</span>.:format<span class="o">)</span>  products#edit
+</span><span class='line'>  product       GET    /products/:id<span class="o">(</span>.:format<span class="o">)</span>       products#show
+</span><span class='line'>                PATCH  /products/:id<span class="o">(</span>.:format<span class="o">)</span>       products#update
+</span><span class='line'>                PUT    /products/:id<span class="o">(</span>.:format<span class="o">)</span>       products#update
+</span><span class='line'>                DELETE /products/:id<span class="o">(</span>.:format<span class="o">)</span>       products#destroy
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出分为四列，前两列是可选的并且包含路由名和http方法约束，当提供这两列的内容，第三列包含URL映射的字符串。最后，第四列指示路由应该映射哪个controller和哪个action，加上已经定义的路由段键约束。</p>
+
+<p>注意路由任务可以选择一个controller作为环境来查找，看下面例子：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>rake routes <span class="nv">CONTROLLER</span><span class="o">=</span>products
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这将会列出所有与ProductsController相关的路由。</p>
+
+<br/>
+
+
+
+
+<h2>总结</h2>
+
+
+<p>上半篇帮助你全面了解Rails的普通路由规则和路由系统的两个怎样的目的。</p>
+
+<ul>
+<li><p>识别传入的请求并且映射到相应的controller和action，以及额外的变量。</p></li>
+<li><p>识别URL参数方法（例如link_to）匹配相应路径，以便生成适当的HTML链接。</p></li>
+</ul>
+
+
+<p>我们通过在定义路由时使用一些先进的技术如正则表达式和通配符，还有在scope方法下捆绑共享相关路由来创立属于我们自己的路由。</p>
+
+<p>最后，再继续进行之前，我们应该确保你理解如何命名路由工作，以及为什么它们让你变成更容易，让你的视图代码更加简洁。</p>
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2016
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2015/08/03/routing/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2015/08/03/routing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>

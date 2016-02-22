@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vim | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/vim/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2015-07-25T11:34:55+08:00</updated>
+  <updated>2016-02-22T22:48:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -25,6 +25,8 @@
 <h4>.vimrc配置文件</h4>
 
 <p>以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:</p>
+
+<p>``` sh</p>
 
 <pre><code>set nocompatible            " 关闭 vi 兼容模式
     syntax on                   " 自动语法高亮
@@ -143,6 +145,8 @@
     let NERDSpaceDelims=1       " 让注释符与语句之间留一个空格
     let NERDCompactSexyComs=1   " 多行注释时样子更好看
 </code></pre>
+
+<p>```</p>
 
 <p><em>感谢使用vim配置，记住要将vim编辑器重启后才生效。</em></p>
 ]]></content>

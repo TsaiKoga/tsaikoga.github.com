@@ -88,6 +88,12 @@
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -110,18 +116,32 @@
 
 <p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
 
-<pre><code>    $(document).ready -&gt; 
-        $("a.go_top").click () -&gt; 
-            $('html, body').animate({scrollTop: 0}, 300)
-            return false
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span> <span class="o">-&gt;</span>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;a.go_top&quot;</span><span class="p">).</span><span class="nx">click</span> <span class="p">()</span> <span class="o">-&gt;</span>
+</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;html, body&#39;</span><span class="p">).</span><span class="nx">animate</span><span class="p">({</span><span class="nx">scrollTop</span><span class="o">:</span> <span class="mi">0</span><span class="p">},</span> <span class="mi">300</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="kc">false</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">bind</span> <span class="s1">&#39;scroll resize&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+</span><span class='line'>        <span class="nx">scroll_from_top</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">scrollTop</span><span class="p">()</span>
+</span><span class='line'>        <span class="k">if</span> <span class="nx">scroll_from_top</span> <span class="o">&gt;=</span> <span class="mi">1</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;a.go_top&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;a.go_top&#39;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
 
-        $(window).bind 'scroll resize', -&gt; 
-            scroll_from_top = $(window).scrollTop()
-            if scroll_from_top &gt;= 1
-                $('a.go_top').show()
-            else
-                $('a.go_top').hide()
-</code></pre>
+
+
 </div>
 
 <div class="meta">
@@ -152,7 +172,7 @@
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 

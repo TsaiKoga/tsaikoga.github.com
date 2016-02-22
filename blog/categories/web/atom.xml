@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/web/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2015-07-25T11:34:55+08:00</updated>
+  <updated>2016-02-22T22:48:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -35,18 +35,22 @@
 
 <p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
 
-<pre><code>    $(document).ready -&gt; 
-        $("a.go_top").click () -&gt; 
-            $('html, body').animate({scrollTop: 0}, 300)
-            return false
+<p>``` js</p>
 
-        $(window).bind 'scroll resize', -&gt; 
-            scroll_from_top = $(window).scrollTop()
-            if scroll_from_top &gt;= 1
-                $('a.go_top').show()
-            else
-                $('a.go_top').hide()
+<pre><code>$(document).ready -&gt; 
+    $("a.go_top").click () -&gt; 
+        $('html, body').animate({scrollTop: 0}, 300)
+        return false
+
+    $(window).bind 'scroll resize', -&gt; 
+        scroll_from_top = $(window).scrollTop()
+        if scroll_from_top &gt;= 1
+            $('a.go_top').show()
+        else
+            $('a.go_top').hide()
 </code></pre>
+
+<p>```</p>
 ]]></content>
   </entry>
   

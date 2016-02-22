@@ -6,7 +6,8 @@
 	<title>加载Rails - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="在上一篇文章Rails服务启动过程,最后加载的config/application.rb文件中显示： require 'rails/all' 这个文件在railties/lib/rails/all.rb。 railties/lib/rails/all.rb 这个文件非常重要， &hellip;">
+	<meta name="description" content="在上一篇文章Rails服务启动过程,最后加载的config/application.rb文件中显示： 1
+require &#39;rails/all&#39; 这个文件在railties/lib/rails/all.rb。 railties/lib/rails/all.rb 这个文件非常重要， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -87,6 +88,12 @@
 
 </header>
 
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (3)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
 <div id="toload">
 <!-- begin toload --> 
     <div id="content" class="inner">
@@ -94,8 +101,10 @@
 	<h2 class="title">加载Rails</h2>
 	<div class="entry-content"><p>在上一篇文章<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>,最后加载的config/application.rb文件中显示：</p>
 
-<pre><code>    require 'rails/all'
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>这个文件在railties/lib/rails/all.rb。</p>
 
@@ -105,21 +114,36 @@
 
 <p>这个文件非常重要，它加载了rails的所有个体框架，从中可以知道这些<strong>框架的加载顺序</strong>：</p>
 
-<pre><code>require "rails"
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rails&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sx">%{</span>
+</span><span class='line'><span class="sx">    active_record</span>
+</span><span class='line'><span class="sx">    action_controller</span>
+</span><span class='line'><span class="sx">    action_mail</span>
+</span><span class='line'><span class="sx">    rails/test_unit</span>
+</span><span class='line'><span class="sx">    sprockets</span>
+</span><span class='line'><span class="sx">}</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">framework</span><span class="o">|</span>
+</span><span class='line'>    <span class="k">begin</span>
+</span><span class='line'>        <span class="nb">require</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">framework</span><span class="si">}</span><span class="s2">/railtie&quot;</span>           <span class="c1"># 文件active_record/railtie等</span>
+</span><span class='line'>  <span class="k">rescue</span> <span class="no">LoadError</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
-    %{
-        active_record
-        action_controller
-        action_mail
-        rails/test_unit
-        sprockets
-    }.each do |framework|
-        begin
-            require "#{framework}/railtie"          # 文件active_record/railtie等
-      rescue LoadError
-        end
-    end
-</code></pre>
 
 <blockquote><p><strong>railtie 是Rails的核心框架</strong>，并且提供hooks来修改启动时的载入流程，
 如果需要在启动过程或之后与rails框架进行交互，就需要加载Railtie。</p></blockquote>
@@ -140,13 +164,20 @@
 
 <p>以下为初始化代码：(你的Application类继承Rails::Application类，而这个类就在railties/lib/rails/application.rb文件中)</p>
 
-<pre><code>    def initialize!(group=:default) #:nodoc:
-        raise "Application has been already initialized." if @initialized
-        run_initializers(group, self)
-        @initialized = true
-        self
-    end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">initialize!</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="ss">:default</span><span class="p">)</span> <span class="c1">#:nodoc:</span>
+</span><span class='line'>    <span class="k">raise</span> <span class="s2">&quot;Application has been already initialized.&quot;</span> <span class="k">if</span> <span class="vi">@initialized</span>
+</span><span class='line'>    <span class="n">run_initializers</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="nb">self</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@initialized</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class='line'>    <span class="nb">self</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>Rails会贯穿这整个Rails::Application祖先类，重新排序和运行他们。</p>
 
@@ -154,72 +185,130 @@
 
 <p>在<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">上一篇</a>时,有提到Rack::Server类，它里面有一个app方法是这么定义的：</p>
 
-<pre><code>    def app
-        @app ||= begin
-            if !::File.exist? options[:config]
-                abort "configuration #{options[:config]} not found"
-            end
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">app</span>
+</span><span class='line'>    <span class="vi">@app</span> <span class="o">||=</span> <span class="k">begin</span>
+</span><span class='line'>        <span class="k">if</span> <span class="o">!::</span><span class="no">File</span><span class="o">.</span><span class="n">exist?</span> <span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span>
+</span><span class='line'>            <span class="nb">abort</span> <span class="s2">&quot;configuration </span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="n">app</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Builder</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="nb">self</span><span class="o">.</span><span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span><span class="p">,</span> <span class="n">opt_parser</span><span class="p">)</span>
+</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">merge!</span> <span class="n">options</span>
+</span><span class='line'>        <span class="n">app</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
 
-            app, options = Rack::Builder.parse_file(self.options[:config], opt_parser)
-            self.options.merge! options
-            app
-        end
-    end
-</code></pre>
 
 <p>这里所指的app就是Rails的app（一种中间件），Rack将会调用所有提供的中间件。</p>
 
-<pre><code>    def build_app(app)
-        middleware[options[:environment]].reverse_each do |middleware|
-            middleware = middleware.call(self) if middleware.respond_to?(:call)
-            next unless middleware
-            klass = middleware.shift
-            app = klass.new(app, *middleware)
-        end
-        app
-    end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">build_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">middleware</span><span class="o">[</span><span class="n">options</span><span class="o">[</span><span class="ss">:environment</span><span class="o">]].</span><span class="n">reverse_each</span> <span class="k">do</span> <span class="o">|</span><span class="n">middleware</span><span class="o">|</span>
+</span><span class='line'>        <span class="n">middleware</span> <span class="o">=</span> <span class="n">middleware</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">middleware</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">next</span> <span class="k">unless</span> <span class="n">middleware</span>
+</span><span class='line'>        <span class="n">klass</span> <span class="o">=</span> <span class="n">middleware</span><span class="o">.</span><span class="n">shift</span>
+</span><span class='line'>        <span class="n">app</span> <span class="o">=</span> <span class="n">klass</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="o">*</span><span class="n">middleware</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="n">app</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>以上代码build_app是被Server#start方法调用的，通过这个代码调用：</p>
 
-<pre><code>    server.run wrapped_app, options, &amp;blk
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">server</span><span class="o">.</span><span class="n">run</span> <span class="n">wrapped_app</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">blk</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>所以，server.run将会依赖于你所使用的server程序(以上代码有传入一个程序块&amp;blk,他将关系到你运行的服务),
 像是如果你是用的是Mongrel数据库，将会通过传入如下程序块运行：</p>
 
-<pre><code>    def self.run(app, options={})
-        server = ::Mongrel::HttpServer.new(
-            options[:Host]           || '0.0.0.0',
-            options[:Port]           || 8080,
-            options[:num_processors] || 950,
-            options[:throttle]       || 0,
-            options[:timeout]        || 60)
-        # Acts like Rack::URLMap, utilizing Mongrel's own path finding methods.
-        # Use is similar to #run, replacing the app argument with a hash of
-        # { path=&gt;app, ... } or an instance of Rack::URLMap.
-        if options[:map]
-            if app.is_a? Hash
-                app.each do |path, appl|
-                    path = '/'+path unless path[0] == ?/
-                    server.register(path, Rack::Handler::Mongrel.new(appl))
-                end
-            elsif app.is_a? URLMap
-                app.instance_variable_get(:@mapping).each do |(host, path, appl)|
-                 next if !host.nil? &amp;&amp; !options[:Host].nil? &amp;&amp; options[:Host] != host
-                 path = '/'+path unless path[0] == ?/
-                 server.register(path, Rack::Handler::Mongrel.new(appl))
-                end
-            else
-                raise ArgumentError, "first argument should be a Hash or URLMap"
-            end
-        else
-            server.register('/', Rack::Handler::Mongrel.new(app))
-        end
-        yield server  if block_given?
-        server.run.join
-    end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
+</span><span class='line'>    <span class="n">server</span> <span class="o">=</span> <span class="o">::</span><span class="ss">Mongrel</span><span class="p">:</span><span class="ss">:HttpServer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span>           <span class="o">||</span> <span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:Port</span><span class="o">]</span>           <span class="o">||</span> <span class="mi">8080</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:num_processors</span><span class="o">]</span> <span class="o">||</span> <span class="mi">950</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:throttle</span><span class="o">]</span>       <span class="o">||</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:timeout</span><span class="o">]</span>        <span class="o">||</span> <span class="mi">60</span><span class="p">)</span>
+</span><span class='line'>    <span class="c1"># Acts like Rack::URLMap, utilizing Mongrel&#39;s own path finding methods.</span>
+</span><span class='line'>    <span class="c1"># Use is similar to #run, replacing the app argument with a hash of</span>
+</span><span class='line'>    <span class="c1"># { path=&gt;app, ... } or an instance of Rack::URLMap.</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:map</span><span class="o">]</span>
+</span><span class='line'>        <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">is_a?</span> <span class="no">Hash</span>
+</span><span class='line'>            <span class="n">app</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">path</span><span class="p">,</span> <span class="n">appl</span><span class="o">|</span>
+</span><span class='line'>                <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">path</span> <span class="k">unless</span> <span class="n">path</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="sc">?/</span>
+</span><span class='line'>                <span class="n">server</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">appl</span><span class="p">))</span>
+</span><span class='line'>            <span class="k">end</span>
+</span><span class='line'>        <span class="k">elsif</span> <span class="n">app</span><span class="o">.</span><span class="n">is_a?</span> <span class="no">URLMap</span>
+</span><span class='line'>            <span class="n">app</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="ss">:@mapping</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">appl</span><span class="p">)</span><span class="o">|</span>
+</span><span class='line'>             <span class="k">next</span> <span class="k">if</span> <span class="o">!</span><span class="n">host</span><span class="o">.</span><span class="n">nil?</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">].</span><span class="n">nil?</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span> <span class="o">!=</span> <span class="n">host</span>
+</span><span class='line'>             <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">path</span> <span class="k">unless</span> <span class="n">path</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="sc">?/</span>
+</span><span class='line'>             <span class="n">server</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">appl</span><span class="p">))</span>
+</span><span class='line'>            <span class="k">end</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>            <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;first argument should be a Hash or URLMap&quot;</span>
+</span><span class='line'>        <span class="k">end</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>        <span class="n">server</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>    <span class="k">yield</span> <span class="n">server</span>  <span class="k">if</span> <span class="nb">block_given?</span>
+</span><span class='line'>    <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">join</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
 
 <p>以上代码使用Mongrel::HttpServer定义了server实例，然后使用server.run运行.</p>
 </div>
@@ -252,7 +341,7 @@
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2015
+    Copyright &copy; 2016
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 
