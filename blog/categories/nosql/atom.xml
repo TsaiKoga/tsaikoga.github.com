@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nosql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/nosql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-02-23T21:23:23+08:00</updated>
+  <updated>2016-02-23T21:24:25+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -141,11 +141,11 @@
     <id>http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis</id>
     <content type="html"><![CDATA[<h3>目录：</h3>
 
-<h4><a href="#1">安装步骤</a></h4>
+<h4><a href="#1">1.安装步骤</a></h4>
 
-<h4><a href="#2">其他设置</a></h4>
+<h4><a href="#2">2.其他设置</a></h4>
 
-<h4><a href="#3">Redis的安全配置</a></h4>
+<h4><a href="#3">3.Redis的安全配置</a></h4>
 
 <h3 id='1'>安装步骤:</h3>
 
