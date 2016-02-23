@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-02-23T14:32:45+08:00</updated>
+  <updated>2016-02-23T21:23:02+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -6893,7 +6893,16 @@ Ubuntu hosts文件位置: /etc/hosts
     <link href="http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/"/>
     <updated>2013-10-15T10:02:00+08:00</updated>
     <id>http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis</id>
-    <content type="html"><![CDATA[<h4>安装步骤：</h4>
+    <content type="html"><![CDATA[<h3>目录：</h3>
+
+<h4><a href="#1">安装步骤</a></h4>
+
+<h4><a href="#2">其他设置</a></h4>
+
+<h4><a href="#3">Redis的安全配置</a></h4>
+
+<h3 id='1'>安装步骤:</h3>
+
 
 <hr />
 
@@ -6929,7 +6938,7 @@ Ubuntu hosts文件位置: /etc/hosts
 
 <blockquote><p><em>由下图自动生成的代码可知：这时Redis 的可执行文件被放到了/usr/local/bin</em></p></blockquote>
 
-<p><img src="http://TsaiKoga.github.com/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
+<p><img src="http://TsaiKoga.github.com/images/posts/2013-10-15/redis1.png" title="生成代码" alt="redis" /></p>
 
 <p>2.<strong> 让redis成为后台驻留程序： </strong></p>
 
@@ -7017,7 +7026,10 @@ Ubuntu hosts文件位置: /etc/hosts
 <br/>
 
 
-<h3>Redis的安全配置：</h3>
+
+
+<h3 id="3"> Redis的安全配置：</h3>
+
 
 <hr />
 
