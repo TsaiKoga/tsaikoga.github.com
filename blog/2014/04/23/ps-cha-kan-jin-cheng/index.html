@@ -1,0 +1,321 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>PS 查看进程 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="如果你使用Linux进行操作，不可避免要接触ps命令，他可以显示进程。 首先，我们来介绍一下进程： 1. 进程 linux上进程有5种状态: 运行(正在运行或在运行队列中等待)
+中断(休眠中, 受阻, 在等待某个条件的形成或接受到信号)
+不可中断(收到信号不唤醒和不可运行, &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/photoshop'>Photoshop (1)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (2)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">PS 查看进程</h2>
+	<div class="entry-content"><p>如果你使用Linux进行操作，不可避免要接触ps命令，他可以显示进程。</p>
+
+<p>首先，我们来介绍一下进程：</p>
+
+<p>1.<strong> 进程 </strong></p>
+
+<hr />
+
+<p>linux上进程有5种状态:</p>
+
+<blockquote><ol>
+<li>运行(正在运行或在运行队列中等待)</li>
+<li>中断(休眠中, 受阻, 在等待某个条件的形成或接受到信号)</li>
+<li>不可中断(收到信号不唤醒和不可运行, 进程必须等待直到有中断发生)</li>
+<li>僵死(进程已终止, 但进程描述符存在, 直到父进程调用wait4()系统调用后释放)</li>
+<li>停止(进程收到SIGSTOP, SIGSTP, SIGTIN, SIGTOU信号后停止运行运行</li>
+</ol>
+</blockquote>
+
+<br/>
+
+
+<p>2.<strong> 常用的PS参数</strong></p>
+
+<hr />
+
+<p>1）ps a    显示现行终端机下的所有程序，包括其他用户的程序。</p>
+
+<p>2）ps -A   显示所有程序。</p>
+
+<p>3）ps c    列出程序时，显示每个程序真正的指令名称，而不包含路径，参数或常驻服务的标示。</p>
+
+<p>4）ps -e   此参数的效果和指定&#8221;A&#8221;参数相同。</p>
+
+<p>5）ps e    列出程序时，显示每个程序所使用的环境变量。</p>
+
+<p>6）ps f    用ASCII字符显示树状结构，表达程序间的相互关系。</p>
+
+<p>7）ps -H   显示树状结构，表示程序间的相互关系。</p>
+
+<p>8）ps -N   显示所有的程序，除了执行ps指令终端机下的程序之外。</p>
+
+<p>9）ps s    采用程序信号的格式显示程序状况。</p>
+
+<p>10）ps S   列出程序时，包括已中断的子程序资料。</p>
+
+<p>11）ps -t &lt;终端机编号> 　指定终端机编号，并列出属于该终端机的程序的状况。</p>
+
+<p>12）ps u 　以用户为主的格式来显示程序状况。</p>
+
+<p>13）ps x 　显示所有程序，不以终端机来区分。</p>
+
+<p>14）ps -l  較長,較詳細的顯示該PID的信息</p>
+
+<br/>
+
+
+<p>3.<strong> 最常用的ps aux 命令解析 </strong></p>
+
+<hr />
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># ps aux |more</span>
+</span><span class='line'>    USER       PID        %CPU %MEM   VSZ  RSS  TTY                   STAT     START   TIME     COMMAND
+</span><span class='line'>    root         1        0.0  0.0     4772  564 ?                     S        Sep22   0:03     init <span class="o">[</span>3<span class="o">]</span>
+</span><span class='line'>    root         2        0.0  0.0     0    0        ?                 S        Sep22   0:03     <span class="o">[</span>migration/0<span class="o">]</span>
+</span><span class='line'>    root         3        0.0  0.0     0    0        ?                 SN      Sep22   0:00     <span class="o">[</span>ksoftirqd/0<span class="o">]</span>
+</span><span class='line'>    root         4        0.0  0.0     0    0        ?                 S        Sep22   0:02     <span class="o">[</span>migration/1<span class="o">]</span>
+</span><span class='line'>    root         5        0.0  0.0     0    0        ?                 SN      Sep22   0:00     <span class="o">[</span>ksoftirqd/1<span class="o">]</span>
+</span><span class='line'>    root         6        0.0  0.0     0    0        ?                 Ss+     Sep22   0:02     <span class="o">[</span>migration/2<span class="o">]</span>
+</span><span class='line'>    root         7        0.0  0.0     0    0        ?                 SN      Sep22   0:00     <span class="o">[</span>ksoftirqd/2<span class="o">]</span>
+</span><span class='line'>    root         8        0.0  0.0     0    0        ?                 S        Sep22   0:00     <span class="o">[</span>migration/3<span class="o">]</span>
+</span><span class='line'>    root         9        0.0  0.0     0    0        ?                 SN      Sep22   0:00     <span class="o">[</span>ksoftirqd/3<span class="o">]</span>
+</span><span class='line'>    root        10        0.0  0.0     0    0        ?                 S&lt;      Sep22    0:00     <span class="o">[</span>migration/4<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的每一列代表的意思：</p>
+
+<ol>
+<li>USER 进程的属主；</li>
+<li>PID   进程的ID；</li>
+<li>PPID    父进程；</li>
+<li>%CPU   进程占用的CPU百分比；</li>
+<li>%MEM  占用内存的百分比；</li>
+<li>NI        进程的NICE值，数值大，表示较少占用CPU时间；</li>
+<li>VSZ     該进程使用的虚拟內存量（KB）；</li>
+<li>RSS     該進程占用的固定內存量（KB）（驻留中页的数量）；</li>
+<li>TTY     該進程在那個終端上運行（登陸者的終端位置），若與終端無關，則顯示（？）。若為pts/0等，則表示由網絡連接主機進程</li>
+<li>WCHAN  當前進程是否正在進行，若為-表示正在進行；</li>
+<li>START   該進程被觸發启动时间；</li>
+<li>TIME      該进程實際使用CPU運行的时间；</li>
+<li>COMMAND   命令的名称和参数；</li>
+</ol>
+
+
+<br/>
+
+
+<h4>对于Stat的常见状态：</h4>
+
+<p>D 无法中断的休眠状态（通常 IO 的进程）；</p>
+
+<p>R 正在运行可中在队列中可过行的；</p>
+
+<p>S 处于休眠状态；</p>
+
+<p>T 停止或被追踪；</p>
+
+<p>W 进入内存交换  （从内核2.6开始无效）；</p>
+
+<p>X 死掉的进程   （基本很少見）；</p>
+
+<p>Z 僵尸进程；</p>
+
+<p>&lt; 优先级高的进程</p>
+
+<p>N 优先级较低的进程</p>
+
+<p>L 有些页被锁进内存；</p>
+
+<p>s 进程的领导者（在它之下有子进程）；</p>
+
+<p>l 多进程的（使用 CLONE_THREAD, 类似 NPTL pthreads）；</p>
+
+<ul>
+<li>位于后台的进程组；</li>
+</ul>
+
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2016
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>
