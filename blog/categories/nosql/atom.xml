@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Nosql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/nosql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-02-23T21:24:25+08:00</updated>
+  <updated>2016-02-23T21:38:43+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -232,7 +232,10 @@ redis&gt; get foo
 <br/>
 
 
-<h3>其他设置：</h3>
+
+
+<h3 id="2"> 其他设置：</h3>
+
 
 <hr />
 
