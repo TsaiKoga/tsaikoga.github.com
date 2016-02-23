@@ -4,4 +4,5 @@ sharing: false
 ---
 
 ## Crap!!
+这里用个不幸的消息告诉你，你访问的页面不存在，请回到主页[home](/)。
 Looks like the page you're looking for doesn't exist. Just go [home](/) and try again!

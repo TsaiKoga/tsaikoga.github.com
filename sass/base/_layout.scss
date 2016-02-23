@@ -95,3 +95,44 @@ a{
   &.left, &.right { margin-bottom: .8em; }
 }
 
+#sidebar {
+    position: absolute;
+    width: 230px;
+    right: 10px;
+    padding: 0 10px;
+    &:before {
+        content: "\f02c";
+        font: 1.3em FontAwesome;
+        display: inline-block;
+    }
+    h1 {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+        text-align: center;
+        display: inline-block;
+        margin-left: 5px;
+    }
+    ul {
+        list-style: none;
+    }
+    ul li {
+        background-color: #444;
+        padding: 5px 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+    ul li a {
+        color: #ccc;
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+@media (max-width: 1200px){
+    #sidebar {
+        position: relative;
+        width: 100%;
+        right: 0;
+        padding: 0;
+    }
+}
