@@ -3,7 +3,7 @@ layout: post
 title: "Nosql简介"
 date: 2013-10-15 13:21
 comments: true
-categories: [nosql]
+categories: ["Nosql"]
 ---
 
 ####背景：####

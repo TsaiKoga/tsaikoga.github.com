@@ -3,7 +3,7 @@ layout: post
 title: "Ubuntu下安装redis 及安全配置"
 date: 2013-10-15 10:02
 comments: true
-categories: [nosql]
+categories: [Nosql, "Security"]
 ---
 
 #### 安装步骤：
