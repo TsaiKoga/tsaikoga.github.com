@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-02-22T22:48:26+08:00</updated>
+  <updated>2016-02-23T11:01:52+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,21 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[配色表]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/02/22/pei-se-biao/"/>
+    <updated>2016-02-22T23:03:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2016/02/22/pei-se-biao</id>
+    <content type="html"><![CDATA[<h3>配色表</h3>
+
+<p>色彩搭配中 色相搭配分类</p>
+
+<p>网页设计中常见的色彩搭配按照色相的顺序归类。每类都以该色相为主，配以其他色相或者同色相的，应用对比和调和的方法，并按照从轻快到浓烈的顺序排序。</p>
+
+<p><img src="http://TsaiKoga.github.com/images/posts/2016-02-22/peisebiao.gif" alt="配色表" /></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Routing]]></title>
@@ -6739,16 +6754,31 @@ Ubuntu hosts文件位置: /etc/hosts
 </ol>
 
 
+<p>想安装redis，必须要有先决条件，使你安装更容易：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get install build-essential
+</span><span class='line'>sudo apt-get install tcl8.5
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>选择最新稳定版本：</p>
+
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 <span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://redis.googlecode.com/files/redis-2.2.13.tar.gz    <span class="c"># 下载压缩包</span>
-</span><span class='line'>tar -zxf redis-2.2.13.tar.gz    <span class="c"># 解压该压缩包</span>
-</span><span class='line'><span class="nb">cd </span>redis-2.2.13
-</span><span class='line'>make                              <span class="c"># 编译</span>
-</span><span class='line'>sudo make install               <span class="c"># 安装redis</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>wget http://download.redis.io/releases/redis-stable.tar.gz
+</span><span class='line'>tar xzf redis-stable.tar.gz
+</span><span class='line'><span class="nb">cd </span>redis-stable
+</span><span class='line'>make
+</span><span class='line'>make <span class="nb">test</span> <span class="c"># 运行测试</span>
+</span><span class='line'>sudo make install
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -6757,12 +6787,14 @@ Ubuntu hosts文件位置: /etc/hosts
 <p><img src="http://TsaiKoga.github.com/images/posts/2013-10-15/redis1.png" title="生成代码" alt="无法显示图片" /></p>
 
 <ol>
-<li><strong>拷贝指定配置文件到指定目录：</strong></li>
+<li><strong>让redis成为后台驻留程序：</strong></li>
 </ol>
 
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>cp redis.conf /etc/
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">cd </span>utils
+</span><span class='line'>sudo ./install_server.sh
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -6771,8 +6803,12 @@ Ubuntu hosts文件位置: /etc/hosts
 </ol>
 
 
+<p>6379是redis的默认端口</p>
+
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>redis-server /etc/redis.conf
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service redis_6379 start
+</span><span class='line'>sudo service redis_6379 stop
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -6811,7 +6847,7 @@ Ubuntu hosts文件位置: /etc/hosts
 <h4>设置开机自动启动，关机自动关闭：</h4>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo update-rc.d redis-server defaults
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo update-rc.d redis_6379 defaults
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -6831,6 +6867,228 @@ Ubuntu hosts文件位置: /etc/hosts
 </span><span class='line'>sudo chown redis.redis /var/log/redis
 </span></code></pre></td></tr></table></div></figure>
 
+
+<hr />
+
+<h3>Redis的安全配置：</h3>
+
+<p>这里不得不说一下，如果你在服务器上搭建redis，一定要对redis进行安全设置，因为我部署的网站，就是因为没有安全配置而被攻击。</p>
+
+<ol>
+<li><strong> 绑定本机 IP </strong></li>
+</ol>
+
+
+<p>默认redis服务器只会让localhost访问，如果你更新了配置文件让其他地方也可以连入redis，那就非常危险，你需要：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo vim /etc/redis/redis.conf
+</span><span class='line'><span class="nb">bind </span>127.0.0.1 <span class="c"># 将此行解除注释，如果没有此行，那就加上这一行</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li><strong> 配置Redis密码 </strong>
+编辑redis的配置文件： redis.conf
+将下面这一行取消注释，开启密码验证功能</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># requirepass foobared</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>foobared太简单了，我们需要复杂的密码；下面提供一个命令可以生成密码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">echo</span> <span class="s2">&quot;foo&quot;</span> | sha256sum
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>他会输出如下密码：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>黏贴到requirepass后面即可。如果这个命令没有用，你可能需要安装<strong> apg </strong> 或者 <strong> pwgen </strong>工具来帮助你生成密码。</p>
+
+<p>更新完密码，请重启redis：
+mZ&#8220;` sh</p>
+
+<pre><code>sudo service redis-server restart
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>进入redis，然后输入密码验证操作：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>redis-cli    
+auth your_redis_password 
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>3. ** 重新命名命令**
+</span><span class='line'>
+</span><span class='line'>redis允许你重新对命令进行命名或禁用；
+</span><span class='line'>其中有些命令比较危险，例如：**  FLUSHDB, FLUSHALL, KEYS, PEXPIRE, DEL, CONFIG, SHUTDOWN, BGREWRITEAOF, BGSAVE, SAVE, SPOP, SREM, RENAME 和 DEBUG**
+</span><span class='line'>
+</span><span class='line'>你可以自己选择要禁用还是重命名：
+</span><span class='line'>
+</span><span class='line'>禁用：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code># It is also possible to completely kill a command by renaming it into
+# an empty string:
+#
+rename-command FLUSHDB ""
+rename-command FLUSHALL ""
+rename-command DEBUG ""
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>重命名：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>rename-command CONFIG ""
+rename-command SHUTDOWN SHUTDOWN_MENOT
+rename-command CONFIG ASC12_CONFIG
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>保存后，重启redis
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>sudo service redis-server restart
+redis-cli
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>如果你进行了第二步设置密码，这里你需要输入密码，
+</span><span class='line'>然后输入config命令看看是否有效：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>&gt; config get requirepass
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>将会输出：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>(error) ERR unknown command 'config'
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>输入重命名后的命令：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>asc12_config get requirepass
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>输出：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>1) "requirepass"
+2) "your_redis_password"
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>4. ** 设置文件目录的访问权限 **
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>ls -l /var/lib | grep redis
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>输出：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh
+drwxr-xr-x 2 redis   redis   4096 Aug  6 09:32 redis</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>看到redis数据目录的权限属于redis所有，这非常好，但是那部分不是文件夹的权限，文件夹的是755，我们需要把它设置成770
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>sudo chmod 700 /var/lib/redis
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>接下来我们来看看配置文件redis.conf
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>ls -l /etc/redis/redis.conf
+-rw-r--r-- 1 root root 30176 Jan 14  2014 /etc/redis/redis.conf
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>他是644，我们需要做如下修改：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>sudo chown redis:root /etc/redis/redis.conf
+sudo chmod 600 /etc/redis/redis.conf
+</code></pre>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>最后重启redis服务：
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p> sh</p>
+
+<pre><code>sudo service redis-server restart
+</code></pre>
+
+<p>&#8220;`</p>
 ]]></content>
   </entry>
   

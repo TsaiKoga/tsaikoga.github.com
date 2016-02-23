@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: PhotoShop | TsaiKoga Blog]]></title>
+  <link href="http://TsaiKoga.github.com/blog/categories/photoshop/atom.xml" rel="self"/>
+  <link href="http://TsaiKoga.github.com/"/>
+  <updated>2016-02-23T11:02:09+08:00</updated>
+  <id>http://TsaiKoga.github.com/</id>
+  <author>
+    <name><![CDATA[TsaiKoga]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[配色表]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/02/22/pei-se-biao/"/>
+    <updated>2016-02-22T23:03:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2016/02/22/pei-se-biao</id>
+    <content type="html"><![CDATA[<h3>配色表</h3>
+
+<p>色彩搭配中 色相搭配分类</p>
+
+<p>网页设计中常见的色彩搭配按照色相的顺序归类。每类都以该色相为主，配以其他色相或者同色相的，应用对比和调和的方法，并按照从轻快到浓烈的顺序排序。</p>
+
+<p><img src="/images/posts/2016-02-22/peisebiao.gif" alt="配色表" /></p>
+]]></content>
+  </entry>
+  
+</feed>
