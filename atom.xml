@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-02-23T21:38:23+08:00</updated>
+  <updated>2016-08-06T15:01:39+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -14,17 +14,807 @@
 
   
   <entry>
-    <title type="html"><![CDATA[配色表]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2016/02/22/pei-se-biao/"/>
-    <updated>2016-02-22T23:03:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2016/02/22/pei-se-biao</id>
-    <content type="html"><![CDATA[<h3>配色表</h3>
+    <title type="html"><![CDATA[Atom 快捷键使用大全]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/05/06/atomkuai-jie-jian-shi-yong-da-quan/"/>
+    <updated>2016-05-06T11:36:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2016/05/06/atomkuai-jie-jian-shi-yong-da-quan</id>
+    <content type="html"><![CDATA[<h3><a href="#1">1. 快捷键标识</a></h3>
 
-<p>色彩搭配中 色相搭配分类</p>
+<h3><a href="#2">2. 内容</a></h3>
 
-<p>网页设计中常见的色彩搭配按照色相的顺序归类。每类都以该色相为主，配以其他色相或者同色相的，应用对比和调和的方法，并按照从轻快到浓烈的顺序排序。</p>
+<h2 id="1">快捷键标识</h2>
 
-<p><img src="http://TsaiKoga.github.com/images/posts/2016-02-22/peisebiao.gif" alt="配色表" /></p>
+
+<p>⌘ : Command key</p>
+
+<p>⌃ : Control key</p>
+
+<p>⌫ : Delete key</p>
+
+<p>← : Left arrow key</p>
+
+<p>→ : Right arrow key</p>
+
+<p>↑ : Up arrow key</p>
+
+<p>↓ : Down arrow key</p>
+
+<p>⌥ : Option or Alt key</p>
+
+<p>↩ : Return or Enter key</p>
+
+<p>⇧ : Shift key</p>
+
+<br/>
+
+
+
+
+<h2 id="2">内容</h2>
+
+
+<p><a href="#2.1">2.1. 命令板</a></p>
+
+<p><a href="#2.2">2.2. 配置</a></p>
+
+<p><a href="#2.3">2.3. 项目任务</a></p>
+
+<p><a href="#2.4">2.4. 自动补全</a></p>
+
+<p><a href="#2.5">2.5. 书签</a></p>
+
+<p><a href="#2.6">2.6. 括号 </a></p>
+
+<p><a href="#2.7">2.7. 代码折叠</a></p>
+
+<p><a href="#2.8">2.8. 代码导航和管理</a></p>
+
+<p><a href="#2.9">2.9. 字符变化</a></p>
+
+<p><a href="#2.10">2.10. 注释</a></p>
+
+<p><a href="#2.11">2.11. 编辑器视图任务</a></p>
+
+<p><a href="#2.12">2.12. 文件任务</a></p>
+
+<p><a href="#2.13">2.13. 查找和替换</a></p>
+
+<p><a href="#2.14">2.14. 字体任务</a></p>
+
+<p><a href="#2.15">2.15. 语法</a></p>
+
+<p><a href="#2.16">2.16. 搜索任务</a></p>
+
+<br/>
+
+
+
+
+<h3 id="2.1">命令板</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>打开命令板</td>
+      <td>⌘-⇧-p</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.2">配置</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>打开配置编辑器</td>
+      <td>⌘-,</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.3">项目任务</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>隐藏应用</td>
+      <td>⌘-h</td>
+    </tr>
+    <tr>
+      <td>隐藏其他应用</td>
+      <td>⌥-⌘-h</td>
+    </tr>
+    <tr>
+      <td>最小化应用</td>
+      <td>⌘-m</td>
+    </tr>
+    <tr style="color: red;">
+      <td>新建文件</td>
+      <td>⌘-n</td>
+    </tr>
+    <tr>
+      <td>新建窗口</td>
+      <td>⌘-⇧-n</td>
+    </tr>
+    <tr>
+      <td>打开应用</td>
+      <td>⌘-o</td>
+    </tr>
+    <tr>
+      <td>打开Dev</td>
+      <td>⇧-⌘-o</td>
+    </tr>
+    <tr>
+      <td>退出Atom</td>
+      <td>⌘-q</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.4">自动补全</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>打开配置编辑器</td>
+      <td>⌘-,</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.5">书签</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>切换书签</td>
+      <td>⌘-F2</td>
+    </tr>
+    <tr>
+      <td>查看所有书签</td>
+      <td>⌃-F2</td>
+    </tr>
+    <tr>
+      <td>跳到下一个书签</td>
+      <td>F2</td>
+    </tr>
+    <tr>
+      <td>跳到上一个书签</td>
+      <td>⇧-F2</td>
+    </tr>
+    <tr>
+      <td>清除所有书签</td>
+      <td>⌘-⇧-F2</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.6">括号</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>寻找匹配的括号</td>
+      <td>⌃-m</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.7">代码折叠</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr style="color: red;">
+      <td>合上代码</td>
+      <td>⌥-⌘-[</td>
+    </tr>
+    <tr style="color: red;">
+      <td>展开代码</td>
+      <td>⌥-⌘-]</td>
+    </tr>
+    <tr>
+      <td>在缩排第N级合上代码</td>
+      <td>⌘-k cmd-N</td>
+    </tr>
+    <tr>
+      <td>合上所选的文本</td>
+      <td>⌥-⌘-⌃-f</td>
+    </tr>
+    <tr style="color: red;">
+      <td>展开所有代码</td>
+      <td>⌥-⌘-}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.8">代码导航和管理</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>裁剪到行末</td>
+      <td>⌃-k</td>
+    </tr>
+    <tr>
+      <td>删除到单词起始位</td>
+      <td>⌥-⌫</td>
+    </tr>
+    <tr>
+
+      <td>删除到单词末尾</td>
+      <td>⌥-d</td>
+    </tr>
+    <tr>
+      <td>删除行</td>
+      <td>⌃-⇧-k</td>
+    </tr>
+    <tr>
+      <td>复制行</td>
+      <td>⌘-⇧-d</td>
+    </tr>
+    <tr>
+      <td>跳到行</td>
+      <td>⌃-g</td>
+    </tr>
+    <tr>
+      <td>跳到匹配的括号</td>
+      <td>⌃-m</td>
+    </tr>
+    <tr>
+      <td>缩进所选文字</td>
+      <td>⌘-]</td>
+    </tr>
+    <tr>
+      <td>前进所选文字</td>
+      <td>⌘-[</td>
+    </tr>
+    <tr>
+      <td>加入行</td>
+      <td>⌘-j</td>
+    </tr>
+    <tr>
+      <td>移动单词到开头</td>
+      <td>⌥-b</td>
+    </tr>
+    <tr>
+      <td>移动单词到末尾</td>
+      <td>⌥-f</td>
+    </tr>
+    <tr>
+      <td>移动到行起始位</td>
+      <td>⌃-a</td>
+    </tr>
+    <tr>
+      <td>移动到行末</td>
+      <td>⌃-e</td>
+    </tr>
+    <tr>
+      <td>移动行到上面</td>
+      <td>⌘-⌃-↑</td>
+    </tr>
+    <tr>
+      <td>移动行到下面</td>
+      <td>⌘-⌃-↓</td>
+    </tr>
+    <tr>
+      <td>移动文件到顶部</td>
+      <td>⌘-↑</td>
+    </tr>
+    <tr>
+      <td>移动文件到底部</td>
+      <td>⌘-↓</td>
+    </tr>
+    <tr>
+      <td>移动到行的一个字符</td>
+      <td>⌘-←</td>
+    </tr>
+    <tr>
+      <td>移动到行的最后一个字符</td>
+      <td>⌘-→</td>
+    </tr>
+    <tr>
+      <td>移动左边的字符</td>
+      <td>⌘-⌃-b</td>
+    </tr>
+    <tr>
+      <td>移动右边的字符</td>
+      <td>⌘-⌃-f</td>
+    </tr>
+    <tr>
+      <td>移动到单词的开头</td>
+      <td>⌥-⇧-b</td>
+    </tr>
+    <tr>
+      <td>移动到单词的末尾</td>
+      <td>⌥-⇧-f</td>
+    </tr>
+    <tr>
+      <td>移动整个单词</td>
+      <td>⌃-⇧-w</td>
+    </tr>
+    <tr>
+      <td>选择到行的第一个字符</td>
+      <td>⌥-⇧-a</td>
+    </tr>
+    <tr>
+      <td>选择到行的最后一个字符</td>
+      <td>⌥-⇧-e</td>
+    </tr>
+    <tr>
+      <td>选择到相同的位置</td>
+      <td>⌥-⇧-n</td>
+    </tr>
+    <tr>
+      <td>选择到上一行相同的位置</td>
+      <td>⌥-⇧-p</td>
+    </tr>
+    <tr>
+      <td>选择到文件头</td>
+      <td>⌘-⇧-↑</td>
+    </tr>
+    <tr>
+      <td>选择到文件尾</td>
+      <td>⌘-⇧-↓</td>
+    </tr>
+    <tr>
+      <td>选择全部</td>
+      <td>⌘-a</td>
+    </tr>
+    <tr>
+      <td>选择到下一个</td>
+      <td>⌘-d</td>
+    </tr>
+    <tr>
+      <td>选择行</td>
+      <td>⌘-L</td>
+    </tr>
+    <tr>
+      <td>切换注释</td>
+      <td>⌘-/</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.9">字符变化</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr style="color: red;">
+      <td>将Tab变成空格</td>
+      <td>⌥-⌘-[</td>
+    </tr>
+    <tr style="color: red;">
+      <td>将空格变成Tab</td>
+      <td>⌥-⌘-]</td>
+    </tr>
+    <tr>
+      <td>变成大写</td>
+      <td>⌘-k-u</td>
+    </tr>
+    <tr>
+      <td>变成小写</td>
+      <td>⌘-k-L</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.10">注释</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr style="color: red;">
+      <td>切换注释</td>
+      <td>⌘-/</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.11">编辑器视图任务</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>垂直拆分面板</td>
+      <td>⌘-k-↓</td>
+    </tr>
+    <tr>
+      <td>水平拆分面板</td>
+      <td>⌘-k-→</td>
+    </tr>
+    <tr>
+      <td>垂直导航面板</td>
+      <td>⌘-k ⌘-↓</td>
+    </tr>
+    <tr>
+      <td>水平导航面板</td>
+      <td>⌘-k ⌘-→</td>
+    </tr>
+    <tr>
+      <td>切换全屏</td>
+      <td>⌃-⌘-f</td>
+    </tr>
+    <tr style="color: red;">
+      <td>切换树</td>
+      <td>⌘-\</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.12">文件任务</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>模糊搜索文件</td>
+      <td>⌘-t</td>
+    </tr>
+    <tr>
+      <td>寻找并打开文件</td>
+      <td>⌘-b</td>
+    </tr>
+    <tr>
+      <td>找最近更改但是还未跟踪的文件（git）</td>
+      <td>⌘-⇧-b</td>
+    </tr>
+    <tr>
+      <td>打开树</td>
+      <td>⌃-0</td>
+    </tr>
+    <tr>
+      <td>切换到树</td>
+      <td>⌘-&#92;</td>
+    </tr>
+    <tr style="color: red;">
+      <td>增加文件</td>
+      <td>a</td>
+    </tr>
+    <tr style="color: red;">
+      <td>移动文件</td>
+      <td>m</td>
+    </tr>
+    <tr style="color: red;">
+      <td>删除文件</td>
+      <td>⌫</td>
+    </tr>
+    <tr>
+      <td>重新打开文件</td>
+      <td>⌘-⇧-t</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+<h3 id="2.13">查找和替换</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>在当前文件查找字符串</td>
+      <td>⌘-f</td>
+    </tr>
+    <tr>
+      <td>整个项目中查找字符串</td>
+      <td>⇧-⌘-f</td>
+    </tr>
+    <tr>
+      <td>跳到匹配的字符串</td>
+      <td>⌘-g</td>
+    </tr>
+    <tr style="color: red;">
+      <td>跳到前面匹配的字符串</td>
+      <td>⇧-⌘-g</td>
+    </tr>
+    <tr>
+      <td>跳到后面匹配的字符串</td>
+      <td>⌘-d</td>
+    </tr>
+    <tr style="color: red;">
+      <td>选择所有匹配的字符串</td>
+      <td>⌃-⌘-g</td>
+    </tr>
+    <tr>
+      <td>替换当前文件的字符串</td>
+      <td>⌥-⌘-f</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.14">字体任务</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>增加字体大小</td>
+      <td>cmd-+</td>
+    </tr>
+    <tr>
+      <td>减少字体大小</td>
+      <td>cmd—</td>
+    </tr>
+  </body>
+</table>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.15">语法</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>选择语法</td>
+      <td>⌃-⇧-L</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id="2.16">搜索任务</h3>
+
+
+<hr />
+
+<table style="padding: 10px; width: 100%;">
+  <thead>
+    <tr>
+      <th>任务</th>
+      <th>按键</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>搜索符号</td>
+      <td>⌘-r</td>
+    </tr>
+    <tr>
+      <td>整个项目中搜索符号</td>
+      <td>⌘-⇧-r</td>
+    </tr>
+  </tbody>
+</table>
+
 ]]></content>
   </entry>
   
