@@ -1,0 +1,291 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Git公司项目中的使用方法 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。 它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。 背景 首先我来介绍一下公司的大致情况，然后阐述一下公司如何用Git进行工作： 我们公司是一家外企电商平台，产品在国外销售，技术部在中国， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Git公司项目中的使用方法</h2>
+	<div class="entry-content"><p>Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。</p>
+
+<p>它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。</p>
+
+<h4>背景</h4>
+
+<hr />
+
+<p>首先我来介绍一下公司的大致情况，然后阐述一下公司如何用Git进行工作：</p>
+
+<p>我们公司是一家外企电商平台，产品在国外销售，技术部在中国，所以会有时差。面对这类问题，我们技术部这边对项目进行开发完善，
+确定每周二的一个时间点为项目上线时间（因为这个时间点用户量极少），所有大改动和新功能都会在本周的这个时间点上线，我们称之为【常规上线】。
+对于项目突然出现的 Bug ，或是上线后出现的 Bug，我们也会更改然后上线，这次上线属于当天的紧急上线，我们称之为【紧急上线】，取名为Hot Fix。</p>
+
+<p>OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。</p>
+
+<h4>操作流程</h4>
+
+<hr />
+
+<h5>分支介绍</h5>
+
+<p>先来看看我们项目主要的分支吧：</p>
+
+<ul>
+<li><p>master 主分支，用来部署周二的常规上线。</p></li>
+<li><p>release 发布分支，这个分支的代码一定是生产环境下的分支（代码最新），用于切除 Hotfix 分支，作紧急上线处理。</p></li>
+<li><p>testing 常规上线的测试分支，这里的代码用于测试，周二常规上线后可以删除后重建；不与master相同，测试完此分支与master分支无关；
+用于当测试出现 BUG，修复很多次，最后测试通过；本地可以将最后通过的commits都合并为一个commit提交到master，保证commit的整洁，减少冲突。</p></li>
+</ul>
+
+
+<h5>常规上线</h5>
+
+<p>接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop</p>
+
+<pre><code>git checkout -b develop
+git commit -m "First Commit"
+git push origin develop
+</code></pre>
+
+<p>然后周二正式上线，我们周一先将自己的分支本地测完，然后“合并”到公共的 testing 分支【记住是merge哦，不是rebase】；</p>
+
+<pre><code>git checkout testing                # from develop to testing
+# git merge develop                 # 这里一般是发到 github 上给别人 pr，或是发到gitlab上给别人 mr
+git push origin testing             # 如果是通过 gitlab/github mr/pr 后，这里将是 git pull origin testing
+BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
+</code></pre>
+
+<h5>注意事项 （merge 和 rebase）</h5>
+
+<blockquote><p>有个问题需要注意，曾经我将我的代码rebase到testing上；</p>
+
+<pre><code>git checkout testing
+git rebase develop
+</code></pre>
+
+<p>rebase 会将 testing 和 develop 两个分支中的commit整理成 testing 一个分支，但是当两个分支中有一个commit发生冲突的时候
+<img src="/images/posts/2016-08-06/git-rebase.png" title="rebase的图示" alt="git rebase" /></p>
+
+<p>这个冲突如上图，来自于 develop 的 commit，你将它 rebase 到了 testing 上，正当你觉得一切顺利的时候；</p>
+
+<p>你想要 push 你的代码到远程的 testing，你会发现需要 pull 代码，然而当你 pull 代码后，你又发现原来的冲突，然后解决冲突，然后再 pull 代码，这样无限循环下去&hellip;</p>
+
+<p>这是因为远程的 testing 就是没解决冲突前的 testing 分支，你 rebase 后解决冲突的 commit 是 develop 的commit，这样你再次拉代码下来，冲突又再次出现了。</p></blockquote>
+
+<p>所以，使用“merge”！这里 merge 后，develop 的 commit3 会与 testing 产生冲突，解决完冲突后，merge 不像 rebase 会把解决完的放在原来的 commit3 上，而是你需要
+新提交一个解决冲突后的 commit【我们叫它commit4】，这样就 pull 的代码遇到 commit4，发现已被解决，就没有冲突了。</p>
+
+<h5>紧急上线 Hotfix</h5>
+
+<p>看到上面的常规上线，我们结束了周二的工作任务；周三来了，你来到办公室，发现昨天上线的内容还需要修改，并且必须在今天上线。这时候我们需要如下分支：</p>
+
+<ul>
+<li><p>release 分支， 周二从 master 分支部署到正式服务器后，将 master 代码 merge release 分支，release上的代码即代表着线上的最新代码。</p></li>
+<li><p>hotfix160803 分支，从名字可以看出 hotfix + 日期，这个是从 release 切出来的，像testing分支一样，让所有要紧急发布的程序员将今天自己的分支合到这里进行测试。</p></li>
+</ul>
+
+
+<p>具体操作就是
+1. 首先我们从 release 下载线上的代码 <code>git pull origin release:release</code>
+2. release 分支切出一个 hotfix 分支 <code>git checkout -b hotfix160803</code>
+3. 提交 hotfix160803 到远程，让大家可以合并代码
+4. 建立自己的紧急开发分支 <code>git checkout -b hotfix-dev</code></p>
+
+<p>如果已经有人提交了hotfix160803，则只需要 pull 下来，然后建立自己的分支开发。</p>
+
+<p>接下来改完代码后的操作其实和常规上线一样。</p>
+
+<pre><code>git push hotfix-dev
+</code></pre>
+
+<p>gitlab 或 github 上 mr 或 pr</p>
+
+<pre><code>git checkout hotfix160803
+git pull hotfix160803 # 将合并后的代码拉下来
+BRANCH=hotfix160803 cap staging deploy
+</code></pre>
+
+<p>测试完毕后，将 hotfix160803 merge 到 release，发布release。</p>
+
+<p>忙碌的一天就结束了。</p>
+
+<h5>关于 Capistrano 的代码</h5>
+
+<p>你的代码放在 gitlab 上面，项目运行在某个服务器A上，你将代码提交到 gitlab 上，然后 cap deploy；
+其实cap deploy 是通过 clone 你的 gitlab 上的代码到服务器A上的</p>
+
+<p>关于抽出逻辑，制作一个功能，其他传入简单参数，
+关于方法里面，只有if，那干脆将if放方法外面；
+关于需求，通过每个条件都列出来检查。
+对于更改数据，记住留份log作为备份，将数据记录下来，以便回滚。</p>
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2016
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>

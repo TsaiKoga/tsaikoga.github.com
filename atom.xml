@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-06T15:01:39+08:00</updated>
+  <updated>2016-08-20T10:19:01+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,126 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Git公司项目中的使用方法]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa/"/>
+    <updated>2016-08-06T16:10:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa</id>
+    <content type="html"><![CDATA[<p>Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。</p>
+
+<p>它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。</p>
+
+<h4>背景</h4>
+
+<hr />
+
+<p>首先我来介绍一下公司的大致情况，然后阐述一下公司如何用Git进行工作：</p>
+
+<p>我们公司是一家外企电商平台，产品在国外销售，技术部在中国，所以会有时差。面对这类问题，我们技术部这边对项目进行开发完善，
+确定每周二的一个时间点为项目上线时间（因为这个时间点用户量极少），所有大改动和新功能都会在本周的这个时间点上线，我们称之为【常规上线】。
+对于项目突然出现的 Bug ，或是上线后出现的 Bug，我们也会更改然后上线，这次上线属于当天的紧急上线，我们称之为【紧急上线】，取名为Hot Fix。</p>
+
+<p>OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。</p>
+
+<h4>操作流程</h4>
+
+<hr />
+
+<h5>分支介绍</h5>
+
+<p>先来看看我们项目主要的分支吧：</p>
+
+<ul>
+<li><p>master 主分支，用来部署周二的常规上线。</p></li>
+<li><p>release 发布分支，这个分支的代码一定是生产环境下的分支（代码最新），用于切除 Hotfix 分支，作紧急上线处理。</p></li>
+<li><p>testing 常规上线的测试分支，这里的代码用于测试，周二常规上线后可以删除后重建；不与master相同，测试完此分支与master分支无关；
+用于当测试出现 BUG，修复很多次，最后测试通过；本地可以将最后通过的commits都合并为一个commit提交到master，保证commit的整洁，减少冲突。</p></li>
+</ul>
+
+
+<h5>常规上线</h5>
+
+<p>接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop</p>
+
+<pre><code>git checkout -b develop
+git commit -m "First Commit"
+git push origin develop
+</code></pre>
+
+<p>然后周二正式上线，我们周一先将自己的分支本地测完，然后“合并”到公共的 testing 分支【记住是merge哦，不是rebase】；</p>
+
+<pre><code>git checkout testing                # from develop to testing
+# git merge develop                 # 这里一般是发到 github 上给别人 pr，或是发到gitlab上给别人 mr
+git push origin testing             # 如果是通过 gitlab/github mr/pr 后，这里将是 git pull origin testing
+BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
+</code></pre>
+
+<h5>注意事项 （merge 和 rebase）</h5>
+
+<blockquote><p>有个问题需要注意，曾经我将我的代码rebase到testing上；</p>
+
+<pre><code>git checkout testing
+git rebase develop
+</code></pre>
+
+<p>rebase 会将 testing 和 develop 两个分支中的commit整理成 testing 一个分支，但是当两个分支中有一个commit发生冲突的时候
+<img src="http://TsaiKoga.github.com/images/posts/2016-08-06/git-rebase.png" title="rebase的图示" alt="git rebase" /></p>
+
+<p>这个冲突如上图，来自于 develop 的 commit，你将它 rebase 到了 testing 上，正当你觉得一切顺利的时候；</p>
+
+<p>你想要 push 你的代码到远程的 testing，你会发现需要 pull 代码，然而当你 pull 代码后，你又发现原来的冲突，然后解决冲突，然后再 pull 代码，这样无限循环下去&hellip;</p>
+
+<p>这是因为远程的 testing 就是没解决冲突前的 testing 分支，你 rebase 后解决冲突的 commit 是 develop 的commit，这样你再次拉代码下来，冲突又再次出现了。</p></blockquote>
+
+<p>所以，使用“merge”！这里 merge 后，develop 的 commit3 会与 testing 产生冲突，解决完冲突后，merge 不像 rebase 会把解决完的放在原来的 commit3 上，而是你需要
+新提交一个解决冲突后的 commit【我们叫它commit4】，这样就 pull 的代码遇到 commit4，发现已被解决，就没有冲突了。</p>
+
+<h5>紧急上线 Hotfix</h5>
+
+<p>看到上面的常规上线，我们结束了周二的工作任务；周三来了，你来到办公室，发现昨天上线的内容还需要修改，并且必须在今天上线。这时候我们需要如下分支：</p>
+
+<ul>
+<li><p>release 分支， 周二从 master 分支部署到正式服务器后，将 master 代码 merge release 分支，release上的代码即代表着线上的最新代码。</p></li>
+<li><p>hotfix160803 分支，从名字可以看出 hotfix + 日期，这个是从 release 切出来的，像testing分支一样，让所有要紧急发布的程序员将今天自己的分支合到这里进行测试。</p></li>
+</ul>
+
+
+<p>具体操作就是
+1. 首先我们从 release 下载线上的代码 <code>git pull origin release:release</code>
+2. release 分支切出一个 hotfix 分支 <code>git checkout -b hotfix160803</code>
+3. 提交 hotfix160803 到远程，让大家可以合并代码
+4. 建立自己的紧急开发分支 <code>git checkout -b hotfix-dev</code></p>
+
+<p>如果已经有人提交了hotfix160803，则只需要 pull 下来，然后建立自己的分支开发。</p>
+
+<p>接下来改完代码后的操作其实和常规上线一样。</p>
+
+<pre><code>git push hotfix-dev
+</code></pre>
+
+<p>gitlab 或 github 上 mr 或 pr</p>
+
+<pre><code>git checkout hotfix160803
+git pull hotfix160803 # 将合并后的代码拉下来
+BRANCH=hotfix160803 cap staging deploy
+</code></pre>
+
+<p>测试完毕后，将 hotfix160803 merge 到 release，发布release。</p>
+
+<p>忙碌的一天就结束了。</p>
+
+<h5>关于 Capistrano 的代码</h5>
+
+<p>你的代码放在 gitlab 上面，项目运行在某个服务器A上，你将代码提交到 gitlab 上，然后 cap deploy；
+其实cap deploy 是通过 clone 你的 gitlab 上的代码到服务器A上的</p>
+
+<p>关于抽出逻辑，制作一个功能，其他传入简单参数，
+关于方法里面，只有if，那干脆将if放方法外面；
+关于需求，通过每个条件都列出来检查。
+对于更改数据，记住留份log作为备份，将数据记录下来，以便回滚。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Atom 快捷键使用大全]]></title>
@@ -8201,139 +8321,6 @@ Ubuntu hosts文件位置: /etc/hosts
 <li><p><a href="http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments">视频参考</a></p></li>
 </ol>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[create octopress blog]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/"/>
-    <updated>2013-07-28T22:51:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog</id>
-    <content type="html"><![CDATA[<h4>克隆octopress项目</h4>
-
-<pre><code>git clone git://github.com/imathis/octopress.git tsaikoga.github.com  # 这里的tsaikoga.github.com为你的项目名称
-cd tsaikoga.github.com
-</code></pre>
-
-<p>查看Gemfile文件：
-稍作修改，如使用淘宝镜像：source <a href="http://ruby.taobao.org">http://ruby.taobao.org</a></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim Gemfile
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>之后执行:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>bundle install
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>接着要做的事是查看rakefile 文件,，我们会用rake来执行创建博客或创建样式等：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>vim Rakefile   <span class="c"># 里面有许多rake任务</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>我们执行其中的:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake install <span class="c"># 复制&quot;theme/&quot;中的&quot;sass/&quot;和&quot;source/&quot;文件夹到&quot;tsaikoga.github.com/&quot;文件夹下</span>
-</span><span class='line'><span class="c"># 当然你也可以从网上下载他人的样式，如下命令：</span>
-</span><span class='line'>git clone git://github.com/panks/fabric.git .themes/fabric
-</span><span class='line'>rake install<span class="o">[</span><span class="s1">&#39;fabric&#39;</span><span class="o">]</span> <span class="c"># 然后安装fabric这个样式，不加[]则安装默认样式，如上命令：rake install</span>
-</span><span class='line'>rake generate          <span class="c"># 执行此命令后才会生效，然后重启服务</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p><strong>查看网页效果：</strong></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake preview
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>他会生成public文件夹</p>
-
-<hr />
-
-<h4>创建仓库：名字要以用户名为头，区分大小写。(username.github.io)</h4>
-
-<p>本地执行:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake setup_github_pages
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>在github上新建一个octopress仓库，当填入url时，不要填入后缀&#8221;.git&#8221;，这样生成的页面才在&#8221;.com&#8221;上,把public生成好的文件变成版本推送到远程仓库github，之后在远程仓库上做开发。
-说到在远程仓库做开发，就是将&#8221;开发分支source&#8221;覆盖原有的&#8221;master分支&#8221;,以后本地没有了项目，克隆项目下来，checkout 到source上进行开发。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout <span class="nb">source</span>                <span class="c"># 切到开发分支source上</span>
-</span><span class='line'>git push origin <span class="nb">source</span>        <span class="c"># 推送到远程仓库</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h4>如果想在source分支下有_deploy文件夹(当你的_desploy文件夹没了)，只要</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为_deploy/,
-修改_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，</p>
-
-<p>执行：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake generate
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>再执行以下名令，<strong>部署到远程仓库</strong>：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake deploy
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>最后到网址刷新看看。</p>
-
-<hr />
-
-<h4>附加功能：</h4>
-
-<p>注册一个google analytics帐号：
-生成tracking_id:</p>
-
-<h4>新建一个博客：</h4>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>rake new_post<span class="o">[</span><span class="s2">&quot;Hello TsaiKoga&quot;</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>存放到了 source/<em>post 之中, 编辑</em>post文件，如果使用disqus，这里的comment必须填true，下面有原因。</p>
-
-<h4>做评论，可以基于第三方插件：disqus</h4>
-
-<p>扯开一下话题：</p>
-
-<blockquote><p>Disqus的主要目标是通过提供功能强大的第三评论系统，将当前不同网站的相对孤立、隔绝的评论系统，连接成具有社会化特性的大网，用户使用Disqus，在不同网站上评论，无需重复注册账号，只需使用Disqus账号或者<em>第三方平台账号</em>，即可方便的进行评论，且所有评论都会存储、保存在Disqus账号后台，方便随时查看、回顾。</p></blockquote>
-
-<p>可以看到source/<em>layouts/post.html文件中已经有这个插件的评论方法：
-在</em>config.yml中加入你申请的disqus的short_name</p>
 ]]></content>
   </entry>
   
