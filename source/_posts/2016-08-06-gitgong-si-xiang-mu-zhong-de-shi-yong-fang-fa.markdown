@@ -1,0 +1,124 @@
+---
+layout: post
+title: "Git公司项目中的使用方法"
+date: 2016-08-06 16:10
+comments: true
+categories: ["Git", "ProjectManagement"]
+---
+
+Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。
+
+它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。
+
+
+
+
+#### 背景
+
+--------------------------------
+
+首先我来介绍一下公司的大致情况，然后阐述一下公司如何用Git进行工作：
+
+我们公司是一家外企电商平台，产品在国外销售，技术部在中国，所以会有时差。面对这类问题，我们技术部这边对项目进行开发完善，
+确定每周二的一个时间点为项目上线时间（因为这个时间点用户量极少），所有大改动和新功能都会在本周的这个时间点上线，我们称之为【常规上线】。
+对于项目突然出现的 Bug ，或是上线后出现的 Bug，我们也会更改然后上线，这次上线属于当天的紧急上线，我们称之为【紧急上线】，取名为Hot Fix。
+
+
+OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。
+
+
+
+
+
+### 操作流程
+
+--------------------------------
+
+#### 分支介绍
+
+先来看看我们项目主要的分支吧：
+
+- master 主分支，用来部署周二的常规上线。
+
+- release 发布分支，这个分支的代码一定是生产环境下的分支（代码最新），用于切除 Hotfix 分支，作紧急上线处理。
+
+- testing 常规上线的测试分支，这里的代码用于测试，周二常规上线后可以删除后重建；不与master相同，测试完此分支与master分支无关；
+用于当测试出现 BUG，修复很多次，最后测试通过；本地可以将最后通过的commits都合并为一个commit提交到master，保证commit的整洁，减少冲突。
+
+
+
+
+#### 常规上线
+
+接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop
+    git checkout -b develop
+    git commit -m "First Commit"
+    git push origin develop
+
+然后周二正式上线，我们周一先将自己的分支本地测完，然后“合并”到公共的 testing 分支【记住是merge哦，不是rebase】；
+    git checkout testing                # from develop to testing
+    # git merge develop                 # 这里一般是发到 github 上给别人 pr，或是发到gitlab上给别人 mr
+    git push origin testing             # 如果是通过 gitlab/github mr/pr 后，这里将是 git pull origin testing
+    BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
+
+
+
+
+#### 注意事项 （merge 和 rebase）
+> 有个问题需要注意，曾经我将我的代码rebase到testing上；
+    git checkout testing
+    git rebase develop
+
+> rebase 会将 testing 和 develop 两个分支中的commit整理成 testing 一个分支，但是当两个分支中有一个commit发生冲突的时候
+> ![git rebase](/images/posts/2016-08-06/git-rebase.png "rebase的图示")
+
+> 这个冲突如上图，来自于 develop 的 commit，你将它 rebase 到了 testing 上，正当你觉得一切顺利的时候；
+
+> 你想要 push 你的代码到远程的 testing，你会发现需要 pull 代码，然而当你 pull 代码后，你又发现原来的冲突，然后解决冲突，然后再 pull 代码，这样无限循环下去...
+
+> 这是因为远程的 testing 就是没解决冲突前的 testing 分支，你 rebase 后解决冲突的 commit 是 develop 的commit，这样你再次拉代码下来，冲突又再次出现了。
+
+所以，使用“merge”！这里 merge 后，develop 的 commit3 会与 testing 产生冲突，解决完冲突后，merge 不像 rebase 会把解决完的放在原来的 commit3 上，而是你需要
+新提交一个解决冲突后的 commit【我们叫它commit4】，这样就 pull 的代码遇到 commit4，发现已被解决，就没有冲突了。
+
+
+
+
+#### 紧急上线 Hotfix
+
+看到上面的常规上线，我们结束了周二的工作任务；周三来了，你来到办公室，发现昨天上线的内容还需要修改，并且必须在今天上线。这时候我们需要如下分支：
+
+- release 分支， 周二从 master 分支部署到正式服务器后，将 master 代码 merge release 分支，release上的代码即代表着线上的最新代码。
+
+- hotfix160803 分支，从名字可以看出 hotfix + 日期，这个是从 release 切出来的，像testing分支一样，让所有要紧急发布的程序员将今天自己的分支合到这里进行测试。
+
+具体操作就是
+1. 首先我们从 release 下载线上的代码 `git pull origin release:release`
+2. release 分支切出一个 hotfix 分支 `git checkout -b hotfix160803`
+3. 提交 hotfix160803 到远程，让大家可以合并代码
+4. 建立自己的紧急开发分支 `git checkout -b hotfix-dev`
+
+如果已经有人提交了hotfix160803，则只需要 pull 下来，然后建立自己的分支开发。
+
+接下来改完代码后的操作其实和常规上线一样。
+    git push hotfix-dev
+
+gitlab 或 github 上 mr 或 pr
+    git checkout hotfix160803
+    git pull hotfix160803 # 将合并后的代码拉下来
+    BRANCH=hotfix160803 cap staging deploy
+
+测试完毕后，将 hotfix160803 merge 到 release，发布release。
+
+忙碌的一天就结束了。
+
+
+#### 关于 Capistrano 的代码
+你的代码放在 gitlab 上面，项目运行在某个服务器A上，你将代码提交到 gitlab 上，然后 cap deploy；
+其实cap deploy 是通过 clone 你的 gitlab 上的代码到服务器A上的
+
+
+关于抽出逻辑，制作一个功能，其他传入简单参数，
+关于方法里面，只有if，那干脆将if放方法外面；
+关于需求，通过每个条件都列出来检查。
+对于更改数据，记住留份log作为备份，将数据记录下来，以便回滚。
