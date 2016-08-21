@@ -134,18 +134,27 @@
 
 <p>接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop</p>
 
-<pre><code>git checkout -b develop
-git commit -m "First Commit"
-git push origin develop
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout -b develop
+</span><span class='line'>git commit -m <span class="s2">&quot;First Commit&quot;</span>
+</span><span class='line'>git push origin develop
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>然后周二正式上线，我们周一先将自己的分支本地测完，然后“合并”到公共的 testing 分支【记住是merge哦，不是rebase】；</p>
 
-<pre><code>git checkout testing                # from develop to testing
-# git merge develop                 # 这里一般是发到 github 上给别人 pr，或是发到gitlab上给别人 mr
-git push origin testing             # 如果是通过 gitlab/github mr/pr 后，这里将是 git pull origin testing
-BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout testing                <span class="c"># from develop to testing</span>
+</span><span class='line'><span class="c"># git merge develop                 # 这里一般是发到 github 上给别人 pr，或是发到gitlab上给别人 mr</span>
+</span><span class='line'>git push origin testing             <span class="c"># 如果是通过 gitlab/github mr/pr 后，这里将是 git pull origin testing</span>
+</span><span class='line'><span class="nv">BRANCH</span><span class="o">=</span>testing cap staging deploy   <span class="c"># 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV[&quot;BRANCH&quot;] || &quot;master&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <h4>注意事项 （merge 和 rebase）</h4>
 
@@ -187,15 +196,21 @@ git rebase develop
 
 <p>接下来改完代码后的操作其实和常规上线一样。</p>
 
-<pre><code>git push hotfix-dev
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git push hotfix-dev
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>gitlab 或 github 上 mr 或 pr</p>
 
-<pre><code>git checkout hotfix160803
-git pull hotfix160803 # 将合并后的代码拉下来
-BRANCH=hotfix160803 cap staging deploy
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout hotfix160803
+</span><span class='line'>git pull hotfix160803 <span class="c"># 将合并后的代码拉下来</span>
+</span><span class='line'><span class="nv">BRANCH</span><span class="o">=</span>hotfix160803 cap staging deploy
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>测试完毕后，将 hotfix160803 merge 到 release，发布release。</p>
 

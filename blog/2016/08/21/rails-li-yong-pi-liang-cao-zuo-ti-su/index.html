@@ -134,27 +134,45 @@
 
 <p>用代码说明吧，首先当然对于这么庞大的数据量，要进行 <strong>分页</strong> 处理：</p>
 
-<pre><code>per_page = 100
-page = 0
-total_page = (Product.count.to_f / per_page).ceil
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">per_page</span> <span class="o">=</span> <span class="mi">100</span>
+</span><span class='line'><span class="n">page</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'><span class="n">total_page</span> <span class="o">=</span> <span class="p">(</span><span class="no">Product</span><span class="o">.</span><span class="n">count</span><span class="o">.</span><span class="n">to_f</span> <span class="o">/</span> <span class="n">per_page</span><span class="p">)</span><span class="o">.</span><span class="n">ceil</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>每一页进行 <strong>批量</strong> 操作：</p>
 
-<pre><code>total_page.times do
-  products = Product.limit(per_page).offset(page * per_page)
-  bill_items = bill_inventory_valuation_details products        # 符合条件的采购入库单数据，此方法的查找也必须对 products 进行批量查找
-  sell_items = sell_inventory_valuation_details products        # 符合条件的销售出库数据
-  package_items = package_inventory_valuation_details products  # 异常出库数据
-  adjust = adjust_inventory_valuation_details products          # 调整仓库数据
-  products.each do |product|
-    datas = []
-    datas += bill_items[product.id].map{|item| {id: item.id, quantity: item.quantity, price: item.price}}
-    # 对查出的数据进行处理，构造最终结果
-    ... ...
-  end
-end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">total_page</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">products</span> <span class="o">=</span> <span class="no">Product</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">per_page</span><span class="p">)</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">page</span> <span class="o">*</span> <span class="n">per_page</span><span class="p">)</span>
+</span><span class='line'>  <span class="n">bill_items</span> <span class="o">=</span> <span class="n">bill_inventory_valuation_details</span> <span class="n">products</span>        <span class="c1"># 符合条件的采购入库单数据，此方法的查找也必须对 products 进行批量查找</span>
+</span><span class='line'>  <span class="n">sell_items</span> <span class="o">=</span> <span class="n">sell_inventory_valuation_details</span> <span class="n">products</span>        <span class="c1"># 符合条件的销售出库数据</span>
+</span><span class='line'>  <span class="n">package_items</span> <span class="o">=</span> <span class="n">package_inventory_valuation_details</span> <span class="n">products</span>  <span class="c1"># 异常出库数据</span>
+</span><span class='line'>  <span class="n">adjust</span> <span class="o">=</span> <span class="n">adjust_inventory_valuation_details</span> <span class="n">products</span>          <span class="c1"># 调整仓库数据</span>
+</span><span class='line'>  <span class="n">products</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">product</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">datas</span> <span class="o">=</span> <span class="o">[]</span>
+</span><span class='line'>    <span class="n">datas</span> <span class="o">+=</span> <span class="n">bill_items</span><span class="o">[</span><span class="n">product</span><span class="o">.</span><span class="n">id</span><span class="o">].</span><span class="n">map</span><span class="p">{</span><span class="o">|</span><span class="n">item</span><span class="o">|</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="ss">quantity</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">quantity</span><span class="p">,</span> <span class="ss">price</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">price</span><span class="p">}}</span>
+</span><span class='line'>    <span class="c1"># 对查出的数据进行处理，构造最终结果</span>
+</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>这样原先没有进行批量操作会耗时接近12个小时，使用了批量操作后仅为2个多小时。</p>
 
@@ -180,11 +198,16 @@ end
 <p>第四种方式是AR方式的70倍左右，而公司后台使用的正是 activerecord-import,
 做法很简单，先将数据创建 <strong>存于内存</strong>，然后批量 import <strong>插入</strong> 数据库：</p>
 
-<pre><code>(controller.action_methods.to_a - excepts).each do |action|
-  need_imports &lt;&lt; Permission.new(subject: subject, action: action, description: "#{action.humanize} of #{subject}")
-end
-Permission.import need_imports
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="n">controller</span><span class="o">.</span><span class="n">action_methods</span><span class="o">.</span><span class="n">to_a</span> <span class="o">-</span> <span class="n">excepts</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">action</span><span class="o">|</span>
+</span><span class='line'>  <span class="n">need_imports</span> <span class="o">&lt;&lt;</span> <span class="no">Permission</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">subject</span><span class="p">:</span> <span class="n">subject</span><span class="p">,</span> <span class="ss">action</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span> <span class="ss">description</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">action</span><span class="o">.</span><span class="n">humanize</span><span class="si">}</span><span class="s2"> of </span><span class="si">#{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="no">Permission</span><span class="o">.</span><span class="n">import</span> <span class="n">need_imports</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>这样已经很快了，还有更快的吗？</p>
 
@@ -197,15 +220,23 @@ Permission.import need_imports
 
 <p>SQL语句：</p>
 
-<pre><code>(15955.1ms)  LOAD DATA LOCAL INFILE '/Users/tsaikoga/out_storage_orders.txt'
-REPLACE INTO TABLE out_storage_orders FIELDS TERMINATED BY ',' (`id`,`warehouse_id`,`destination_id`,`user_id`,`out_storage_order_type`,`out_storage_reason_type`,`status`,`quantity`,`package_id`)
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="p">(</span><span class="mi">15955</span><span class="o">.</span><span class="mi">1</span><span class="n">ms</span><span class="p">)</span>  <span class="no">LOAD</span> <span class="no">DATA</span> <span class="no">LOCAL</span> <span class="no">INFILE</span> <span class="s1">&#39;/Users/tsaikoga/out_storage_orders.txt&#39;</span>
+</span><span class='line'><span class="no">REPLACE</span> <span class="no">INTO</span> <span class="no">TABLE</span> <span class="n">out_storage_orders</span> <span class="no">FIELDS</span> <span class="no">TERMINATED</span> <span class="no">BY</span> <span class="s1">&#39;,&#39;</span> <span class="p">(</span><span class="sb">`id`</span><span class="p">,</span><span class="sb">`warehouse_id`</span><span class="p">,</span><span class="sb">`destination_id`</span><span class="p">,</span><span class="sb">`user_id`</span><span class="p">,</span><span class="sb">`out_storage_order_type`</span><span class="p">,</span><span class="sb">`out_storage_reason_type`</span><span class="p">,</span><span class="sb">`status`</span><span class="p">,</span><span class="sb">`quantity`</span><span class="p">,</span><span class="sb">`package_id`</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>插入行数：</p>
 
-<pre><code>wc -l &lt; /Users/tsaikoga/out_storage_orders.txt
-100000
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>wc -l &lt; /Users/tsaikoga/out_storage_orders.txt
+</span><span class='line'>100000
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 
 <h3 id="3.1">3.1 批量更改schema数据库</h3>
 
@@ -225,26 +256,43 @@ rename_column :orders, "shipping_last_name", "origin_shipping_last_name"
 
 <p>执行migrate用时非常长，还不如使用如下代码：</p>
 
-<pre><code>class RenameOldOrderAddressRelatedColumn &lt; ActiveRecord::Migration
-  def up
-    change_table(:orders, :bulk =&gt; true) do |t|
-      t.rename :order_status_code_id, :state
-      t.remove :in_process
-      [:first_name,
-       :last_name,
-       :country,
-       :state].each do |column|
-        t.rename "shipping_#{column}", "origin_shipping_#{column}"
-      end
-    end
-  end
-end
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">RenameOldOrderAddressRelatedColumn</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Migration</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">up</span>
+</span><span class='line'>    <span class="n">change_table</span><span class="p">(</span><span class="ss">:orders</span><span class="p">,</span> <span class="ss">:bulk</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">rename</span> <span class="ss">:order_status_code_id</span><span class="p">,</span> <span class="ss">:state</span>
+</span><span class='line'>      <span class="n">t</span><span class="o">.</span><span class="n">remove</span> <span class="ss">:in_process</span>
+</span><span class='line'>      <span class="o">[</span><span class="ss">:first_name</span><span class="p">,</span>
+</span><span class='line'>       <span class="ss">:last_name</span><span class="p">,</span>
+</span><span class='line'>       <span class="ss">:country</span><span class="p">,</span>
+</span><span class='line'>       <span class="ss">:state</span><span class="o">].</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">column</span><span class="o">|</span>
+</span><span class='line'>        <span class="n">t</span><span class="o">.</span><span class="n">rename</span> <span class="s2">&quot;shipping_</span><span class="si">#{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;origin_shipping_</span><span class="si">#{</span><span class="n">column</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>以上代码只生成一句 SQL 语句，数据库迁移时间大大减少。</p>
 
-<pre><code>ALTER TABLE `orders` DROP `in_process`, CHANGE `shipping_first_name` `origin_shipping_first_name` varchar(50) DEFAULT NULL, CHANGE `shipping_last_name` `origin_shipping_last_name` varchar(50) DEFAULT NULL, CHANGE `shipping_country` `origin_shipping_country` varchar(255) DEFAULT NULL, CHANGE `shipping_state` `origin_shipping_state` varchar(255) DEFAULT NULL...
-</code></pre>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">ALTER</span> <span class="no">TABLE</span> <span class="sb">`orders`</span> <span class="no">DROP</span> <span class="sb">`in_process`</span><span class="p">,</span> <span class="no">CHANGE</span> <span class="sb">`shipping_first_name`</span> <span class="sb">`origin_shipping_first_name`</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="no">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span> <span class="no">CHANGE</span> <span class="sb">`shipping_last_name`</span> <span class="sb">`origin_shipping_last_name`</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="no">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span> <span class="no">CHANGE</span> <span class="sb">`shipping_country`</span> <span class="sb">`origin_shipping_country`</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="no">DEFAULT</span> <span class="no">NULL</span><span class="p">,</span> <span class="no">CHANGE</span> <span class="sb">`shipping_state`</span> <span class="sb">`origin_shipping_state`</span> <span class="n">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="no">DEFAULT</span> <span class="no">NULL</span><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span></code></pre></td></tr></table></div></figure>
+
 
 <p>相关文档：
 <a href="http://dev.mysql.com/doc/refman/5.5/en/load-data.html">http://dev.mysql.com/doc/refman/5.5/en/load-data.html</a>
