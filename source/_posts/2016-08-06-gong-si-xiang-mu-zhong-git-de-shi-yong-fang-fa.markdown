@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Git公司项目中的使用方法"
+title: "公司项目中 Git 的使用方法"
 date: 2016-08-06 16:10
 comments: true
 categories: ["Git", "ProjectManagement"]
@@ -51,15 +51,19 @@ OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。
 #### 常规上线
 
 接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop
+``` sh
     git checkout -b develop
     git commit -m "First Commit"
     git push origin develop
+```
 
 然后周二正式上线，我们周一先将自己的分支本地测完，然后“合并”到公共的 testing 分支【记住是merge哦，不是rebase】；
+``` sh
     git checkout testing                # from develop to testing
     # git merge develop                 # 这里一般是发到 github 上给别人 pr，或是发到gitlab上给别人 mr
     git push origin testing             # 如果是通过 gitlab/github mr/pr 后，这里将是 git pull origin testing
     BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
+```
 
 
 
@@ -71,11 +75,11 @@ OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。
 
 > rebase 会将 testing 和 develop 两个分支中的commit整理成 testing 一个分支，但是当两个分支中有一个commit发生冲突的时候
 > ![git rebase](/images/posts/2016-08-06/git-rebase.png "rebase的图示")
-
+>
 > 这个冲突如上图，来自于 develop 的 commit，你将它 rebase 到了 testing 上，正当你觉得一切顺利的时候；
-
+>
 > 你想要 push 你的代码到远程的 testing，你会发现需要 pull 代码，然而当你 pull 代码后，你又发现原来的冲突，然后解决冲突，然后再 pull 代码，这样无限循环下去...
-
+>
 > 这是因为远程的 testing 就是没解决冲突前的 testing 分支，你 rebase 后解决冲突的 commit 是 develop 的commit，这样你再次拉代码下来，冲突又再次出现了。
 
 所以，使用“merge”！这里 merge 后，develop 的 commit3 会与 testing 产生冲突，解决完冲突后，merge 不像 rebase 会把解决完的放在原来的 commit3 上，而是你需要
@@ -101,12 +105,16 @@ OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。
 如果已经有人提交了hotfix160803，则只需要 pull 下来，然后建立自己的分支开发。
 
 接下来改完代码后的操作其实和常规上线一样。
+``` sh
     git push hotfix-dev
+```
 
 gitlab 或 github 上 mr 或 pr
+``` sh
     git checkout hotfix160803
     git pull hotfix160803 # 将合并后的代码拉下来
     BRANCH=hotfix160803 cap staging deploy
+```
 
 测试完毕后，将 hotfix160803 merge 到 release，发布release。
 

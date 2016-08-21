@@ -3,7 +3,7 @@ layout: post
 title: "Scroll to top"
 date: 2013-08-30 21:57
 comments: true
-categories: [coffeescript, web]
+categories: [Javascript]
 ---
 
 许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
@@ -19,16 +19,15 @@ categories: [coffeescript, web]
 **example:** (标签\<a class="go_top"\>)
 
 ``` js
-    $(document).ready -> 
-        $("a.go_top").click () -> 
+    $(document).ready ->
+        $("a.go_top").click () ->
             $('html, body').animate({scrollTop: 0}, 300)
             return false
 
-        $(window).bind 'scroll resize', -> 
+        $(window).bind 'scroll resize', ->
             scroll_from_top = $(window).scrollTop()
             if scroll_from_top >= 1
                 $('a.go_top').show()
             else
                 $('a.go_top').hide()
 ```
-
