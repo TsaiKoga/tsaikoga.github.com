@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: web | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/web/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Javascript | TsaiKoga Blog]]></title>
+  <link href="http://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-21T15:20:00+08:00</updated>
+  <updated>2016-08-21T22:01:46+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -37,12 +37,12 @@
 
 <p>``` js</p>
 
-<pre><code>$(document).ready -&gt; 
-    $("a.go_top").click () -&gt; 
+<pre><code>$(document).ready -&gt;
+    $("a.go_top").click () -&gt;
         $('html, body').animate({scrollTop: 0}, 300)
         return false
 
-    $(window).bind 'scroll resize', -&gt; 
+    $(window).bind 'scroll resize', -&gt;
         scroll_from_top = $(window).scrollTop()
         if scroll_from_top &gt;= 1
             $('a.go_top').show()

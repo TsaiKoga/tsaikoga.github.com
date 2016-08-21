@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-21T15:20:00+08:00</updated>
+  <updated>2016-08-21T22:01:46+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -189,8 +189,9 @@ end
 
 <p>```</p>
 
-<p>相关文档：
-<a href="http://dev.mysql.com/doc/refman/5.5/en/load-data.html">http://dev.mysql.com/doc/refman/5.5/en/load-data.html</a>
+<p>相关文档：</p>
+
+<p><a href="http://dev.mysql.com/doc/refman/5.5/en/load-data.html">http://dev.mysql.com/doc/refman/5.5/en/load-data.html</a>
 <a href="http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html">http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html</a></p>
 
 <p>总结，对于大数据一定要进行批量处理。</p>
