@@ -1,0 +1,332 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Rails 利用批量操作提速 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="1.1 批量查找数据 1.2 操作代码 2.1 批量插入数据 2.2 INFILE文件插入数据 3.1 批量更改schema数据库 1.1 批量查找数据 由于之前一直在做后台的数据，其中有个任务是关于 财务库存 的页面. 这个“财务库存”有产品和日期选项，您可以通过选择产品， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (1)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (7)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Rails 利用批量操作提速</h2>
+	<div class="entry-content"><h4><a href="#1.1">1.1 批量查找数据</a></h4>
+
+<h5><a href="#1.2">1.2 操作代码</a></h5>
+
+<h4><a href="#2.1">2.1 批量插入数据</a></h4>
+
+<h5><a href="#2.2">2.2 INFILE文件插入数据</a></h5>
+
+<h4><a href="#3.1">3.1 批量更改schema数据库</a></h4>
+
+<h2 id="1.1">1.1 批量查找数据</h2>
+
+
+<hr />
+
+<p>由于之前一直在做后台的数据，其中有个任务是关于 财务库存 的页面.</p>
+
+<blockquote><p>这个“财务库存”有产品和日期选项，您可以通过选择产品，查看它在某段时间内的库存价格等情况。</p>
+
+<p>将采购入库单数据[PurchaseOrderBill]，销售出库单数据[OutStorageOrder]，异常取货和仓库调整单数据整合在一个页面；
+根据日期排序来显示这个页面的内容，以及这些内容的成本价格变化，这里的价格根据这些取出来的数据进行排列后再进行运算得出。</p>
+
+<p>项目中有近5w条产品记录，又要将“采购入库单”和“销售出库单”与 产品product进行关联查找，耗时挺大的。</p>
+
+<p>这时候公司那边说要提供一次性下载所有产品的财务库存数据，不过不需要显示价格变化情况，直接显示最后一条价格结果就行了。</p></blockquote>
+
+<p>近5w条的 product 产品关联(joins/includes)的单据进行计算价格，然后显示结果。
+如何加快查找速度呢？</p>
+
+<p>答案是进行 <strong>批量</strong> 查找。</p>
+
+<h3 id="1.2">1.2 操作代码</h3>
+
+
+<p>用代码说明吧，首先当然对于这么庞大的数据量，要进行 <strong>分页</strong> 处理：</p>
+
+<pre><code>per_page = 100
+page = 0
+total_page = (Product.count.to_f / per_page).ceil
+</code></pre>
+
+<p>每一页进行 <strong>批量</strong> 操作：</p>
+
+<pre><code>total_page.times do
+  products = Product.limit(per_page).offset(page * per_page)
+  bill_items = bill_inventory_valuation_details products        # 符合条件的采购入库单数据，此方法的查找也必须对 products 进行批量查找
+  sell_items = sell_inventory_valuation_details products        # 符合条件的销售出库数据
+  package_items = package_inventory_valuation_details products  # 异常出库数据
+  adjust = adjust_inventory_valuation_details products          # 调整仓库数据
+  products.each do |product|
+    datas = []
+    datas += bill_items[product.id].map{|item| {id: item.id, quantity: item.quantity, price: item.price}}
+    # 对查出的数据进行处理，构造最终结果
+    ... ...
+  end
+end
+</code></pre>
+
+<p>这样原先没有进行批量操作会耗时接近12个小时，使用了批量操作后仅为2个多小时。</p>
+
+<h2 id="2.1">2.1 批量插入数据</h2>
+
+
+<hr />
+
+<p>当你要对大量数据进行插入数据库的操作时，一条条插入将是及其愚蠢的行为。如何进行批量插入呢？</p>
+
+<p>可以先看看这篇文章：<a href="https://www.coffeepowered.net/2009/01/23/mass-inserting-data-in-rails-without-killing-your-performance/">Mass inserting data in Rails without killing your performance</a></p>
+
+<p>这篇文章提到 Rails 快速插入数据的四种方法：</p>
+
+<ol>
+<li><p>Use transactions</p></li>
+<li><p>Get down and dirty with the raw SQL</p></li>
+<li><p>A single mass insert</p></li>
+<li><p>Use INSERT statements with multiple VALUES lists with ar-extensions OR activerecord-import</p></li>
+</ol>
+
+
+<p>第四种方式是AR方式的70倍左右，而公司后台使用的正是 activerecord-import,
+做法很简单，先将数据创建 <strong>存于内存</strong>，然后批量 import <strong>插入</strong> 数据库：</p>
+
+<pre><code>(controller.action_methods.to_a - excepts).each do |action|
+  need_imports &lt;&lt; Permission.new(subject: subject, action: action, description: "#{action.humanize} of #{subject}")
+end
+Permission.import need_imports
+</code></pre>
+
+<p>这样已经很快了，还有更快的吗？</p>
+
+<h3 id="2.2">2.2 INFILE文件插入数据 </h3>
+
+
+<p>From MySQL Doc:</p>
+
+<blockquote><p>When loading a table from a text file, use LOAD DATA INFILE. This is usually 20 times faster than using INSERT statements</p></blockquote>
+
+<p>SQL语句：</p>
+
+<pre><code>(15955.1ms)  LOAD DATA LOCAL INFILE '/Users/tsaikoga/out_storage_orders.txt'
+REPLACE INTO TABLE out_storage_orders FIELDS TERMINATED BY ',' (`id`,`warehouse_id`,`destination_id`,`user_id`,`out_storage_order_type`,`out_storage_reason_type`,`status`,`quantity`,`package_id`)
+</code></pre>
+
+<p>插入行数：</p>
+
+<pre><code>wc -l &lt; /Users/tsaikoga/out_storage_orders.txt
+100000
+</code></pre>
+
+<h3 id="3.1">3.1 批量更改schema数据库</h3>
+
+
+<hr />
+
+<p>你有没有发现，当你某张表的数据非常非常多的时候，你想要更改其中一个字段的类型，然后执行 migrate ；
+执行时间非常长，你厌倦了等待，只好 ctrl+c 撤销了migrate，但是实际上数据库中的记录已经有很大一部分改变了字段的类型。
+这时候你想再migrate，会出现这种类型的字段已存在的提示。（当然你可以利用mysql的界面工具或直接到mysql更改字段类型进行拯救）</p>
+
+<p>这里提供一个 Rails 的方法，将数据大批量进行更改。
+比方说，以下是一段更改 orders 表的 shipping_first_name shipping_last_name 名称的方法：</p>
+
+<pre><code>rename_column :orders, "shipping_first_name", "origin_shipping_first_name"
+rename_column :orders, "shipping_last_name", "origin_shipping_last_name"
+</code></pre>
+
+<p>执行migrate用时非常长，还不如使用如下代码：</p>
+
+<pre><code>class RenameOldOrderAddressRelatedColumn &lt; ActiveRecord::Migration
+  def up
+    change_table(:orders, :bulk =&gt; true) do |t|
+      t.rename :order_status_code_id, :state
+      t.remove :in_process
+      [:first_name,
+       :last_name,
+       :country,
+       :state].each do |column|
+        t.rename "shipping_#{column}", "origin_shipping_#{column}"
+      end
+    end
+  end
+end
+</code></pre>
+
+<p>以上代码只生成一句 SQL 语句，数据库迁移时间大大减少。</p>
+
+<pre><code>ALTER TABLE `orders` DROP `in_process`, CHANGE `shipping_first_name` `origin_shipping_first_name` varchar(50) DEFAULT NULL, CHANGE `shipping_last_name` `origin_shipping_last_name` varchar(50) DEFAULT NULL, CHANGE `shipping_country` `origin_shipping_country` varchar(255) DEFAULT NULL, CHANGE `shipping_state` `origin_shipping_state` varchar(255) DEFAULT NULL...
+</code></pre>
+
+<p>相关文档：
+<a href="http://dev.mysql.com/doc/refman/5.5/en/load-data.html">http://dev.mysql.com/doc/refman/5.5/en/load-data.html</a>
+<a href="http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html">http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html</a></p>
+
+<p>总结，对于大数据一定要进行批量处理。</p>
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2016
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>

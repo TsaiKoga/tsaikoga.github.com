@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-20T10:19:01+08:00</updated>
+  <updated>2016-08-21T15:01:23+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -14,10 +14,171 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Git公司项目中的使用方法]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa/"/>
+    <title type="html"><![CDATA[Rails 利用批量操作提速]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/"/>
+    <updated>2016-08-21T14:29:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su</id>
+    <content type="html"><![CDATA[<h4><a href="#1.1">1.1 批量查找数据</a></h4>
+
+<h5><a href="#1.2">1.2 操作代码</a></h5>
+
+<h4><a href="#2.1">2.1 批量插入数据</a></h4>
+
+<h5><a href="#2.2">2.2 INFILE文件插入数据</a></h5>
+
+<h4><a href="#3.1">3.1 批量更改schema数据库</a></h4>
+
+<h2 id="1.1">1.1 批量查找数据</h2>
+
+
+<hr />
+
+<p>由于之前一直在做后台的数据，其中有个任务是关于 财务库存 的页面.</p>
+
+<blockquote><p>这个“财务库存”有产品和日期选项，您可以通过选择产品，查看它在某段时间内的库存价格等情况。</p>
+
+<p>将采购入库单数据[PurchaseOrderBill]，销售出库单数据[OutStorageOrder]，异常取货和仓库调整单数据整合在一个页面；
+根据日期排序来显示这个页面的内容，以及这些内容的成本价格变化，这里的价格根据这些取出来的数据进行排列后再进行运算得出。</p>
+
+<p>项目中有近5w条产品记录，又要将“采购入库单”和“销售出库单”与 产品product进行关联查找，耗时挺大的。</p>
+
+<p>这时候公司那边说要提供一次性下载所有产品的财务库存数据，不过不需要显示价格变化情况，直接显示最后一条价格结果就行了。</p></blockquote>
+
+<p>近5w条的 product 产品关联(joins/includes)的单据进行计算价格，然后显示结果。
+如何加快查找速度呢？</p>
+
+<p>答案是进行 <strong>批量</strong> 查找。</p>
+
+<h3 id="1.2">1.2 操作代码</h3>
+
+
+<p>用代码说明吧，首先当然对于这么庞大的数据量，要进行 <strong>分页</strong> 处理：</p>
+
+<pre><code>per_page = 100
+page = 0
+total_page = (Product.count.to_f / per_page).ceil
+</code></pre>
+
+<p>每一页进行 <strong>批量</strong> 操作：</p>
+
+<pre><code>total_page.times do
+  products = Product.limit(per_page).offset(page * per_page)
+  bill_items = bill_inventory_valuation_details products        # 符合条件的采购入库单数据，此方法的查找也必须对 products 进行批量查找
+  sell_items = sell_inventory_valuation_details products        # 符合条件的销售出库数据
+  package_items = package_inventory_valuation_details products  # 异常出库数据
+  adjust = adjust_inventory_valuation_details products          # 调整仓库数据
+  products.each do |product|
+    datas = []
+    datas += bill_items[product.id].map{|item| {id: item.id, quantity: item.quantity, price: item.price}}
+    # 对查出的数据进行处理，构造最终结果
+    ... ...
+  end
+end
+</code></pre>
+
+<p>这样原先没有进行批量操作会耗时接近12个小时，使用了批量操作后仅为2个多小时。</p>
+
+<h2 id="2.1">2.1 批量插入数据</h2>
+
+
+<hr />
+
+<p>当你要对大量数据进行插入数据库的操作时，一条条插入将是及其愚蠢的行为。如何进行批量插入呢？</p>
+
+<p>可以先看看这篇文章：<a href="https://www.coffeepowered.net/2009/01/23/mass-inserting-data-in-rails-without-killing-your-performance/">Mass inserting data in Rails without killing your performance</a></p>
+
+<p>这篇文章提到 Rails 快速插入数据的四种方法：</p>
+
+<ol>
+<li><p>Use transactions</p></li>
+<li><p>Get down and dirty with the raw SQL</p></li>
+<li><p>A single mass insert</p></li>
+<li><p>Use INSERT statements with multiple VALUES lists with ar-extensions OR activerecord-import</p></li>
+</ol>
+
+
+<p>第四种方式是AR方式的70倍左右，而公司后台使用的正是 activerecord-import,
+做法很简单，先将数据创建 <strong>存于内存</strong>，然后批量 import <strong>插入</strong> 数据库：</p>
+
+<pre><code>(controller.action_methods.to_a - excepts).each do |action|
+  need_imports &lt;&lt; Permission.new(subject: subject, action: action, description: "#{action.humanize} of #{subject}")
+end
+Permission.import need_imports
+</code></pre>
+
+<p>这样已经很快了，还有更快的吗？</p>
+
+<h3 id="2.2">2.2 INFILE文件插入数据 </h3>
+
+
+<p>From MySQL Doc:</p>
+
+<blockquote><p>When loading a table from a text file, use LOAD DATA INFILE. This is usually 20 times faster than using INSERT statements</p></blockquote>
+
+<p>SQL语句：</p>
+
+<pre><code>(15955.1ms)  LOAD DATA LOCAL INFILE '/Users/tsaikoga/out_storage_orders.txt'
+REPLACE INTO TABLE out_storage_orders FIELDS TERMINATED BY ',' (`id`,`warehouse_id`,`destination_id`,`user_id`,`out_storage_order_type`,`out_storage_reason_type`,`status`,`quantity`,`package_id`)
+</code></pre>
+
+<p>插入行数：</p>
+
+<pre><code>wc -l &lt; /Users/tsaikoga/out_storage_orders.txt
+100000
+</code></pre>
+
+<h3 id="3.1">3.1 批量更改schema数据库</h3>
+
+
+<hr />
+
+<p>你有没有发现，当你某张表的数据非常非常多的时候，你想要更改其中一个字段的类型，然后执行 migrate ；
+执行时间非常长，你厌倦了等待，只好 ctrl+c 撤销了migrate，但是实际上数据库中的记录已经有很大一部分改变了字段的类型。
+这时候你想再migrate，会出现这种类型的字段已存在的提示。（当然你可以利用mysql的界面工具或直接到mysql更改字段类型进行拯救）</p>
+
+<p>这里提供一个 Rails 的方法，将数据大批量进行更改。
+比方说，以下是一段更改 orders 表的 shipping_first_name shipping_last_name 名称的方法：</p>
+
+<pre><code>rename_column :orders, "shipping_first_name", "origin_shipping_first_name"
+rename_column :orders, "shipping_last_name", "origin_shipping_last_name"
+</code></pre>
+
+<p>执行migrate用时非常长，还不如使用如下代码：</p>
+
+<pre><code>class RenameOldOrderAddressRelatedColumn &lt; ActiveRecord::Migration
+  def up
+    change_table(:orders, :bulk =&gt; true) do |t|
+      t.rename :order_status_code_id, :state
+      t.remove :in_process
+      [:first_name,
+       :last_name,
+       :country,
+       :state].each do |column|
+        t.rename "shipping_#{column}", "origin_shipping_#{column}"
+      end
+    end
+  end
+end
+</code></pre>
+
+<p>以上代码只生成一句 SQL 语句，数据库迁移时间大大减少。</p>
+
+<pre><code>ALTER TABLE `orders` DROP `in_process`, CHANGE `shipping_first_name` `origin_shipping_first_name` varchar(50) DEFAULT NULL, CHANGE `shipping_last_name` `origin_shipping_last_name` varchar(50) DEFAULT NULL, CHANGE `shipping_country` `origin_shipping_country` varchar(255) DEFAULT NULL, CHANGE `shipping_state` `origin_shipping_state` varchar(255) DEFAULT NULL...
+</code></pre>
+
+<p>相关文档：
+<a href="http://dev.mysql.com/doc/refman/5.5/en/load-data.html">http://dev.mysql.com/doc/refman/5.5/en/load-data.html</a>
+<a href="http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html">http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html</a></p>
+
+<p>总结，对于大数据一定要进行批量处理。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[公司项目中 Git 的使用方法]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/"/>
     <updated>2016-08-06T16:10:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa</id>
+    <id>http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa</id>
     <content type="html"><![CDATA[<p>Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。</p>
 
 <p>它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。</p>
@@ -34,11 +195,11 @@
 
 <p>OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。</p>
 
-<h4>操作流程</h4>
+<h3>操作流程</h3>
 
 <hr />
 
-<h5>分支介绍</h5>
+<h4>分支介绍</h4>
 
 <p>先来看看我们项目主要的分支吧：</p>
 
@@ -50,7 +211,7 @@
 </ul>
 
 
-<h5>常规上线</h5>
+<h4>常规上线</h4>
 
 <p>接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop</p>
 
@@ -67,7 +228,7 @@ git push origin testing             # 如果是通过 gitlab/github mr/pr 后，
 BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
 </code></pre>
 
-<h5>注意事项 （merge 和 rebase）</h5>
+<h4>注意事项 （merge 和 rebase）</h4>
 
 <blockquote><p>有个问题需要注意，曾经我将我的代码rebase到testing上；</p>
 
@@ -87,7 +248,7 @@ git rebase develop
 <p>所以，使用“merge”！这里 merge 后，develop 的 commit3 会与 testing 产生冲突，解决完冲突后，merge 不像 rebase 会把解决完的放在原来的 commit3 上，而是你需要
 新提交一个解决冲突后的 commit【我们叫它commit4】，这样就 pull 的代码遇到 commit4，发现已被解决，就没有冲突了。</p>
 
-<h5>紧急上线 Hotfix</h5>
+<h4>紧急上线 Hotfix</h4>
 
 <p>看到上面的常规上线，我们结束了周二的工作任务；周三来了，你来到办公室，发现昨天上线的内容还需要修改，并且必须在今天上线。这时候我们需要如下分支：</p>
 
@@ -121,7 +282,7 @@ BRANCH=hotfix160803 cap staging deploy
 
 <p>忙碌的一天就结束了。</p>
 
-<h5>关于 Capistrano 的代码</h5>
+<h4>关于 Capistrano 的代码</h4>
 
 <p>你的代码放在 gitlab 上面，项目运行在某个服务器A上，你将代码提交到 gitlab 上，然后 cap deploy；
 其实cap deploy 是通过 clone 你的 gitlab 上的代码到服务器A上的</p>
@@ -8185,141 +8346,6 @@ Ubuntu hosts文件位置: /etc/hosts
 </span></code></pre></td></tr></table></div></figure>
 
 
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[redcarpet和pygments结合进行markdown显示]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/"/>
-    <updated>2013-08-29T22:23:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi</id>
-    <content type="html"><![CDATA[<h2>redcarpet</h2>
-
-<hr />
-
-<p>用于将内容转化成markdown形式进行显示，它提供许多配置，具体操作方式如下：</p>
-
-<p>1.首先是在gemfile中加入redcarpet.</p>
-
-<p>2.安装redcarpet</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>gem install redcarpet
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>3.以前可直接在要显示的view中加入如下代码:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="err">&lt;</span>%= Redcarpet::Markdown.new(render, :extension =&gt; {})%&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>现在在辅助方法中写如下代码：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">markdown</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</span><span class='line'>      <span class="nb">require</span> <span class="s1">&#39;redcarpet&#39;</span>
-</span><span class='line'>      <span class="n">render</span> <span class="o">=</span> <span class="ss">Redcarpet</span><span class="p">:</span><span class="ss">:Render</span><span class="o">::</span><span class="no">HTML</span>
-</span><span class='line'>      <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>          <span class="ss">autolink</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>          <span class="n">filter_html</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>          <span class="n">fenced_code_blocks</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>    <span class="n">no_intra_emphasis</span><span class="p">:</span> <span class="kp">true</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>      <span class="n">markdown</span> <span class="o">=</span> <span class="ss">Redcarpet</span><span class="p">:</span><span class="ss">:Markdown</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">render</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">hard_wrap</span><span class="p">:</span> <span class="kp">true</span><span class="p">),</span> <span class="n">options</span><span class="p">)</span>
-</span><span class='line'>      <span class="n">markdown</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">html_safe</span>
-</span><span class='line'>  <span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>4.在view中加入显示markdown的代码:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="err">&lt;</span>%= raw(markdown.render(@post.content).html_safe) %&gt;
-</span></code></pre></td></tr></table></div></figure>
-
-
-<h2>pygments</h2>
-
-<hr />
-
-<p>可以和redcarpet很好的结合，用于语法高亮设置。
-具体代码如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="k">def</span> <span class="nf">markdown</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</span><span class='line'>          <span class="nb">require</span> <span class="s1">&#39;redcarpet&#39;</span>
-</span><span class='line'>          <span class="n">render</span> <span class="o">=</span> <span class="no">HTMLwithPygments</span>
-</span><span class='line'>          <span class="n">options</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>                  <span class="ss">autolink</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>                  <span class="n">filter_html</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>                  <span class="ss">prettify</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>                  <span class="n">fenced_code_blocks</span><span class="p">:</span> <span class="kp">true</span><span class="p">,</span>
-</span><span class='line'>                  <span class="n">no_intra_emphasis</span><span class="p">:</span> <span class="kp">true</span>
-</span><span class='line'>          <span class="p">}</span>
-</span><span class='line'>          <span class="n">markdown</span> <span class="o">=</span> <span class="ss">Redcarpet</span><span class="p">:</span><span class="ss">:Markdown</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">render</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">hard_wrap</span><span class="p">:</span> <span class="kp">true</span><span class="p">),</span> <span class="n">options</span><span class="p">)</span>
-</span><span class='line'>          <span class="n">markdown</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">html_safe</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="k">class</span> <span class="nc">HTMLwithPygments</span> <span class="o">&lt;</span> <span class="ss">Redcarpet</span><span class="p">:</span><span class="ss">:Render</span><span class="o">::</span><span class="no">HTML</span>
-</span><span class='line'>          <span class="nb">require</span> <span class="s1">&#39;pygments&#39;</span>
-</span><span class='line'>          <span class="k">def</span> <span class="nf">block_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>
-</span><span class='line'>                  <span class="no">Pygments</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="ss">:lexer</span> <span class="o">=&gt;</span> <span class="n">language</span><span class="p">,</span> <span class="ss">:options</span> <span class="o">=&gt;</span> <span class="p">{</span><span class="ss">:linenos</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">})</span>
-</span><span class='line'>          <span class="k">end</span>
-</span><span class='line'>  <span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<blockquote><h3>注意：</h3>
-
-<ol>
-<li>辅助方法要引入文件redcarpet和pygments。</li>
-<li>hard_wrap必须Redcarpet::Render::HTML实例化时进行配置。</li>
-<li>必须有fenced_code_blocks才能将代码块放入代码框中。</li>
-</ol>
-</blockquote>
-
-<p><video width='800' height='504' preload='none' controls poster='http://railscasts.com/static/episodes/posters/loading.png'><source src='http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4' type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'></video></p>
-
-<p>参考：</p>
-
-<ol>
-<li><p><a href="https://github.com/vmg/redcarpet">github上的redcarpet</a></p></li>
-<li><p><a href="https://github.com/tmm1/pygments.rb">github上的pygments</a></p></li>
-<li><p><a href="http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments">视频参考</a></p></li>
-</ol>
 
 ]]></content>
   </entry>

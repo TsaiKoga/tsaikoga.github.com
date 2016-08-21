@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-20T10:20:07+08:00</updated>
+  <updated>2016-08-21T15:02:04+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,167 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rails 利用批量操作提速]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/"/>
+    <updated>2016-08-21T14:29:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su</id>
+    <content type="html"><![CDATA[<h4><a href="#1.1">1.1 批量查找数据</a></h4>
+
+<h5><a href="#1.2">1.2 操作代码</a></h5>
+
+<h4><a href="#2.1">2.1 批量插入数据</a></h4>
+
+<h5><a href="#2.2">2.2 INFILE文件插入数据</a></h5>
+
+<h4><a href="#3.1">3.1 批量更改schema数据库</a></h4>
+
+<h2 id="1.1">1.1 批量查找数据</h2>
+
+
+<hr />
+
+<p>由于之前一直在做后台的数据，其中有个任务是关于 财务库存 的页面.</p>
+
+<blockquote><p>这个“财务库存”有产品和日期选项，您可以通过选择产品，查看它在某段时间内的库存价格等情况。</p>
+
+<p>将采购入库单数据[PurchaseOrderBill]，销售出库单数据[OutStorageOrder]，异常取货和仓库调整单数据整合在一个页面；
+根据日期排序来显示这个页面的内容，以及这些内容的成本价格变化，这里的价格根据这些取出来的数据进行排列后再进行运算得出。</p>
+
+<p>项目中有近5w条产品记录，又要将“采购入库单”和“销售出库单”与 产品product进行关联查找，耗时挺大的。</p>
+
+<p>这时候公司那边说要提供一次性下载所有产品的财务库存数据，不过不需要显示价格变化情况，直接显示最后一条价格结果就行了。</p></blockquote>
+
+<p>近5w条的 product 产品关联(joins/includes)的单据进行计算价格，然后显示结果。
+如何加快查找速度呢？</p>
+
+<p>答案是进行 <strong>批量</strong> 查找。</p>
+
+<h3 id="1.2">1.2 操作代码</h3>
+
+
+<p>用代码说明吧，首先当然对于这么庞大的数据量，要进行 <strong>分页</strong> 处理：</p>
+
+<pre><code>per_page = 100
+page = 0
+total_page = (Product.count.to_f / per_page).ceil
+</code></pre>
+
+<p>每一页进行 <strong>批量</strong> 操作：</p>
+
+<pre><code>total_page.times do
+  products = Product.limit(per_page).offset(page * per_page)
+  bill_items = bill_inventory_valuation_details products        # 符合条件的采购入库单数据，此方法的查找也必须对 products 进行批量查找
+  sell_items = sell_inventory_valuation_details products        # 符合条件的销售出库数据
+  package_items = package_inventory_valuation_details products  # 异常出库数据
+  adjust = adjust_inventory_valuation_details products          # 调整仓库数据
+  products.each do |product|
+    datas = []
+    datas += bill_items[product.id].map{|item| {id: item.id, quantity: item.quantity, price: item.price}}
+    # 对查出的数据进行处理，构造最终结果
+    ... ...
+  end
+end
+</code></pre>
+
+<p>这样原先没有进行批量操作会耗时接近12个小时，使用了批量操作后仅为2个多小时。</p>
+
+<h2 id="2.1">2.1 批量插入数据</h2>
+
+
+<hr />
+
+<p>当你要对大量数据进行插入数据库的操作时，一条条插入将是及其愚蠢的行为。如何进行批量插入呢？</p>
+
+<p>可以先看看这篇文章：<a href="https://www.coffeepowered.net/2009/01/23/mass-inserting-data-in-rails-without-killing-your-performance/">Mass inserting data in Rails without killing your performance</a></p>
+
+<p>这篇文章提到 Rails 快速插入数据的四种方法：</p>
+
+<ol>
+<li><p>Use transactions</p></li>
+<li><p>Get down and dirty with the raw SQL</p></li>
+<li><p>A single mass insert</p></li>
+<li><p>Use INSERT statements with multiple VALUES lists with ar-extensions OR activerecord-import</p></li>
+</ol>
+
+
+<p>第四种方式是AR方式的70倍左右，而公司后台使用的正是 activerecord-import,
+做法很简单，先将数据创建 <strong>存于内存</strong>，然后批量 import <strong>插入</strong> 数据库：</p>
+
+<pre><code>(controller.action_methods.to_a - excepts).each do |action|
+  need_imports &lt;&lt; Permission.new(subject: subject, action: action, description: "#{action.humanize} of #{subject}")
+end
+Permission.import need_imports
+</code></pre>
+
+<p>这样已经很快了，还有更快的吗？</p>
+
+<h3 id="2.2">2.2 INFILE文件插入数据 </h3>
+
+
+<p>From MySQL Doc:</p>
+
+<blockquote><p>When loading a table from a text file, use LOAD DATA INFILE. This is usually 20 times faster than using INSERT statements</p></blockquote>
+
+<p>SQL语句：</p>
+
+<pre><code>(15955.1ms)  LOAD DATA LOCAL INFILE '/Users/tsaikoga/out_storage_orders.txt'
+REPLACE INTO TABLE out_storage_orders FIELDS TERMINATED BY ',' (`id`,`warehouse_id`,`destination_id`,`user_id`,`out_storage_order_type`,`out_storage_reason_type`,`status`,`quantity`,`package_id`)
+</code></pre>
+
+<p>插入行数：</p>
+
+<pre><code>wc -l &lt; /Users/tsaikoga/out_storage_orders.txt
+100000
+</code></pre>
+
+<h3 id="3.1">3.1 批量更改schema数据库</h3>
+
+
+<hr />
+
+<p>你有没有发现，当你某张表的数据非常非常多的时候，你想要更改其中一个字段的类型，然后执行 migrate ；
+执行时间非常长，你厌倦了等待，只好 ctrl+c 撤销了migrate，但是实际上数据库中的记录已经有很大一部分改变了字段的类型。
+这时候你想再migrate，会出现这种类型的字段已存在的提示。（当然你可以利用mysql的界面工具或直接到mysql更改字段类型进行拯救）</p>
+
+<p>这里提供一个 Rails 的方法，将数据大批量进行更改。
+比方说，以下是一段更改 orders 表的 shipping_first_name shipping_last_name 名称的方法：</p>
+
+<pre><code>rename_column :orders, "shipping_first_name", "origin_shipping_first_name"
+rename_column :orders, "shipping_last_name", "origin_shipping_last_name"
+</code></pre>
+
+<p>执行migrate用时非常长，还不如使用如下代码：</p>
+
+<pre><code>class RenameOldOrderAddressRelatedColumn &lt; ActiveRecord::Migration
+  def up
+    change_table(:orders, :bulk =&gt; true) do |t|
+      t.rename :order_status_code_id, :state
+      t.remove :in_process
+      [:first_name,
+       :last_name,
+       :country,
+       :state].each do |column|
+        t.rename "shipping_#{column}", "origin_shipping_#{column}"
+      end
+    end
+  end
+end
+</code></pre>
+
+<p>以上代码只生成一句 SQL 语句，数据库迁移时间大大减少。</p>
+
+<pre><code>ALTER TABLE `orders` DROP `in_process`, CHANGE `shipping_first_name` `origin_shipping_first_name` varchar(50) DEFAULT NULL, CHANGE `shipping_last_name` `origin_shipping_last_name` varchar(50) DEFAULT NULL, CHANGE `shipping_country` `origin_shipping_country` varchar(255) DEFAULT NULL, CHANGE `shipping_state` `origin_shipping_state` varchar(255) DEFAULT NULL...
+</code></pre>
+
+<p>相关文档：
+<a href="http://dev.mysql.com/doc/refman/5.5/en/load-data.html">http://dev.mysql.com/doc/refman/5.5/en/load-data.html</a>
+<a href="http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html">http://dev.mysql.com/doc/refman/5.5/en/insert-speed.html</a></p>
+
+<p>总结，对于大数据一定要进行批量处理。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Routing]]></title>
@@ -3071,333 +3232,6 @@ end
 <p>```</p>
 
 <p>以上代码使用Mongrel::HttpServer定义了server实例，然后使用server.run运行.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rails服务启动过程]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/"/>
-    <updated>2013-10-24T14:51:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng</id>
-    <content type="html"><![CDATA[<p>我们都知道，每当我们console中输入rails s时，系统就启动了你的rails应用程序。</p>
-
-<hr />
-
-<h3>app程序中的bin/rails脚本</h3>
-
-<p>它是由你的app程序的<strong>bin/rails脚本</strong>执行的(我们的rails命令在通过bin/rails脚本引用rails/commands.rb文件中)。</p>
-
-<p><em>如：example_</em>app/bin/rails_</p>
-
-<p>``` ru</p>
-
-<pre><code>#!/usr/bin/env ruby
-APP_PATH = File.expand_path('../../config/application',  __FILE__)
-require_relative '../config/boot'
-require 'rails/commands'
-</code></pre>
-
-<p>```</p>
-
-<p>APP_PATH常量将会在rails/commands中用到，而config/boot指向<strong>config/boot.rb</strong>文件，这个文件<strong>会加载和设置Bundler</strong>。</p>
-
-<hr />
-
-<h3>config/boot.rb加载gem</h3>
-
-<p>前面bin/rails引入两个文件,现在我们先说第一个文件
-config/boot.rb:</p>
-
-<p>``` ru</p>
-
-<pre><code># Set up gems listed in the Gemfile.
-ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
-
-require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
-</code></pre>
-
-<p>```</p>
-
-<p>config/boot.rb用ENV[&lsquo;BUNDLE_GEMFILE&rsquo;]定位Gemfile文件，当Gemfile文件存在时，就将它引入。这样一来，gem就被引入了。</p>
-
-<hr />
-
-<h3>rails/commands.rb执行rails命令</h3>
-
-<p>前面config/boot.rb引入的第二个文件,但这个文件必须在第一个文件config/boot.rb文件引入后才被引入。
-rails/commands.rb:</p>
-
-<p>``` ru</p>
-
-<pre><code>ARGV &lt;&lt; '--help' if ARGV.empty?
-
-aliases = {
-    "g"  =&gt; "generate",
-    "d"  =&gt; "destroy",
-    "c"  =&gt; "console",
-    "s"  =&gt; "server",
-    "db" =&gt; "dbconsole",
-    "r"  =&gt; "runner"
-}
-
-command = ARGV.shift
-command = aliases[command] || command
-</code></pre>
-
-<p>```</p>
-
-<p>当你输入的是rails server的话，将会执行下列代码匹配你的命令：</p>
-
-<p>``` ru
-when &lsquo;server&rsquo;</p>
-
-<pre><code># Change to the application's path if there is no config.ru file in current dir.
-# This allows us to run `rails server` from other directories, but still get
-# the main config.ru and properly set the tmp directory.
-Dir.chdir(File.expand_path('../../', APP_PATH)) unless File.exists?(File.expand_path("config.ru"))
-
-require 'rails/commands/server'
-Rails::Server.new.tap do |server|
-    # We need to require application after the server sets environment,
-    # otherwise the --environment option given to the server won't propagate.
-    require APP_PATH
-    Dir.chdir(Rails.application.root)
-    server.start
-end
-</code></pre>
-
-<p>``` ru</p>
-
-<p>刚才我们的bin/rails脚本中已经定义了常量APP_PATH为"config/application.rb",而</p>
-
-<p>``` ru</p>
-
-<pre><code>Dir.chdir(File.expand\_path('../../', APP\_PATH)) unless File.exists?(File.expand\_path("config.ru"))
-</code></pre>
-
-<p>```</p>
-
-<p>表示如果<strong>没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb</strong>。</p>
-
-<p>也就是，你<strong>启动了服务前才帮你加载程序的应用文件application.rb</strong>。
-application.rb这个文件将会加载Rails。</p>
-
-<hr />
-
-<h3>rails/commands/server.rb</h3>
-
-<p>来看一下rails/commands/server中定义的类Rails::Server吧。</p>
-
-<p>``` ru</p>
-
-<pre><code>require 'fileutils'
-require 'optparse'
-require 'action_dispatch'
-
-module Rails
-    class Server &lt; ::Rack::Server
-</code></pre>
-
-<p>```</p>
-
-<p>这里引入的<strong>fileutils和optparse</strong>是<strong>标准的ruby库</strong>，分别提供文件的辅助方法和转化选择。</p>
-
-<p>Rails::Server继承了Rack::Server,当<strong>Rack::Server被初始化(设置环境)</strong>时，Rack::Server也被初始化。</p>
-
-<p>``` ru</p>
-
-<pre><code>def initialize(*)
-    super
-    set_environment
-end
-</code></pre>
-
-<p>```</p>
-
-<hr />
-
-<p>Rack::Server是为<strong>以Rack为基础的应用提供公用的服务接口</strong>，rails就是其中之一。</p>
-
-<ul>
-<li><p>初始化设置环境：</p>
-
-<p>  刚才提到的初始化代码如下：</p></li>
-</ul>
-
-
-<p>``` ru</p>
-
-<pre><code>def set_environment
-    ENV["RAILS_ENV"] ||= options[:environment]
-end
-</code></pre>
-
-<p>```</p>
-
-<pre><code>不要以为set_environment很少，options干了很多事情：
-</code></pre>
-
-<p>``` ru</p>
-
-<pre><code>def options
-    @options ||= parse_options(ARGV)
-end
-</code></pre>
-
-<p>```</p>
-
-<pre><code>parse_options定义如下：
-</code></pre>
-
-<p>``` ru</p>
-
-<pre><code>def parse_options(args)
-    options = default_options
-
-    # Don't evaluate CGI ISINDEX parameters.
-    # http://hoohoo.ncsa.uiuc.edu/cgi/cl.html
-    args.clear if ENV.include?("REQUEST_METHOD")
-
-    options.merge! opt_parser.parse! args
-    options[:config] = ::File.expand_path(options[:config])
-    ENV["RACK_ENV"] = options[:environment]
-    options
-end
-</code></pre>
-
-<p>```</p>
-
-<pre><code>我们将一行一行解释，
-
-(1)选择default_options如下设置：
-</code></pre>
-
-<p>``` ru</p>
-
-<pre><code>def default_options
-    {
-        :environment =&gt; ENV['RACK_ENV'] || "development",
-        :pid         =&gt; nil,
-        :Port        =&gt; 9292,
-        :Host        =&gt; "0.0.0.0",
-        :AccessLog   =&gt; [],
-        :config      =&gt; "config.ru"
-    }
-end
-</code></pre>
-
-<p>```</p>
-
-<pre><code>它**(Rack::Server)提供了默认环境和端口号等信息**，还记得当rails/commands.rb中，如果存在config.ru时，就加载config/applicaton.rb文件吗？
-
-(2)当ENV哈希环境中没有REQUEST_METHOD这个键时，跳过而去执行合并选项。
-</code></pre>
-
-<p>``` ru</p>
-
-<pre><code>Rack::Server中的opt_server
-
-    def opt_parser
-        Options.new
-    end
-</code></pre>
-
-<p>```</p>
-
-<pre><code>(3)Rails::Server重写parse!
-</code></pre>
-
-<p>``` ru</p>
-
-<pre><code>def parse!(args)
-    args, options = args.dup, {}
-
-    opt_parser = OptionParser.new do |opts|
-        opts.banner = "Usage: rails server [mongrel, thin, etc] [options]"
-        opts.on("-p", "--port=port", Integer,
-                        "Runs Rails on the specified port.", "Default: 3000") { |v| options[:Port] = v }
-    ...
-</code></pre>
-
-<p>```</p>
-
-<p>刚才说default_options已经有了config.ru，这是回到之前rails.commands.rb文件，它加载了config/application.rb文件</p>
-
-<hr />
-
-<h3>config/application.rb</h3>
-
-<p>当require APP_PATH被执行，<strong>config/applicaton.rb被加载，server.start就被调用</strong>了。
-方法如下：</p>
-
-<p>``` ru</p>
-
-<pre><code>def start
-    url = "#{options[:SSLEnable] ? 'https' : 'http'}://#{options[:Host]}:#{options[:Port]}"
-    puts "=&gt; Booting #{ActiveSupport::Inflector.demodulize(server)}"
-    puts "=&gt; Rails #{Rails.version} application starting in #{Rails.env} on #{url}"
-    puts "=&gt; Run `rails server -h` for more startup options"
-    trap(:INT) { exit }
-    puts "=&gt; Ctrl-C to shutdown server" unless options[:daemonize]
-
-    #Create required tmp directories if not found
-    %w(cache pids sessions sockets).each do |dir_to_make|
-        FileUtils.mkdir_p(Rails.root.join('tmp', dir_to_make))
-    end
-
-    unless options[:daemonize]
-        wrapped_app # touch the app so the logger is set up
-
-        console = ActiveSupport::Logger.new($stdout)
-        console.formatter = Rails.logger.formatter
-
-        Rails.logger.extend(ActiveSupport::Logger.broadcast(console))
-    end
-
-    super
-ensure
-    # The '-h' option calls exit before @options is set.
-    # If we call 'options' with it unset, we get double help banners.
-    puts 'Exiting' unless @options &amp;&amp; options[:daemonize]
-end
-</code></pre>
-
-<p>```</p>
-
-<blockquote><ul>
-<li><p>这个方法非常重要，我们可以看到前面有一堆提示，而后面<strong>创建了tmp/cache,tmp/pids,tmp/sessions和tmp/sockets文件夹</strong>,</p></li>
-<li><p>在调用<strong>wrapped_app方法创建Rack应用</strong>。</p></li>
-<li><p>并且<strong>定了ActiveSupport::Logger</strong>。</p></li>
-</ul>
-</blockquote>
-
-<p>还记得<strong>options[:config]默认指向config.ru</strong>吗？这个文件中包含了：</p>
-
-<p>``` ru</p>
-
-<pre><code># This file is used by Rack-based servers to start the application.
-
-require ::File.expand_path('../config/environment',  __FILE__)
-run &lt;%= app_const %&gt;
-</code></pre>
-
-<p>```</p>
-
-<p>它<strong>引进了config/environment.rb</strong>文件，而<strong>environment.rb这个文件引入了config/application.rb</strong>文件</p>
-
-<hr />
-
-<h3>actionpack/lib/action_dispatch.rb</h3>
-
-<p>Action Dispatch是rails框架的一个路由组件，提供routing,session和middlewares</p>
-
-<p>也就是，你启动了服务前才帮你加载程序的应用文件application.rb。</p>
-
-<hr />
-
-<h4>总结：(自己所画的rails初始化过程图片)</h4>
-
-<p><img src="/images/posts/2013-10-23/rails_initialize.png" title="rails初始化过程" alt="图片无法显示" /></p>
 ]]></content>
   </entry>
   

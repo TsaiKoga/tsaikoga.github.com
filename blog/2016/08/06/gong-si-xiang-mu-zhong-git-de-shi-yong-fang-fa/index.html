@@ -3,7 +3,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Git公司项目中的使用方法 - TsaiKoga Blog</title>
+	<title>公司项目中 Git 的使用方法 - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
 	<meta name="description" content="Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。 它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。 背景 首先我来介绍一下公司的大致情况，然后阐述一下公司如何用Git进行工作： 我们公司是一家外企电商平台，产品在国外销售，技术部在中国， &hellip;">
@@ -89,7 +89,7 @@
 
     <section id="sidebar">
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (6)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/coffeescript'>coffeescript (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (1)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (7)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li><li><a href='/blog/categories/web'>web (1)</a></li></ul>
 </section>
 
 
@@ -97,7 +97,7 @@
 <!-- begin toload --> 
     <div id="content" class="inner">
         <article class="post">
-	<h2 class="title">Git公司项目中的使用方法</h2>
+	<h2 class="title">公司项目中 Git 的使用方法</h2>
 	<div class="entry-content"><p>Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。</p>
 
 <p>它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。</p>
@@ -114,11 +114,11 @@
 
 <p>OK，接着来看看我们是如何使用 Git 进行如上的上线操作的。</p>
 
-<h4>操作流程</h4>
+<h3>操作流程</h3>
 
 <hr />
 
-<h5>分支介绍</h5>
+<h4>分支介绍</h4>
 
 <p>先来看看我们项目主要的分支吧：</p>
 
@@ -130,7 +130,7 @@
 </ul>
 
 
-<h5>常规上线</h5>
+<h4>常规上线</h4>
 
 <p>接着，我们来看看如何常规上线，假设这周我有一个任务要完成，从 master 切出一个分支叫做 develop</p>
 
@@ -147,7 +147,7 @@ git push origin testing             # 如果是通过 gitlab/github mr/pr 后，
 BRANCH=testing cap staging deploy   # 这里的 BRANCH 是通过 .bashrc 设置环境变量，deploy/staging.rb 中 set :branch, ENV["BRANCH"] || "master"
 </code></pre>
 
-<h5>注意事项 （merge 和 rebase）</h5>
+<h4>注意事项 （merge 和 rebase）</h4>
 
 <blockquote><p>有个问题需要注意，曾经我将我的代码rebase到testing上；</p>
 
@@ -167,7 +167,7 @@ git rebase develop
 <p>所以，使用“merge”！这里 merge 后，develop 的 commit3 会与 testing 产生冲突，解决完冲突后，merge 不像 rebase 会把解决完的放在原来的 commit3 上，而是你需要
 新提交一个解决冲突后的 commit【我们叫它commit4】，这样就 pull 的代码遇到 commit4，发现已被解决，就没有冲突了。</p>
 
-<h5>紧急上线 Hotfix</h5>
+<h4>紧急上线 Hotfix</h4>
 
 <p>看到上面的常规上线，我们结束了周二的工作任务；周三来了，你来到办公室，发现昨天上线的内容还需要修改，并且必须在今天上线。这时候我们需要如下分支：</p>
 
@@ -201,7 +201,7 @@ BRANCH=hotfix160803 cap staging deploy
 
 <p>忙碌的一天就结束了。</p>
 
-<h5>关于 Capistrano 的代码</h5>
+<h4>关于 Capistrano 的代码</h4>
 
 <p>你的代码放在 gitlab 上面，项目运行在某个服务器A上，你将代码提交到 gitlab 上，然后 cap deploy；
 其实cap deploy 是通过 clone 你的 gitlab 上的代码到服务器A上的</p>
@@ -263,8 +263,8 @@ BRANCH=hotfix160803 cap staging deploy
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa/';
-        var disqus_url = 'http://TsaiKoga.github.com/blog/2016/08/06/gitgong-si-xiang-mu-zhong-de-shi-yong-fang-fa/';
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/';
         var disqus_script = 'embed.js';
       
     (function () {
