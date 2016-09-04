@@ -130,3 +130,28 @@ gitlab 或 github 上 mr 或 pr
 关于方法里面，只有if，那干脆将if放方法外面；
 关于需求，通过每个条件都列出来检查。
 对于更改数据，记住留份log作为备份，将数据记录下来，以便回滚。
+
+
+#### 经常使用的 Git 命令
+
+``` sh
+    git checkout -b testing         # 新建分支testing 并切换到上面
+
+    git commit -m "Koga"            # commit
+    git commit --amend              # 将 add 的新修改也提交到之前的commit，并且可以更改commit名称
+
+    git pull origin master:master   # 拉远程的master到本地master，如果本地没有，则新建并拉代码下来，并且所在的分支也会拉master的内容下来，可以将其add 后checkout掉
+    git push origin master          # 提交到远程master分支，如果git push -f origin master，将强制提交
+
+    git rebase master               # 将当前分支与master合成一条
+    git reset HEAD~1                # 重置 上一个 commit，但是修改内容还是保留，只是还没commit
+    git merge master                # 将master合并到当前分支
+
+    git branch                      # 显示所有分支
+    git branch -D testing           # 删除 testing 分支
+    git branch -m dev               # 更改分支名称
+
+    git stash                       # 将更改内容暂存
+    git stash pop                   # 将暂存内容弹出
+    git stash clear                 # 清除暂存内容
+```
