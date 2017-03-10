@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Javascript | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-22T10:00:21+08:00</updated>
+  <updated>2017-03-10T16:07:10+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,169 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JQuery重要知识点]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian/"/>
+    <updated>2017-03-10T15:14:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian</id>
+    <content type="html"><![CDATA[<p>对于Jquery，用起来很像很简单；但是有些知识点经常会忘记。这里特别写一篇来巩固。</p>
+
+<h3>加载：</h3>
+
+<h4>关于 ready 和 onLoad 的区别</h4>
+
+<p>两个不同点：</p>
+
+<p>1)
+只有文档完全下载到本地，才会触发<code>window.onload</code>事件，这意味着所有事件对于Javascript都是可以操作的。</p>
+
+<p>通过<code>$(document).ready()</code>注册的事件处理程序，则会在 <strong>DOM</strong> 完全就绪并可以使用时调用。这意味着
+所有元素对于脚本都是可以访问的。但不意味所有关联文件（例如DOM的图片）都已下载完毕。</p>
+
+<p>换句话说：当HTML都下载完成别解析成为DOM树后，代码才可以运行。</p>
+
+<p>2)
+对于<code>onload</code>属性一次只能保存一个函数引用，所以不能再现有行为上添加新的行为。</p>
+
+<p>对于<code>$(document).ready()</code>调用这方法每次都会向内部的行为队列添加新函数。当页面加载完成后，所有函数会被执行。按照注册他们的顺序依次执行。</p>
+
+<br/>
+
+
+<p>关于<code>$(document).ready()</code>结构，实际上是在基于<code>document</code>这个DOM元素构建成的JQuery对象上调用<code>ready()</code>方法。</p>
+
+<p>实际上可写成：
+<code>javascript
+$(document).ready({
+  ... ...
+});
+</code>
+或写成：
+<code>javascript
+$(function(){
+  ...
+});
+</code></p>
+
+<br/>
+
+
+<hr />
+
+<h3>事件：</h3>
+
+<h4>事件捕获</h4>
+
+<p>允许多个元素响应单击事件的策略</p>
+
+<h4>事件冒泡</h4>
+
+<p>当事件发生时，会首先发送给最具体的元素，在这个元素获得响应机会后，事件会 <strong>向上冒泡到更一般</strong> 的元素。</p>
+
+<p><strong>如何解决事件冒泡副作用</strong></p>
+
+<p>访问事件对象e
+```javascript
+function(e) {
+  if (e.target == this) {</p>
+
+<pre><code>... ...
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>关于<code>event.stopPropagation()</code>阻止所有DOM响应这个事件，但是不能阻止默认操作;
+必须要用<code>event.preventDefault()</code>来在操作前终止事件。</p>
+
+<p><code>javascript
+$('switch').on('click', 'button', function(){ })
+</code>
+相当于
+<code>javascript
+$('switch').on('click', function(e){
+  if(e.target == 'button'){ }
+})
+</code></p>
+
+<p>模仿用户操作行为的方法 <code>trigger()</code> 它提供了和<code>on()</code>方法一样的简写方法。
+像<code>click()</code>等on动作不带参数会自动触发。</p>
+
+<hr />
+
+<h3>属性值：</h3>
+
+<h4>值回调</h4>
+
+<p>把回调函数作为参数传递</p>
+
+<h4>HTML 属性和 DOM 属性的区别</h4>
+
+<p><strong>HTML属性值:</strong> 页面标记中放在引号的值</p>
+
+<p><strong>DOM属性值:</strong> Javascript能存取的值，可以通过chrome的elements检查器查看properties</p>
+
+<p><strong>不同点：</strong> 有些DOM名称和HTML不同，例如：className;
+有些DOM属性HTML是没有的，DOM的<code>attr()</code>就没发操作他们。</p>
+
+<p>测试DOM属性而非HTML属性才可确保跨浏览器的一致性。如：<code>prop()</code>来获取DOM属性值，而非<code>attr()</code></p>
+
+<p>最大不同在操作表单值：DOM和HTML操作表单的名称很多不同，最好不用<code>prop()</code>和<code>attr()</code>，而用<code>val()</code></p>
+
+<hr />
+
+<h3>Ajax</h3>
+
+<h4>单向数据传输：</h4>
+
+<p>AHAH(async http and html)用load()</p>
+
+<p>服务器返回的JSON是字符串，需要变成JS字面量；
+<code>javascript
+$.getJSON('.json', function(data){
+  ...
+});
+</code></p>
+
+<p><strong>向页面注入脚本：</strong>
+<code>javascript
+$.getScript()
+</code></p>
+
+<p><strong>获取XML：</strong>
+```javascript
+$.get(&lsquo;.xml&rsquo;, function(data) {</p>
+
+<pre><code>...  
+</code></pre>
+
+<p>})
+```</p>
+
+<h4>双向数据传递：</h4>
+
+<p><code>javascript
+get('a.php', args, function(){})
+</code></p>
+
+<p><code>javascript
+post('a.php', args, function(){})
+</code></p>
+
+<p><code>javascript
+load('a.php', args, function(){})
+</code>
+load在包含数据对象参数时，会使用post方法</p>
+
+<p>ajaxStart()回调，ajax请求开始且尚未进行任何其他传输时 和 read() 一样只能由$(document)调用</p>
+
+<p>ajaxStop()回调，ajax最后一次请求结束时调用，和 read() 一样只能由$(document)调用</p>
+
+<p>ajaxError()回调，参数是一个XMLHttpRequest的引用。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Scroll to top]]></title>

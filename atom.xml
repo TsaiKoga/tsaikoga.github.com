@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2016-08-22T09:59:59+08:00</updated>
+  <updated>2017-03-10T16:07:10+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,204 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[JQuery重要知识点]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian/"/>
+    <updated>2017-03-10T15:14:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian</id>
+    <content type="html"><![CDATA[<p>对于Jquery，用起来很像很简单；但是有些知识点经常会忘记。这里特别写一篇来巩固。</p>
+
+<h3>加载：</h3>
+
+<h4>关于 ready 和 onLoad 的区别</h4>
+
+<p>两个不同点：</p>
+
+<p>1)
+只有文档完全下载到本地，才会触发<code>window.onload</code>事件，这意味着所有事件对于Javascript都是可以操作的。</p>
+
+<p>通过<code>$(document).ready()</code>注册的事件处理程序，则会在 <strong>DOM</strong> 完全就绪并可以使用时调用。这意味着
+所有元素对于脚本都是可以访问的。但不意味所有关联文件（例如DOM的图片）都已下载完毕。</p>
+
+<p>换句话说：当HTML都下载完成别解析成为DOM树后，代码才可以运行。</p>
+
+<p>2)
+对于<code>onload</code>属性一次只能保存一个函数引用，所以不能再现有行为上添加新的行为。</p>
+
+<p>对于<code>$(document).ready()</code>调用这方法每次都会向内部的行为队列添加新函数。当页面加载完成后，所有函数会被执行。按照注册他们的顺序依次执行。</p>
+
+<br/>
+
+
+<p>关于<code>$(document).ready()</code>结构，实际上是在基于<code>document</code>这个DOM元素构建成的JQuery对象上调用<code>ready()</code>方法。</p>
+
+<p>实际上可写成：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">({</span>
+</span><span class='line'>  <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或写成：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+<hr />
+
+<h3>事件：</h3>
+
+<h4>事件捕获</h4>
+
+<p>允许多个元素响应单击事件的策略</p>
+
+<h4>事件冒泡</h4>
+
+<p>当事件发生时，会首先发送给最具体的元素，在这个元素获得响应机会后，事件会 <strong>向上冒泡到更一般</strong> 的元素。</p>
+
+<p><strong>如何解决事件冒泡副作用</strong></p>
+
+<p>访问事件对象e</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">==</span> <span class="k">this</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">...</span> <span class="p">...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>关于<code>event.stopPropagation()</code>阻止所有DOM响应这个事件，但是不能阻止默认操作;
+必须要用<code>event.preventDefault()</code>来在操作前终止事件。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;switch&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="s1">&#39;button&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span> <span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>相当于</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;switch&#39;</span><span class="p">).</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span> <span class="o">==</span> <span class="s1">&#39;button&#39;</span><span class="p">){</span> <span class="p">}</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>模仿用户操作行为的方法 <code>trigger()</code> 它提供了和<code>on()</code>方法一样的简写方法。
+像<code>click()</code>等on动作不带参数会自动触发。</p>
+
+<hr />
+
+<h3>属性值：</h3>
+
+<h4>值回调</h4>
+
+<p>把回调函数作为参数传递</p>
+
+<h4>HTML 属性和 DOM 属性的区别</h4>
+
+<p><strong>HTML属性值:</strong> 页面标记中放在引号的值</p>
+
+<p><strong>DOM属性值:</strong> Javascript能存取的值，可以通过chrome的elements检查器查看properties</p>
+
+<p><strong>不同点：</strong> 有些DOM名称和HTML不同，例如：className;
+有些DOM属性HTML是没有的，DOM的<code>attr()</code>就没发操作他们。</p>
+
+<p>测试DOM属性而非HTML属性才可确保跨浏览器的一致性。如：<code>prop()</code>来获取DOM属性值，而非<code>attr()</code></p>
+
+<p>最大不同在操作表单值：DOM和HTML操作表单的名称很多不同，最好不用<code>prop()</code>和<code>attr()</code>，而用<code>val()</code></p>
+
+<hr />
+
+<h3>Ajax</h3>
+
+<h4>单向数据传输：</h4>
+
+<p>AHAH(async http and html)用load()</p>
+
+<p>服务器返回的JSON是字符串，需要变成JS字面量；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span><span class="p">(</span><span class="s1">&#39;.json&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">){</span>
+</span><span class='line'>  <span class="p">...</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>向页面注入脚本：</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">getScript</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><strong>获取XML：</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">$</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;.xml&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="p">...</span>
+</span><span class='line'><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>双向数据传递：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;a.php&#39;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">post</span><span class="p">(</span><span class="s1">&#39;a.php&#39;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">load</span><span class="p">(</span><span class="s1">&#39;a.php&#39;</span><span class="p">,</span> <span class="nx">args</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>load在包含数据对象参数时，会使用post方法</p>
+
+<p>ajaxStart()回调，ajax请求开始且尚未进行任何其他传输时 和 read() 一样只能由$(document)调用</p>
+
+<p>ajaxStop()回调，ajax最后一次请求结束时调用，和 read() 一样只能由$(document)调用</p>
+
+<p>ajaxError()回调，参数是一个XMLHttpRequest的引用。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rails 利用批量操作提速]]></title>
@@ -355,6 +553,49 @@ git rebase develop
 关于方法里面，只有if，那干脆将if放方法外面；
 关于需求，通过每个条件都列出来检查。
 对于更改数据，记住留份log作为备份，将数据记录下来，以便回滚。</p>
+
+<h4>经常使用的 Git 命令</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout -b testing         <span class="c"># 新建分支testing 并切换到上面</span>
+</span><span class='line'>
+</span><span class='line'>git commit -m <span class="s2">&quot;Koga&quot;</span>            <span class="c"># commit</span>
+</span><span class='line'>git commit --amend              <span class="c"># 将 add 的新修改也提交到之前的commit，并且可以更改commit名称</span>
+</span><span class='line'>
+</span><span class='line'>git pull origin master:master   <span class="c"># 拉远程的master到本地master，如果本地没有，则新建并拉代码下来，并且所在的分支也会拉master的内容下来，可以将其add 后checkout掉</span>
+</span><span class='line'>git push origin master          <span class="c"># 提交到远程master分支，如果git push -f origin master，将强制提交</span>
+</span><span class='line'>
+</span><span class='line'>git rebase master               <span class="c"># 将当前分支与master合成一条</span>
+</span><span class='line'>git reset HEAD~1                <span class="c"># 重置 上一个 commit，但是修改内容还是保留，只是还没commit</span>
+</span><span class='line'>git merge master                <span class="c"># 将master合并到当前分支</span>
+</span><span class='line'>
+</span><span class='line'>git branch                      <span class="c"># 显示所有分支</span>
+</span><span class='line'>git branch -D testing           <span class="c"># 删除 testing 分支</span>
+</span><span class='line'>git branch -m dev               <span class="c"># 更改分支名称</span>
+</span><span class='line'>
+</span><span class='line'>git stash                       <span class="c"># 将更改内容暂存</span>
+</span><span class='line'>git stash pop                   <span class="c"># 将暂存内容弹出</span>
+</span><span class='line'>git stash clear                 <span class="c"># 清除暂存内容</span>
+</span></code></pre></td></tr></table></div></figure>
+
 ]]></content>
   </entry>
   
@@ -8358,55 +8599,6 @@ Ubuntu hosts文件位置: /etc/hosts
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo service redis-server restart
-</span></code></pre></td></tr></table></div></figure>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Scroll to top]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
-    <updated>2013-08-30T21:57:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top</id>
-    <content type="html"><![CDATA[<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
-具体操作如下：</p>
-
-<ol>
-<li><p>在页面header下写一个&lt;a>标签里面放张图片指着向上。对&lt;a>标签的css设置有几个重要的：position: fixed（表明标签会随着页面处在同一位置）,overflow: hidden</p></li>
-<li><p>接着设置js</p></li>
-</ol>
-
-
-<blockquote><ol>
-<li>设置它在下拉后显示，具体是看window的scrollTop的位置,如果大于0，则已经开始下拉，所以让&lt;a>标签显示。否则，隐藏。</li>
-<li>单击事件，滚到最上层。具体操作：最好用Jquery，设置时间让其向上滑动。如：  $(&lsquo;html, body&rsquo;).animate({scrollTop: 0}, 300)</li>
-</ol>
-</blockquote>
-
-<p><strong>example:</strong> (标签&lt;a class=&ldquo;go_top&rdquo;>)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span> <span class="o">-&gt;</span>
-</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;a.go_top&quot;</span><span class="p">).</span><span class="nx">click</span> <span class="p">()</span> <span class="o">-&gt;</span>
-</span><span class='line'>        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;html, body&#39;</span><span class="p">).</span><span class="nx">animate</span><span class="p">({</span><span class="nx">scrollTop</span><span class="o">:</span> <span class="mi">0</span><span class="p">},</span> <span class="mi">300</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">return</span> <span class="kc">false</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">bind</span> <span class="s1">&#39;scroll resize&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
-</span><span class='line'>        <span class="nx">scroll_from_top</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nb">window</span><span class="p">).</span><span class="nx">scrollTop</span><span class="p">()</span>
-</span><span class='line'>        <span class="k">if</span> <span class="nx">scroll_from_top</span> <span class="o">&gt;=</span> <span class="mi">1</span>
-</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;a.go_top&#39;</span><span class="p">).</span><span class="nx">show</span><span class="p">()</span>
-</span><span class='line'>        <span class="k">else</span>
-</span><span class='line'>            <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;a.go_top&#39;</span><span class="p">).</span><span class="nx">hide</span><span class="p">()</span>
 </span></code></pre></td></tr></table></div></figure>
 
 ]]></content>

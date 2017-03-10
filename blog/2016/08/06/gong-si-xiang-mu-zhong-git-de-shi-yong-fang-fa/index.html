@@ -89,7 +89,7 @@
 
     <section id="sidebar">
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (1)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (1)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (7)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (1)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (7)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li></ul>
 </section>
 
 
@@ -225,6 +225,49 @@ git rebase develop
 关于方法里面，只有if，那干脆将if放方法外面；
 关于需求，通过每个条件都列出来检查。
 对于更改数据，记住留份log作为备份，将数据记录下来，以便回滚。</p>
+
+<h4>经常使用的 Git 命令</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>git checkout -b testing         <span class="c"># 新建分支testing 并切换到上面</span>
+</span><span class='line'>
+</span><span class='line'>git commit -m <span class="s2">&quot;Koga&quot;</span>            <span class="c"># commit</span>
+</span><span class='line'>git commit --amend              <span class="c"># 将 add 的新修改也提交到之前的commit，并且可以更改commit名称</span>
+</span><span class='line'>
+</span><span class='line'>git pull origin master:master   <span class="c"># 拉远程的master到本地master，如果本地没有，则新建并拉代码下来，并且所在的分支也会拉master的内容下来，可以将其add 后checkout掉</span>
+</span><span class='line'>git push origin master          <span class="c"># 提交到远程master分支，如果git push -f origin master，将强制提交</span>
+</span><span class='line'>
+</span><span class='line'>git rebase master               <span class="c"># 将当前分支与master合成一条</span>
+</span><span class='line'>git reset HEAD~1                <span class="c"># 重置 上一个 commit，但是修改内容还是保留，只是还没commit</span>
+</span><span class='line'>git merge master                <span class="c"># 将master合并到当前分支</span>
+</span><span class='line'>
+</span><span class='line'>git branch                      <span class="c"># 显示所有分支</span>
+</span><span class='line'>git branch -D testing           <span class="c"># 删除 testing 分支</span>
+</span><span class='line'>git branch -m dev               <span class="c"># 更改分支名称</span>
+</span><span class='line'>
+</span><span class='line'>git stash                       <span class="c"># 将更改内容暂存</span>
+</span><span class='line'>git stash pop                   <span class="c"># 将暂存内容弹出</span>
+</span><span class='line'>git stash clear                 <span class="c"># 清除暂存内容</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 <div class="meta">
@@ -255,7 +298,7 @@ git rebase develop
     </div>
     <footer id="footer">
     <div style="display:inline">
-    Copyright &copy; 2016
+    Copyright &copy; 2017
 
     TsaiKoga
 . Powered by <a href="http://octopress.org">Octopress</a> | 
