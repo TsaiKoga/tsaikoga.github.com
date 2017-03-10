@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Javascript | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-10T16:07:10+08:00</updated>
+  <updated>2017-03-10T16:11:57+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -33,6 +33,9 @@
 所有元素对于脚本都是可以访问的。但不意味所有关联文件（例如DOM的图片）都已下载完毕。</p>
 
 <p>换句话说：当HTML都下载完成别解析成为DOM树后，代码才可以运行。</p>
+
+<br/>
+
 
 <p>2)
 对于<code>onload</code>属性一次只能保存一个函数引用，所以不能再现有行为上添加新的行为。</p>
@@ -72,6 +75,9 @@ $(function(){
 
 <p>当事件发生时，会首先发送给最具体的元素，在这个元素获得响应机会后，事件会 <strong>向上冒泡到更一般</strong> 的元素。</p>
 
+<br/>
+
+
 <p><strong>如何解决事件冒泡副作用</strong></p>
 
 <p>访问事件对象e
@@ -89,6 +95,9 @@ function(e) {
 <p>关于<code>event.stopPropagation()</code>阻止所有DOM响应这个事件，但是不能阻止默认操作;
 必须要用<code>event.preventDefault()</code>来在操作前终止事件。</p>
 
+<br/>
+
+
 <p><code>javascript
 $('switch').on('click', 'button', function(){ })
 </code>
@@ -101,6 +110,9 @@ $('switch').on('click', function(e){
 
 <p>模仿用户操作行为的方法 <code>trigger()</code> 它提供了和<code>on()</code>方法一样的简写方法。
 像<code>click()</code>等on动作不带参数会自动触发。</p>
+
+<br/>
+
 
 <hr />
 
