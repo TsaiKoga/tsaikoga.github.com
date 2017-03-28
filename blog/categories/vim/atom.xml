@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vim | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/vim/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-10T16:11:57+08:00</updated>
+  <updated>2017-03-28T17:34:08+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -21,6 +21,16 @@
     <content type="html"><![CDATA[<p>说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。</p>
 
 <p><img src="/images/posts/2013-10-22/vim.jpg" title="Vim图" alt="图片无法显示" /></p>
+
+<h4>vim 中容易忘掉但非常有用的命令</h4>
+
+<ul>
+<li>多选        ctrl+v(mac), ctrl+q(windows/linux)</li>
+<li>打开文件    :open filename</li>
+<li>注释        NERD_commenter命令是\cc或,cc</li>
+<li>解除注释     NERD_commenter命令是\cu或,cu</li>
+</ul>
+
 
 <h4>.vimrc配置文件</h4>
 
@@ -59,7 +69,7 @@
                                                             " 不设定在插入状态无法用退格键和 Delete 键删除回车符
     set cmdheight=1             " 设定命令行的行数为 1
     set laststatus=2            " 显示状态栏 (默认值为 1, 无法显示状态栏)
-    set statusline=\ %&lt;%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&amp;fileformat}\ %{&amp;encoding}\ %c:%l/%L%)\ 
+    set statusline=\ %&lt;%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&amp;fileformat}\ %{&amp;encoding}\ %c:%l/%L%)\
                                                             " 设置在状态行显示的信息
     set foldenable              " 开始折叠
     set foldmethod=syntax       " 设置语法折叠

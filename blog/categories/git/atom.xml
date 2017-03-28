@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Git | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/git/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-10T16:11:57+08:00</updated>
+  <updated>2017-03-28T17:34:08+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -169,6 +169,41 @@ git stash clear                 # 清除暂存内容
 </code></pre>
 
 <p>```</p>
+
+<p>让 bash 显示当前Git的分支及当前路径（如果有python的virtualenv，也显示在开头）：</p>
+
+<p>``` sh</p>
+
+<h6>#</h6>
+
+<h1>shell obtain the git&rsquo;s current branch name</h1>
+
+<h6>#</h6>
+
+<p>find_git_branch() {
+  local dir=. head
+  until [ &ldquo;$dir&rdquo; -ef / ]; do</p>
+
+<pre><code>if [ -f "$dir/.git/HEAD" ]; then
+  head=$(&lt; "$dir/.git/HEAD")
+  if [[ $head = ref:\ refs/heads/* ]]; then
+    git_branch="[${head#*/*/}]"
+  elif [[ $head != '' ]]; then
+    git_branch="[no branch]"
+  else
+    git_branch="[unknow]"
+  fi
+  return
+fi
+dir="../$dir"
+</code></pre>
+
+<p>  done
+  git_branch=&lsquo;&rsquo;
+}
+PROMPT_COMMAND=&ldquo;find_git_branch; $PROMPT_COMMAND&rdquo;
+export PS1=&ldquo;(<code>basename \"$VIRTUAL_ENV\"</code>)\u@\h:\w\$git_branch\$ &rdquo;
+```</p>
 ]]></content>
   </entry>
   

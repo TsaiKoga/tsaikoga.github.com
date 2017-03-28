@@ -268,6 +268,57 @@ git rebase develop
 </span><span class='line'>git stash clear                 <span class="c"># 清除暂存内容</span>
 </span></code></pre></td></tr></table></div></figure>
 
+
+<p>让 bash 显示当前Git的分支及当前路径（如果有python的virtualenv，也显示在开头）：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c">##############################################</span>
+</span><span class='line'><span class="c"># shell obtain the git&#39;s current branch name #</span>
+</span><span class='line'><span class="c">##############################################</span>
+</span><span class='line'>find_git_branch<span class="o">()</span> <span class="o">{</span>
+</span><span class='line'>  <span class="nb">local </span><span class="nv">dir</span><span class="o">=</span>. head
+</span><span class='line'>  <span class="k">until</span> <span class="o">[</span> <span class="s2">&quot;$dir&quot;</span> -ef / <span class="o">]</span>; <span class="k">do</span>
+</span><span class='line'><span class="k">    if</span> <span class="o">[</span> -f <span class="s2">&quot;$dir/.git/HEAD&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">      </span><span class="nv">head</span><span class="o">=</span><span class="k">$(</span>&lt; <span class="s2">&quot;$dir/.git/HEAD&quot;</span><span class="k">)</span>
+</span><span class='line'>      <span class="k">if</span> <span class="o">[[</span> <span class="nv">$head</span> <span class="o">=</span> ref:<span class="se">\ </span>refs/heads/* <span class="o">]]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">        </span><span class="nv">git_branch</span><span class="o">=</span><span class="s2">&quot;[${head#*/*/}]&quot;</span>
+</span><span class='line'>      <span class="k">elif</span> <span class="o">[[</span> <span class="nv">$head</span> !<span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="o">]]</span>; <span class="k">then</span>
+</span><span class='line'><span class="k">        </span><span class="nv">git_branch</span><span class="o">=</span><span class="s2">&quot;[no branch]&quot;</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'><span class="k">        </span><span class="nv">git_branch</span><span class="o">=</span><span class="s2">&quot;[unknow]&quot;</span>
+</span><span class='line'>      <span class="k">fi</span>
+</span><span class='line'><span class="k">      return</span>
+</span><span class='line'><span class="k">    fi</span>
+</span><span class='line'><span class="k">    </span><span class="nv">dir</span><span class="o">=</span><span class="s2">&quot;../$dir&quot;</span>
+</span><span class='line'>  <span class="k">done</span>
+</span><span class='line'><span class="k">  </span><span class="nv">git_branch</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'><span class="nv">PROMPT_COMMAND</span><span class="o">=</span><span class="s2">&quot;find_git_branch; $PROMPT_COMMAND&quot;</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">PS1</span><span class="o">=</span><span class="s2">&quot;(`basename \&quot;$VIRTUAL_ENV\&quot;`)\u@\h:\w\$git_branch\$ &quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 <div class="meta">

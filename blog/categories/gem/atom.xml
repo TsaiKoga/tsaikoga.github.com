@@ -4,7 +4,7 @@
   <title><![CDATA[Category: gem | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/gem/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-10T16:11:57+08:00</updated>
+  <updated>2017-03-28T17:34:08+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -115,7 +115,7 @@
 </ol>
 </blockquote>
 
-<p><video width='800' height='504' preload='none' controls poster=''><source src='http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4">http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4</a>' ></video></p>
+<p>{% video <a href="http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4">http://media.railscasts.com/assets/episodes/videos/272-markdown-with-redcarpet.mp4</a> 800 504 <a href="http://railscasts.com/static/episodes/posters/loading.png">http://railscasts.com/static/episodes/posters/loading.png</a> %}</p>
 
 <p>参考：</p>
 
