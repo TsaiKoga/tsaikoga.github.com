@@ -155,3 +155,31 @@ gitlab 或 github 上 mr 或 pr
     git stash pop                   # 将暂存内容弹出
     git stash clear                 # 清除暂存内容
 ```
+
+让 bash 显示当前Git的分支及当前路径（如果有python的virtualenv，也显示在开头）：
+
+``` sh
+##############################################
+# shell obtain the git's current branch name #
+##############################################
+find_git_branch() {
+  local dir=. head
+  until [ "$dir" -ef / ]; do
+    if [ -f "$dir/.git/HEAD" ]; then
+      head=$(< "$dir/.git/HEAD")
+      if [[ $head = ref:\ refs/heads/* ]]; then
+        git_branch="[${head#*/*/}]"
+      elif [[ $head != '' ]]; then
+        git_branch="[no branch]"
+      else
+        git_branch="[unknow]"
+      fi
+      return
+    fi
+    dir="../$dir"
+  done
+  git_branch=''
+}
+PROMPT_COMMAND="find_git_branch; $PROMPT_COMMAND"
+export PS1="(`basename \"$VIRTUAL_ENV\"`)\u@\h:\w\$git_branch\$ "
+```
