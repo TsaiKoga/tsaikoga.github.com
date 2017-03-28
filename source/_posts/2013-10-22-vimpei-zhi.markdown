@@ -10,6 +10,13 @@ categories: [vim]
 
 ![图片无法显示](/images/posts/2013-10-22/vim.jpg "Vim图")
 
+#### vim 中容易忘掉但非常有用的命令
+
+- 多选        ctrl+v(mac), ctrl+q(windows/linux)
+- 打开文件    :open filename
+- 注释        NERD_commenter命令是\\cc或,cc
+- 解除注释     NERD_commenter命令是\\cu或,cu
+
 ####.vimrc配置文件
 
 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:
@@ -46,7 +53,7 @@ categories: [vim]
 																" 不设定在插入状态无法用退格键和 Delete 键删除回车符
 		set cmdheight=1             " 设定命令行的行数为 1
 		set laststatus=2            " 显示状态栏 (默认值为 1, 无法显示状态栏)
-		set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\ 
+		set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\
 																" 设置在状态行显示的信息
 		set foldenable              " 开始折叠
 		set foldmethod=syntax       " 设置语法折叠
@@ -101,7 +108,7 @@ categories: [vim]
 				return a:char.a:char."\<Esc>i"
 			endif
 		endf
-		
+
 下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：
 
 		"-----------------------------------------------------------------
