@@ -3,7 +3,7 @@ layout: post
 title: "create octopress blog"
 date: 2013-07-28 22:51
 comments: true
-categories: gem
+categories: [Rails]
 ---
 ####克隆octopress项目
     git clone git://github.com/imathis/octopress.git tsaikoga.github.com  # 这里的tsaikoga.github.com为你的项目名称
@@ -42,7 +42,7 @@ categories: gem
 
 ``` sh
     rake preview
-``` 
+```
 
 他会生成public文件夹
 
@@ -70,7 +70,7 @@ categories: gem
     git clone https://github.com/TsaiKoga/tsaikoga.github.com.git
 ```
 
-重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为\_deploy/, 
+重新克隆了项目下来，再改变文件夹tsaikoga.github.com/名字为\_deploy/,
 修改\_config.yml文件中的内容:一定要把url改成/tsaikoga.github.com，
 
 执行：
@@ -86,7 +86,7 @@ categories: gem
 ```
 
 最后到网址刷新看看。
-******************************** 
+********************************
 ####附加功能：
 注册一个google analytics帐号：
 生成tracking_id:

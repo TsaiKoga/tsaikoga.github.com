@@ -3,7 +3,7 @@ layout: post
 title: "公司项目中 Git 的使用方法"
 date: 2016-08-06 16:10
 comments: true
-categories: ["Git", "ProjectManagement"]
+categories: [Git, ProjectManagement]
 ---
 
 Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。

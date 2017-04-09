@@ -3,7 +3,7 @@ layout: post
 title: "Ubuntu下安装redis 及安全配置"
 date: 2013-10-15 10:02
 comments: true
-categories: [Nosql, "Security"]
+categories: [Nosql, Security]
 ---
 
 ### 目录：
@@ -154,7 +154,7 @@ foobared太简单了，我们需要复杂的密码；下面提供一个命令可
 
 ``` sh
     redis-cli    
-    auth your_redis_password 
+    auth your_redis_password
 ```
 
 <br/>

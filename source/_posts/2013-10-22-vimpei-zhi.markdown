@@ -3,7 +3,7 @@ layout: post
 title: "Vim配置"
 date: 2013-10-22 14:24
 comments: true
-categories: [vim]
+categories: [Editor]
 ---
 
 说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。

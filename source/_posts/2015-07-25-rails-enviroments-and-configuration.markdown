@@ -3,7 +3,7 @@ layout: post
 title: "Rails Enviroments and Configuration"
 date: 2015-07-25 13:03
 comments: true
-categories: ['Rails']
+categories: [Rails]
 ---
 
 对于 Rails 的环境和配置，这里翻译了一篇文章。如果有翻译错的地方，欢迎指出。
@@ -180,7 +180,7 @@ Bundler 通过一个配置文件Gemfile 中解决一些列版本的gems依赖。
     git 'git://github.com/rails/rails.git', ref: "4aded"
     git 'git://github.com/rails/rails.git', branch: '3-2-stable'
     git 'git://github.com/rails/rails.git', tag: 'v3.2.11'
-    
+
     gem 'nokogiri', git: 'git://github.com/tenderlove/nokogiri.git', ref => '0eec4'
 ```
 
@@ -319,11 +319,11 @@ config/application.rb是Rails应用设置的主要文件，也是config/environm
 ``` ru
     # To pick the frameworks you want, remove 'require "rails/all"'
     # and list the framework railties that you want:
-    # 
+    #
     # require "active_model/railtie"
     # require "active_record/railtie"
     # require "action_controller/railtie"
-    # require "action_mailer/railtie" 
+    # require "action_mailer/railtie"
     # require "action_view/railtie"
     # require "sprockets/railtie"
     # require "rails/test_unit/railtie"
@@ -422,7 +422,7 @@ Rails2介绍了一个概念，将配置设置放入config/initializers目录中�
     # You can add backtrace silencers for libraries that you're using but
     # don't wish to see in your backtraces.
     Rails.backtrace_cleaner.add_silencer{|line|line=~/my_noisy_library/}
- 
+
     # You can also remove all the silencers if you're trying to debug a
     # problem that might stem from framework code.
     Rails.backtrace_cleaner.remove_silencers!
@@ -527,11 +527,11 @@ binary data</td></tr>
 ``` ru
     # Your secret key for verifying the integrity of signed cookies.
     # If you change this key, all old signed cookies will become invalid!
-     
+
     # Make sure the secret is at least 30 characters and all random,
     # no regular words or you'll be exposed to dictionary attacks.
     # You can use `rake secret` to generate a secure secret key.
-     
+
     # Make sure your secret_key_base is kept private
     # if you're sharing your code publicly.
     Example::Application.config.secret_key_base = 'f32b1a3755e05a3d...'
@@ -567,7 +567,7 @@ Rails3.1后引入的，wrap_parameters.rb这个initializer能配置你的应用�
     ActiveSupport.on_load(:action_controller) do
       wrap_parameters format: [:json] if respond_to?(:wrap_parameters)
     end
-     
+
     # To enable root element in JSON for ActiveRecord objects.
     # ActiveSupport.on_load(:active_record) do
     #   self.include_root_in_json = true
@@ -826,7 +826,7 @@ Rails3.1引入Assets Pipeline，一个可以连接和缩小javascript和css的as
       # performance.
       config.serve_static_assets = true
       config.static_cache_control = "public, max-age=3600"
-      
+
       # Show full error reports and disable caching.
       config.consider_all_requests_local = true
       config.action_controller.perform_caching = false
@@ -876,7 +876,7 @@ Rails3.1引入Assets Pipeline，一个可以连接和缩小javascript和css的as
       # Full error reports are disabled and caching is turned on.
       config.consider_all_requests_local = false
       config.action_controller.perform_caching = true
-      
+
       # Enable Rack::Cache to put a simple HTTP cache in front of your
       # application
       # Add `rack-cache` to your Gemfile before enabling this.
@@ -1222,5 +1222,3 @@ Jamis也完整地写了关于这个的技术博文：http://weblog.jamisbuck.org
 
 -----------------------------------
 我们结束了Rails之旅，这章简要覆盖了bundler的一些细节，并且评估了不同环境下rails的执行，和如何加载它的依赖，包括你的应用代码。并且深入查看application.rb文件和如何更改每种模式来自定义符合我们胃口的Rails的行为。
-
-

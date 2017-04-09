@@ -3,7 +3,7 @@ layout: post
 title: "redcarpet和pygments结合进行markdown显示"
 date: 2013-08-29 22:23
 comments: true
-categories: [gem]
+categories: [Rails]
 ---
 ## redcarpet
 ----------------------------------------------------
@@ -57,8 +57,8 @@ categories: [gem]
 				require 'redcarpet'
 				render = HTMLwithPygments
 				options = {
-						autolink: true, 
-						filter_html: true, 
+						autolink: true,
+						filter_html: true,
 						prettify: true,
 						fenced_code_blocks: true,
 						no_intra_emphasis: true
@@ -66,7 +66,7 @@ categories: [gem]
 				markdown = Redcarpet::Markdown.new(render.new(hard_wrap: true), options)
 				markdown.render(text).html_safe
 		end
-		 
+
 		class HTMLwithPygments < Redcarpet::Render::HTML
 				require 'pygments'
 				def block_code(code, language)
@@ -89,4 +89,3 @@ categories: [gem]
 2. [github上的pygments](https://github.com/tmm1/pygments.rb)
 
 3. [视频参考](http://railscasts.com/episodes/272-markdown-with-redcarpet?view=comments)
-

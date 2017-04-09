@@ -3,7 +3,7 @@ layout: post
 title: "PS 查看进程"
 date: 2014-04-23 13:53
 comments: true
-categories: ["Linux"]
+categories: [Linux]
 ---
 
 如果你使用Linux进行操作，不可避免要接触ps命令，他可以显示进程。

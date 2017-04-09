@@ -3,7 +3,7 @@ layout: post
 title: "Atom 快捷键使用大全"
 date: 2016-05-06 11:36
 comments: true
-categories: [Atom]
+categories: [Editor]
 ---
 
 ### [1. 快捷键标识](#1)
