@@ -8,7 +8,7 @@
     
 	<meta name="description" content="XHTML必要规则： 标签都要小写
 属性名要小写
-严格的嵌套，例如： 1 &lt;i&gt;&lt;b&gt;Hello&lt;/b&gt;&lt;/i&gt; &lt;!--&gt;而不是&lt;b&gt;&lt;i&gt;hello&lt;/i&gt;&lt;/b&gt;&lt;--&gt; &hellip;">
+严格的嵌套（例如：&lt;i&gt;&lt;b&gt;Hello&lt;/b&gt;&lt;/i&gt; &lt;!--&gt;而不是&lt;b&gt;&lt;i&gt;hello&lt;/i&gt;&lt;/b&gt;&lt;--&gt;） &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -102,37 +102,18 @@
 	<h2 class="title">CSS知识总结</h2>
 	<div class="entry-content"><h3>XHTML必要规则：</h3>
 
+<hr />
+
 <ol>
 <li>标签都要小写</li>
 <li>属性名要小写</li>
-<li>严格的嵌套，例如：</li>
-</ol>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'> <span class="nt">&lt;i&gt;&lt;b&gt;</span>Hello<span class="nt">&lt;/b&gt;&lt;/i&gt;</span> <span class="c">&lt;!--&gt;而不是&lt;b&gt;&lt;i&gt;hello&lt;/i&gt;&lt;/b&gt;&lt;--&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ol>
+<li>严格的嵌套（例如：<code>&lt;i&gt;&lt;b&gt;Hello&lt;/b&gt;&lt;/i&gt; &lt;!--&gt;而不是&lt;b&gt;&lt;i&gt;hello&lt;/i&gt;&lt;/b&gt;&lt;--&gt;</code>）</li>
 <li>标签必须封闭</li>
-<li>空元素标记也要封闭（例如：<img/><br/>）</li>
+<li>空元素标记也要封闭（例如：<code>&lt;img/&gt;&lt;br/&gt;</code>）</li>
 <li>属性要用双引号</li>
-<li>属性使用完整形式，例如：</li>
+<li>属性使用完整形式（例如：<code>&lt;button disabled=true&gt;&lt;/button&gt;&lt;!--&gt;而不是直接disabled&lt;--&gt;</code>）</li>
+<li>结构标记不能放在内容标记中（如<code>&lt;table&gt;不能放在&lt;p&gt;中</code>）</li>
 </ol>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;button</span> <span class="na">disabled=</span><span class="s">true</span><span class="nt">&gt;&lt;/button&gt;</span><span class="c">&lt;!--&gt;而不是直接disabled&lt;--&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<ol>
-<li>结构标记不能放在内容标记中，如<table>不能放在<p>中</li>
-</ol>
-
-
-<br/>
 
 
 <br/>
@@ -143,7 +124,11 @@
 
 <h2>CSS 总结</h2>
 
+<hr />
+
 <h3>引入CSS</h3>
+
+<hr />
 
 <ul>
 <li>行内式：通过<code>&lt;style type="text/css"&gt;&lt;/style&gt;</code>直接引入</li>
@@ -156,10 +141,9 @@
 <br/>
 
 
-<br/>
-
-
 <h3>选择器</h3>
+
+<hr />
 
 <ul>
 <li>标记选择器：例如p、h1、 h2等标签去掉尖括号</li>
@@ -178,15 +162,11 @@
 <br/>
 
 
-<br/>
-
-
 <h3>盒子模型</h3>
 
+<hr />
+
 <p>margin &ndash; border -padding &ndash; content</p>
-
-<br/>
-
 
 <br/>
 
@@ -218,13 +198,15 @@
 <br/>
 
 
-<br/>
-
-
 <h3>布局Postion</h3>
+
+<hr />
 
 <p>提到 postion，必须知道一件事，就是元素是否会被 postioned，因为 absolute 需要他来调整位置。
 目前只有一个属性值 static 不会被positioned，其他都会。</p>
+
+<br/>
+
 
 <ul>
 <li>static: 默认的 position 值，不会被positioned。</li>
@@ -237,10 +219,9 @@
 <br/>
 
 
-<br/>
-
-
 <h3>浮动</h3>
+
+<hr />
 
 <p>浮动主要是float,有left，right。他会对相邻元素造成影响。通过clear属性可以清除影响，如：</p>
 
@@ -276,7 +257,11 @@
 
 <h3>响应式布局：</h3>
 
+<hr />
+
 <h4>设置 Meta 标签：</h4>
+
+<hr />
 
 <p>大多数移动浏览器将HTML页面放大为宽的视图（viewport）以符合屏幕分辨率。你可以使用视图的meta标签来进行重置。下面的视图标签告诉浏览器，使用设备的宽度作为视图宽度并禁止初始的缩放。在<head>标签里加入这个meta标签。</p>
 
@@ -293,6 +278,8 @@
 
 <h4>通过媒介查询来设置样式 Media Queries：</h4>
 
+<hr />
+
 <p>Media Queries 是响应式设计的核心。
 它根据条件告诉浏览器如何为指定视图宽度渲染页面。假如一个终端的分辨率小于 980px，那么可以这样写：</p>
 
@@ -307,6 +294,8 @@
 
 
 <h4>设置多种视图宽度</h4>
+
+<hr />
 
 <p>假如我们要设定兼容 iPad 和 iphone 的视图，那么可以这样设置：</p>
 
@@ -326,10 +315,9 @@
 
 <h4>图片文字也要响应式</h4>
 
-<ol>
-<li>宽度需要使用百分比</li>
-</ol>
+<hr />
 
+<p>1.宽度需要使用百分比</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nf">#head</span> <span class="p">{</span> <span class="k">width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span> <span class="p">}</span>
@@ -339,11 +327,8 @@
 <br/>
 
 
-<ol>
-<li>处理图片缩放的方法
-简单的解决方法可以使用百分比，但这样不友好，会放大或者缩小图片。那么可以尝试给图片指定的最大宽度为百分比。假如图片超过了，就缩小。假如图片小了，就原尺寸输出。</li>
-</ol>
-
+<p>2.处理图片缩放的方法
+简单的解决方法可以使用百分比，但这样不友好，会放大或者缩小图片。那么可以尝试给图片指定的最大宽度为百分比。假如图片超过了，就缩小。假如图片小了，就原尺寸输出。</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nt">img</span> <span class="p">{</span> <span class="k">width</span><span class="o">:</span> <span class="k">auto</span><span class="p">;</span> <span class="k">max-width</span><span class="o">:</span> <span class="m">100</span><span class="o">%</span><span class="p">;</span> <span class="p">}</span>
@@ -353,12 +338,9 @@
 <br/>
 
 
-<ol>
-<li>相对大小的文字：
+<p>3.相对大小的文字：
 字体也不能使用绝对大小（px），而只能使用相对大小（em）。
-先指定全局字体，这里设置为页面默认大小的100%，即16像素：</li>
-</ol>
-
+先指定全局字体，这里设置为页面默认大小的100%，即16像素：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
