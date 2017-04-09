@@ -91,7 +91,7 @@ gem install redcarpet 3.以前可直接在要显示的view中加入如下代码:
 
     <section id="sidebar">
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/atom'>Atom (1)</a></li><li><a href='/blog/categories/gem'>gem (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (1)</a></li><li><a href='/blog/categories/net'>net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (7)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/vim'>vim (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (1)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li></ul>
 </section>
 
 
@@ -198,7 +198,7 @@ gem install redcarpet 3.以前可直接在要显示的view中加入如下代码:
 </span><span class='line'>          <span class="n">markdown</span> <span class="o">=</span> <span class="ss">Redcarpet</span><span class="p">:</span><span class="ss">:Markdown</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">render</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">hard_wrap</span><span class="p">:</span> <span class="kp">true</span><span class="p">),</span> <span class="n">options</span><span class="p">)</span>
 </span><span class='line'>          <span class="n">markdown</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">html_safe</span>
 </span><span class='line'>  <span class="k">end</span>
-</span><span class='line'>  
+</span><span class='line'>
 </span><span class='line'>  <span class="k">class</span> <span class="nc">HTMLwithPygments</span> <span class="o">&lt;</span> <span class="ss">Redcarpet</span><span class="p">:</span><span class="ss">:Render</span><span class="o">::</span><span class="no">HTML</span>
 </span><span class='line'>          <span class="nb">require</span> <span class="s1">&#39;pygments&#39;</span>
 </span><span class='line'>          <span class="k">def</span> <span class="nf">block_code</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">language</span><span class="p">)</span>

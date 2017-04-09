@@ -2,13 +2,13 @@
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/07/28/create-octopress-blog/</loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:27:51+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://TsaiKoga.github.com/blog/2013/08/29/redcarpethe-pygmentsjie-he-jin-xing-markdownxian-shi/
         </loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:27:46+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/</loc>
@@ -16,7 +16,7 @@
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/</loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:28:04+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/10/15/nosqljian-jie/</loc>
@@ -26,7 +26,7 @@
         <loc>
             http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/
         </loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:28:09+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/</loc>
@@ -34,7 +34,7 @@
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/10/22/vimpei-zhi/</loc>
-        <lastmod>2017-03-28T17:04:36+08:00</lastmod>
+        <lastmod>2017-04-09T10:28:27+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian/</loc>
@@ -72,11 +72,11 @@
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng/</loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:28:43+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration/</loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:28:50+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2015/08/03/routing/</loc>
@@ -84,13 +84,13 @@
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/2016/05/06/atomkuai-jie-jian-shi-yong-da-quan/</loc>
-        <lastmod>2017-03-26T11:38:04+08:00</lastmod>
+        <lastmod>2017-04-09T10:28:58+08:00</lastmod>
     </url>
     <url>
         <loc>
             http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/
         </loc>
-        <lastmod>2017-03-28T16:54:40+08:00</lastmod>
+        <lastmod>2017-04-09T10:29:06+08:00</lastmod>
     </url>
     <url>
         <loc>
@@ -103,24 +103,28 @@
         <lastmod>2017-03-26T11:38:04+08:00</lastmod>
     </url>
     <url>
+        <loc>http://TsaiKoga.github.com/blog/2017/04/09/csszhi-shi-zong-jie/</loc>
+        <lastmod>2017-04-09T11:20:13+08:00</lastmod>
+    </url>
+    <url>
         <loc>http://TsaiKoga.github.com/404.html</loc>
         <lastmod>2017-03-26T11:38:04+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/archives/</loc>
-        <lastmod>2017-03-28T17:04:36+08:00</lastmod>
+        <lastmod>2017-04-09T11:20:13+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/archives/</loc>
-        <lastmod>2017-03-28T17:04:36+08:00</lastmod>
+        <lastmod>2017-04-09T11:20:13+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/blog/</loc>
-        <lastmod>2017-03-28T17:04:36+08:00</lastmod>
+        <lastmod>2017-04-09T11:20:13+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/</loc>
-        <lastmod>2017-03-28T17:04:36+08:00</lastmod>
+        <lastmod>2017-04-09T11:20:13+08:00</lastmod>
     </url>
     <url>
         <loc>http://TsaiKoga.github.com/robots.txt</loc>

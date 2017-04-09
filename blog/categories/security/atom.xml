@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Security | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/security/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-28T17:34:08+08:00</updated>
+  <updated>2017-04-09T11:23:03+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -216,7 +216,7 @@ bind 127.0.0.1 # 将此行解除注释，如果没有此行，那就加上这一
 <p>``` sh</p>
 
 <pre><code>redis-cli    
-auth your_redis_password 
+auth your_redis_password
 </code></pre>
 
 <p>```</p>

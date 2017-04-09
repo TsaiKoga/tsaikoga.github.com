@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CSS | TsaiKoga Blog]]></title>
+  <link href="http://TsaiKoga.github.com/blog/categories/css/atom.xml" rel="self"/>
+  <link href="http://TsaiKoga.github.com/"/>
+  <updated>2017-04-09T11:23:03+08:00</updated>
+  <id>http://TsaiKoga.github.com/</id>
+  <author>
+    <name><![CDATA[TsaiKoga]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[CSS知识总结]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2017/04/09/csszhi-shi-zong-jie/"/>
+    <updated>2017-04-09T10:27:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2017/04/09/csszhi-shi-zong-jie</id>
+    <content type="html"><![CDATA[<h3>XHTML必要规则：</h3>
+
+<ol>
+<li>标签都要小写</li>
+<li>属性名要小写</li>
+<li>严格的嵌套，例如：
+<code>html
+&lt;i&gt;&lt;b&gt;Hello&lt;/b&gt;&lt;/i&gt; &lt;!--&gt;而不是&lt;b&gt;&lt;i&gt;hello&lt;/i&gt;&lt;/b&gt;&lt;--&gt;
+</code></li>
+<li>标签必须封闭</li>
+<li>空元素标记也要封闭（例如：<img/><br/>）</li>
+<li>属性要用双引号</li>
+<li>属性使用完整形式，例如：
+<code>html
+&lt;button disabled=true&gt;&lt;/button&gt;&lt;!--&gt;而不是直接disabled&lt;--&gt;
+</code></li>
+<li>结构标记不能放在内容标记中，如<table>不能放在<p>中</li>
+</ol>
+
+
+<br/>
+
+
+<br/>
+
+
+<br/>
+
+
+<h2>CSS 总结</h2>
+
+<h3>引入CSS</h3>
+
+<ul>
+<li>行内式：通过<code>&lt;style type="text/css"&gt;&lt;/style&gt;</code>直接引入</li>
+<li>嵌入式：通过<code>&lt;head&gt;</code>中引入</li>
+<li>链接式：通过<code>&lt;link href=“style/style.css" rel="stylesheeet" type="txet/css"/&gt;</code>引入</li>
+<li>导入式：通过<code>&lt;style type="text/css"&gt;@import "style.css";&lt;/style&gt;</code>，注意：导入式是等到加载完后才导入css的，所以会有一瞬间没有css样式</li>
+</ul>
+
+
+<br/>
+
+
+<br/>
+
+
+<h3>选择器</h3>
+
+<ul>
+<li>标记选择器：例如p、h1、 h2等标签去掉尖括号</li>
+<li>类别选择器：.class</li>
+<li>ID选择器： #id</li>
+<li>复合选择器：</li>
+<li>交集选择器：将两个选择器并列在一起，如h1.spec</li>
+<li>并集选择器：通过逗号分隔开，如h1, h2</li>
+<li>后代选择器：通过空格分隔，这里的后代可以是儿子，孙子等</li>
+<li>子选择器：通过>号分隔，与后代不同，它只适用于儿子。</li>
+</ul>
+
+
+<p>优先级：行内样式 > ID样式 > 类别样式 > 标记样式</p>
+
+<br/>
+
+
+<br/>
+
+
+<h3>盒子模型</h3>
+
+<p>margin &ndash; border -padding &ndash; content</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>由于盒子模型的 border 和 padding，实际设置宽度应该减去这两个值，才能保证盒子的宽度不会变大；
+还好 CSS3 引入box-sizing: border-box，这个属性可以让 padding 和 border 不对 width 造成影响。
+``` css
+.fancy {
+  width: 500px;
+  margin: 20px auto;
+  padding: 50px;
+  border: solid blue 10px;
+  -webkit-box-sizing: border-box;</p>
+
+<pre><code> -moz-box-sizing: border-box;
+      box-sizing: border-box;
+</code></pre>
+
+<p>}
+```</p>
+
+<br/>
+
+
+<br/>
+
+
+<h3>布局Postion</h3>
+
+<p>提到 postion，必须知道一件事，就是元素是否会被 postioned，因为 absolute 需要他来调整位置。
+目前只有一个属性值 static 不会被positioned，其他都会。</p>
+
+<ul>
+<li>static: 默认的 position 值，不会被positioned。</li>
+<li>relative: 通过 top / right / bottom / left 偏离原位置，<strong>其他元素位置不会受到它偏离后的影响</strong></li>
+<li>fixed: 固定定位，脱离文档流；手机版本不支持，详情请看<a href="http://bradfrost.com/blog/mobile/fixed-position/">解决方法</a></li>
+<li>absolute: 对于最近的 <strong>positioned 祖先</strong> 绝对定位，像fixed一样通过 top / right / bottom  /left 来调整位置</li>
+</ul>
+
+
+<br/>
+
+
+<br/>
+
+
+<h3>浮动</h3>
+
+<p>浮动主要是float,有left，right。他会对相邻元素造成影响。通过clear属性可以清除影响，如：
+<code>css
+.box {
+  float: left;
+  width: 200px;
+  height: 100px;
+  margin: 1em;
+}
+.after-box {
+  clear: left;
+}
+</code></p>
+
+<p>如果 div 中元素（例如图片）设置了浮动，div 反而比他里面这个元素（图片）小，该怎么办？
+通过设置为 <code>overflow: auto</code> 解决，IE6还要设置<code>zoom: 1</code></p>
+
+<br/>
+
+
+<br/>
+
+
+<h3>响应式布局：</h3>
+
+<h4>设置 Meta 标签：</h4>
+
+<p>大多数移动浏览器将HTML页面放大为宽的视图（viewport）以符合屏幕分辨率。你可以使用视图的meta标签来进行重置。下面的视图标签告诉浏览器，使用设备的宽度作为视图宽度并禁止初始的缩放。在<head>标签里加入这个meta标签。
+<code>css
+&lt;meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"&gt;
+</code>
+viewport是网页默认的宽度和高度，上面这行代码的意思是，网页宽度默认等于屏幕宽度（width=device-width），原始缩放比例（initial-scale=1）为1.0，即网页初始大小占屏幕面积的100%。
+<strong> 注意：（user-scalable = no 属性能够解决 iPad 切换横屏之后触摸才能回到具体尺寸的问题。 ）</strong></p>
+
+<br/>
+
+
+<h4>通过媒介查询来设置样式 Media Queries：</h4>
+
+<p>Media Queries 是响应式设计的核心。
+它根据条件告诉浏览器如何为指定视图宽度渲染页面。假如一个终端的分辨率小于 980px，那么可以这样写：
+<code>css
+@media screen and (max-width: 980px) {
+}
+</code></p>
+
+<br/>
+
+
+<h4>设置多种视图宽度</h4>
+
+<p>假如我们要设定兼容 iPad 和 iphone 的视图，那么可以这样设置：
+<code>css
+/** iPad **/
+@media only screen and (min-width: 768px) and (max-width: 1024px) {}
+/** iPhone **/
+@media only screen and (min-width: 320px) and (max-width: 767px) {}
+</code></p>
+
+<br/>
+
+
+<h4>图片文字也要响应式</h4>
+
+<ol>
+<li>宽度需要使用百分比
+```css
+
+<h1>head { width: 100% }</h1>
+
+<p>```</p></li>
+</ol>
+
+
+<br/>
+
+
+<ol>
+<li>处理图片缩放的方法
+简单的解决方法可以使用百分比，但这样不友好，会放大或者缩小图片。那么可以尝试给图片指定的最大宽度为百分比。假如图片超过了，就缩小。假如图片小了，就原尺寸输出。
+<code>css
+img { width: auto; max-width: 100%; }
+</code></li>
+</ol>
+
+
+<br/>
+
+
+<ol>
+<li>相对大小的文字：
+字体也不能使用绝对大小（px），而只能使用相对大小（em）。
+先指定全局字体，这里设置为页面默认大小的100%，即16像素：
+<code>css
+body {
+　font: normal 100% Helvetica, Arial, sans-serif;
+}
+</code>
+然后
+<code>
+h1 {
+　font-size: 1.5em;
+}
+</code>
+h1的大小是默认大小的1.5倍，即24像素（24/16=1.5）。</li>
+</ol>
+
+
+<br/>
+
+
+<p>相关响应式资料资料：<a href="http://www.ruanyifeng.com/blog/2012/05/responsive_web_design.html">http://www.ruanyifeng.com/blog/2012/05/responsive_web_design.html</a></p>
+]]></content>
+  </entry>
+  
+</feed>

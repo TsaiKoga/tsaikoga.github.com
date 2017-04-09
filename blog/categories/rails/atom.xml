@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-28T17:34:08+08:00</updated>
+  <updated>2017-04-09T11:23:03+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -1845,11 +1845,11 @@ environments.rb:运行所有初始化</p></blockquote>
 
 <pre><code># To pick the frameworks you want, remove 'require "rails/all"'
 # and list the framework railties that you want:
-# 
+#
 # require "active_model/railtie"
 # require "active_record/railtie"
 # require "action_controller/railtie"
-# require "action_mailer/railtie" 
+# require "action_mailer/railtie"
 # require "action_view/railtie"
 # require "sprockets/railtie"
 # require "rails/test_unit/railtie"

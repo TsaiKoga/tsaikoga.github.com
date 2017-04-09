@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: net | TsaiKoga Blog]]></title>
+  <title><![CDATA[Category: Net | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/net/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-03-28T17:34:08+08:00</updated>
+  <updated>2017-04-09T11:23:03+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
