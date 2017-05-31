@@ -61,6 +61,42 @@ categories: [Rails, Mysql]
     end
 ```
 
+批量的产品分别进行采购单Bill,销售单Sell，包裹Package，还有调整库存单据Adjust的查询然后全部group_by产品ID，
+最后将以产品ID来循环，将这个产品的所有单据组合一起，然后就可以算它的库存销售情况。
+**记住：代码循环永远比循环数据库操作要快的多**
+
+``` ru
+def bill_inventory_valuation_details products
+    bill_items = PurchaseOrderBillItem.joins(:purchase_order_bill => :purchase_order).
+                                       includes(:purchase_order_bill => :purchase_order).
+                                       where("purchase_order_bills.status = ?", PurchaseOrderBill::STATUS[:finished]).
+                                       where("purchase_order_bills.date BETWEEN ? AND ?", @start_date, @end_date).
+                                       where("purchase_order_bill_items.product_id IN (?)", products.pluck(:id)).
+                                       group_by(&:product_id)
+  end
+
+  def sell_inventory_valuation_details products
+    sell_items = OutStorageOrderItem.joins(:out_storage_order).
+                                     includes(:out_storage_order).
+                                     where("out_storage_orders.out_storage_order_type = ?", 3).
+                                     where("out_storage_orders.created_at BETWEEN ? AND ?", @start_date.beginning_of_day, @end_date.end_of_day).
+                                     where("out_storage_orders.package_id IS NOT NULL OR out_storage_orders.package_group_id IS NOT NULL").
+                                     where("out_storage_order_items.product_id IN (?)", products.pluck(:id)).
+                                     group_by(&:product_id)
+  end
+
+  def adjust_inventory_valuation_details products
+    adjust = AdjustInventoryRecord.where("the_date BETWEEN ? AND ?", @start_date, @end_date).where(product_id: products.pluck(:id)).group_by(&:product_id)
+  end
+
+  def package_inventory_valuation_details products
+    package_items = PackageItem.eager_load(:package).where(product_id: products.pluck(:id)).
+                                                  where("packages.state = ?", Package::STATE_VALUES[:processed]).
+                                                  where("packages.dropship = ?", false).
+                                                  where("packages.shipped_at >= ? AND packages.shipped_at <= ?", @start_date, @end_date).group_by(&:product_id)
+  end
+```
+
 这样原先没有进行批量操作会耗时接近12个小时，使用了批量操作后仅为2个多小时。
 
 
