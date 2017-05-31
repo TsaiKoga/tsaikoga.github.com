@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-04-09T11:40:24+08:00</updated>
+  <updated>2017-05-31T10:16:13+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -579,6 +579,71 @@
 </span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span> <span class="o">.</span><span class="n">.</span><span class="o">.</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>批量的产品分别进行采购单Bill,销售单Sell，包裹Package，还有调整库存单据Adjust的查询然后全部group_by产品ID，
+最后将以产品ID来循环，将这个产品的所有单据组合一起，然后就可以算它的库存销售情况。
+<strong>记住：代码循环永远比循环数据库操作要快的多</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">bill_inventory_valuation_details</span> <span class="n">products</span>
+</span><span class='line'>    <span class="n">bill_items</span> <span class="o">=</span> <span class="no">PurchaseOrderBillItem</span><span class="o">.</span><span class="n">joins</span><span class="p">(</span><span class="ss">:purchase_order_bill</span> <span class="o">=&gt;</span> <span class="ss">:purchase_order</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                       <span class="n">includes</span><span class="p">(</span><span class="ss">:purchase_order_bill</span> <span class="o">=&gt;</span> <span class="ss">:purchase_order</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                       <span class="n">where</span><span class="p">(</span><span class="s2">&quot;purchase_order_bills.status = ?&quot;</span><span class="p">,</span> <span class="ss">PurchaseOrderBill</span><span class="p">:</span><span class="ss">:STATUS</span><span class="o">[</span><span class="ss">:finished</span><span class="o">]</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                       <span class="n">where</span><span class="p">(</span><span class="s2">&quot;purchase_order_bills.date BETWEEN ? AND ?&quot;</span><span class="p">,</span> <span class="vi">@start_date</span><span class="p">,</span> <span class="vi">@end_date</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                       <span class="n">where</span><span class="p">(</span><span class="s2">&quot;purchase_order_bill_items.product_id IN (?)&quot;</span><span class="p">,</span> <span class="n">products</span><span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="ss">:id</span><span class="p">))</span><span class="o">.</span>
+</span><span class='line'>                                       <span class="n">group_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:product_id</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">sell_inventory_valuation_details</span> <span class="n">products</span>
+</span><span class='line'>    <span class="n">sell_items</span> <span class="o">=</span> <span class="no">OutStorageOrderItem</span><span class="o">.</span><span class="n">joins</span><span class="p">(</span><span class="ss">:out_storage_order</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                     <span class="n">includes</span><span class="p">(</span><span class="ss">:out_storage_order</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                     <span class="n">where</span><span class="p">(</span><span class="s2">&quot;out_storage_orders.out_storage_order_type = ?&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                     <span class="n">where</span><span class="p">(</span><span class="s2">&quot;out_storage_orders.created_at BETWEEN ? AND ?&quot;</span><span class="p">,</span> <span class="vi">@start_date</span><span class="o">.</span><span class="n">beginning_of_day</span><span class="p">,</span> <span class="vi">@end_date</span><span class="o">.</span><span class="n">end_of_day</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                     <span class="n">where</span><span class="p">(</span><span class="s2">&quot;out_storage_orders.package_id IS NOT NULL OR out_storage_orders.package_group_id IS NOT NULL&quot;</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                     <span class="n">where</span><span class="p">(</span><span class="s2">&quot;out_storage_order_items.product_id IN (?)&quot;</span><span class="p">,</span> <span class="n">products</span><span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="ss">:id</span><span class="p">))</span><span class="o">.</span>
+</span><span class='line'>                                     <span class="n">group_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:product_id</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">adjust_inventory_valuation_details</span> <span class="n">products</span>
+</span><span class='line'>    <span class="n">adjust</span> <span class="o">=</span> <span class="no">AdjustInventoryRecord</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="s2">&quot;the_date BETWEEN ? AND ?&quot;</span><span class="p">,</span> <span class="vi">@start_date</span><span class="p">,</span> <span class="vi">@end_date</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">product_id</span><span class="p">:</span> <span class="n">products</span><span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="ss">:id</span><span class="p">))</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:product_id</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">package_inventory_valuation_details</span> <span class="n">products</span>
+</span><span class='line'>    <span class="n">package_items</span> <span class="o">=</span> <span class="no">PackageItem</span><span class="o">.</span><span class="n">eager_load</span><span class="p">(</span><span class="ss">:package</span><span class="p">)</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">product_id</span><span class="p">:</span> <span class="n">products</span><span class="o">.</span><span class="n">pluck</span><span class="p">(</span><span class="ss">:id</span><span class="p">))</span><span class="o">.</span>
+</span><span class='line'>                                                  <span class="n">where</span><span class="p">(</span><span class="s2">&quot;packages.state = ?&quot;</span><span class="p">,</span> <span class="ss">Package</span><span class="p">:</span><span class="ss">:STATE_VALUES</span><span class="o">[</span><span class="ss">:processed</span><span class="o">]</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                                  <span class="n">where</span><span class="p">(</span><span class="s2">&quot;packages.dropship = ?&quot;</span><span class="p">,</span> <span class="kp">false</span><span class="p">)</span><span class="o">.</span>
+</span><span class='line'>                                                  <span class="n">where</span><span class="p">(</span><span class="s2">&quot;packages.shipped_at &gt;= ? AND packages.shipped_at &lt;= ?&quot;</span><span class="p">,</span> <span class="vi">@start_date</span><span class="p">,</span> <span class="vi">@end_date</span><span class="p">)</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:product_id</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
