@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-05-31T12:17:44+08:00</updated>
+  <updated>2017-10-03T11:07:31+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,226 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[利用视图解决分页与排序的矛盾]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2017/10/02/li-yong-shi-tu-jie-jue-fen-ye-yu-pai-xu-de-mao-dun/"/>
+    <updated>2017-10-02T18:34:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2017/10/02/li-yong-shi-tu-jie-jue-fen-ye-yu-pai-xu-de-mao-dun</id>
+    <content type="html"><![CDATA[<p>刚入职新公司的时候，被数据库的设计吓了一跳；要在一个有缺陷的数据库上解决数据量很大而导致的查询速度慢问题。</p>
+
+<p>首先，先来讲一下这个场景，这是一个APP的交易页面，他要显示的列表信息是衣服的款号，在这款号下面有这个款的几个SKU
+（颜色尺码），以及SKU对应的销售量和交易额。</p>
+
+<p><img src="/images/posts/2017-10-02/mysql-view.jpg" title="视图场景" alt="视图场景" /></p>
+
+<p>然后，数据库中有三个单据表：开单OrderCreate，改单OrderModification，退货单ReturnGoods；
+这三张表各有三个子表 开单子表OrderCreateGoodsSku，改单子表OrderModificationGoodsSku，退货子表ReturnGoodsSku；
+这些子表都有对应的goods_count和goods_price，分别代表着交易数量和单价；</p>
+
+<p>所以，销售量是（开单+改单-退货）的goods_count，
+交易额是（开单goods_count * 开单goods_price + 改单goods_count * 改单goods_price &ndash; 退货goods_count * 退货goods_price)
+当然，由于还要显示颜色尺码以及款号，我们还需要去join 有这些字段的表才行。</p>
+
+<p>由于全部时间单据实在太多，一次性找出来构造成所需要的形式也很耗时；再者，随着时间推移，单据越来越多，这查询速度就更加不能接受了。</p>
+
+<p>所以应该使用分页解决。但是这里还有一个需求，就是要根据交易额和销售量排序。也就是三张表查出的数据进行计算后的结果集进行排序。</p>
+
+<p>但是这样就无法真正意义上的分页了，所以有没有办法在排序后，取出结果集前进行分页呢？</p>
+
+<p>答案是使用视图。</p>
+
+<h3>什么是视图</h3>
+
+<hr />
+
+<p>视图是一个 <strong>虚拟表</strong>，其内容由查询定义。同真实的表一样，视图包含一系列带有名称的列和行数据。
+但是，视图并不在数据库中以存储的数据值集形式存在。行和列数据来自由定义视图的查询所引用的表，并且在 <strong>引用视图时动态生成</strong>。</p>
+
+<p>视图只是一段逻辑。</p>
+
+<h3>使用视图解决排序与分页的矛盾</h3>
+
+<p>现在我们只需要把三张子表的内容全部 union 成一张虚拟表就行了</p>
+
+<p><code>sql
+CREATE ALGORITHM=UNDEFINED DEFINER=`juniu`@`%` SQL SECURITY DEFINER VIEW `juniu_transfer` AS
+(select `juniu_order_create_goods_sku`.`goods_id` AS `goods_id`,`juniu_order_create_goods_sku`.`goods_count` AS `goods_count`,`juniu_order_create_goods_sku`.`goods_price` AS `goods_price`,`juniu_order_create_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_order_create_goods_sku`.`store_id` AS `store_id`,`juniu_order_create_goods_sku`.`customer_id` AS `customer_id`,`juniu_order_create_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_order_create_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_order_create_goods_sku`.`timestamp` AS `timestamp`,`juniu_order_create_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_order_create_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_order_create_goods_sku`.`deleted_at` AS `deleted_at` from `juniu_order_create_goods_sku`)
+union all
+(select `juniu_order_modification_goods_sku`.`goods_id` AS `goods_id`,`juniu_order_modification_goods_sku`.`goods_count_diff` AS `goods_count_diff`,`juniu_order_modification_goods_sku`.`goods_price` AS `goods_price`,`juniu_order_modification_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_order_modification_goods_sku`.`store_id` AS `store_id`,`juniu_order_modification_goods_sku`.`customer_id` AS `customer_id`,`juniu_order_modification_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_order_modification_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_order_modification_goods_sku`.`timestamp` AS `timestamp`,`juniu_order_modification_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_order_modification_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_order_modification_goods_sku`.`deleted_at` AS `deleted_at` from `juniu_order_modification_goods_sku`)
+union all
+(select `juniu_return_goods_sku`.`goods_id` AS `goods_id`,(-(1) * `juniu_return_goods_sku`.`goods_count`) AS `-1*goods_count`,`juniu_return_goods_sku`.`goods_price` AS `goods_price`,`juniu_return_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_return_goods_sku`.`store_id` AS `store_id`,`juniu_return_goods_sku`.`customer_id` AS `customer_id`,`juniu_return_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_return_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_return_goods_sku`.`timestamp` AS `timestamp`,`juniu_return_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_return_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_return_goods_sku`.`deleted_at` AS `deleted_at` from `juniu_return_goods_sku`);
+</code></p>
+
+<p>这就是创建的视图，它有了我们想要的goods_count和goods_price，并且将ReturnGoodsSku的goods_count改为了负数，这样我们可以一次性SUM起来，
+实现交易额和销量的运算；</p>
+
+<p>然后在取出所有数据之前对结果集进行排序。最后通过top或limit取出来；</p>
+
+<p>你也可以先建立这个视图的Model，然后就可以通过ORM来获取结果集。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mysql索引]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2017/10/02/mysqlsuo-yin/"/>
+    <updated>2017-10-02T18:05:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2017/10/02/mysqlsuo-yin</id>
+    <content type="html"><![CDATA[<h4><a href="#1">1.索引的优缺点原因</a></h4>
+
+<h5><a href="#1.1">1.1为什么添加索引，查询速度变快</a></h5>
+
+<h5><a href="#1.2">1.2为什么添加上索引，速度会变慢</a></h5>
+
+<h4><a href="#2">2.索引的类别</a></h4>
+
+<h5><a href="#2.1">2.1主键索引</a></h5>
+
+<h5><a href="#2.2">2.2唯一索引</a></h5>
+
+<h5><a href="#2.3">2.3普通索引</a></h5>
+
+<h5><a href="#2.4">2.4多列索引</a></h5>
+
+<h5><a href="#2.5">2.5全文索引</a></h5>
+
+<br/>
+
+
+<p>之前一直对索引没有很清晰的认识，每次一创建表时，就给外键加索引，只知道索引提高mysql搜索效率；
+前阵子查阅了很多资料，有了比较清晰的认识，现在给出如下总结：</p>
+
+<br/>
+
+
+
+
+<h2 id='1'>索引的优缺点原因</h2>
+
+
+<hr />
+
+<h3 id='1.1'>为什么添加索引，查询速度变快</h3>
+
+
+<hr />
+
+<p>计算机查找某一条记录，如果不加索引，会在整个表中一条一条比较，将匹配的记录加入 <strong>结果集</strong>，很多人说这样会很慢，加了索引就快了。</p>
+
+<p>为什么？</p>
+
+<p>计算机先在索引列表中找到记录的 <strong>位置</strong>，既 <strong>rowid</strong>，然后直接去表中的对应位置取出记录，我就不明白了，查找索引列表难道不需要一条一条的匹配？计算机又不会出现说，看索引列表比直接看表中的记录要快，先在索引列表中找到记录对应的rowid也是要遍历的？难道不是同样的吗？</p>
+
+<p>原因在于 <strong>索引列表是排好序的</strong>，可以通过类似于 <strong>二分查找</strong> 快速找到。直接查找是O(n)，二分查找是log2(n)</p>
+
+<br/>
+
+
+
+
+<h3 id='1.2'>为什么添加上索引，速度会变慢</h3>
+
+
+<hr />
+
+<p>根据上面的回答，添加索引会 <strong>建立有序的索引列表</strong>，建立 <strong>索引都需要维护</strong>，你  <strong>创建、插入或删除</strong> 记录，都要到索引列表查询索引的位置并进行创建、插入或删除索引，这样非常耗时。那如果压根没去用索引，或者很少用它，这种无效索引反而会降低效率。</p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='2'>索引的类别</h2>
+
+
+<hr />
+
+<h3 id='2.1'>主键索引</h3>
+
+
+<hr />
+
+<p>添加PRIMARY KEY（主键索引）</p>
+
+<p><code>sql
+ALTER TABLE `table_name` ADD PRIMARY KEY ( `column` )
+</code></p>
+
+<br/>
+
+
+<h3 id='2.2'>唯一索引</h3>
+
+
+<hr />
+
+<p>添加UNIQUE(唯一索引)</p>
+
+<p><code>sql
+ALTER TABLE `table_name` ADD UNIQUE ( `column` )
+</code></p>
+
+<br/>
+
+
+<h3 id='2.3'>普通索引</h3>
+
+
+<hr />
+
+<p>添加INDEX(普通索引)</p>
+
+<p><code>sql
+ALTER TABLE `table_name` ADD INDEX index_name ( `column`)
+</code></p>
+
+<br/>
+
+
+<h3 id='2.4'>多列索引</h3>
+
+
+<hr />
+
+<p>添加多列索引</p>
+
+<p><code>sql
+ALTER TABLE `table_name` ADD INDEX index_name ( `column1`,`column2`, `column3` )
+</code></p>
+
+<br/>
+
+
+<h3 id='2.5'>全文索引</h3>
+
+
+<hr />
+
+<p>添加FULLTEXT(全文索引)
+<code>sql
+ALTER TABLE `table_name` ADD FULLTEXT (`column`)
+</code></p>
+
+<h4>如何使用：</h4>
+
+<p>在MySQL中创建全文索引之后，现在就该了解如何使用了。众所周知，在数据库中进行模糊查询是使用LIKE关键字进行查询，例如：
+<code>sql
+SELECT * FROM article WHERE content LIKE '%查询字符串%'
+</code></p>
+
+<p>那么，我们使用全文索引也是这样用的吗？当然不是，我们必须使用特有的语法才能使用全文索引进行查询。例如，我们想要在article表的title和content列中全文检索指定的查询字符串，可以如下编写SQL语句：</p>
+
+<p><code>sql
+SELECT * FROM article WHERE MATCH(title, content) AGAINST('查询字符串')
+</code></p>
+
+<br/>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rails 利用批量操作提速]]></title>
