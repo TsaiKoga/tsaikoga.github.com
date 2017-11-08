@@ -33,6 +33,8 @@ categories: [Editor]
 
 <br/>
 
+终端输入atom ./ 将会用 atom 打开当前目录
+
 <h2 id="2">内容</h2>
 
 [2.1. 命令板](#2.1)

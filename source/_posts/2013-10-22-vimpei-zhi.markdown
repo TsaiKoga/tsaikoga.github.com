@@ -16,6 +16,8 @@ categories: [Editor]
 - 打开文件    :open filename
 - 注释        NERD_commenter命令是\\cc或,cc
 - 解除注释     NERD_commenter命令是\\cu或,cu
+- 开启高亮    :syntax on
+- 开启行号    :set number
 
 ####.vimrc配置文件
 
