@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-10-03T11:07:31+08:00</updated>
+  <updated>2017-10-03T11:14:17+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -37,7 +37,7 @@
 
 <p>所以应该使用分页解决。但是这里还有一个需求，就是要根据交易额和销售量排序。也就是三张表查出的数据进行计算后的结果集进行排序。</p>
 
-<p>但是这样就无法真正意义上的分页了，所以有没有办法在排序后，取出结果集前进行分页呢？</p>
+<p>但是这样就无法真正意义上的分页了，所以有没有办法 <strong>在排序后，取出结果集前进行分页</strong> 呢？</p>
 
 <p>答案是使用视图。</p>
 
@@ -56,11 +56,14 @@
 
 <p><code>sql
 CREATE ALGORITHM=UNDEFINED DEFINER=`juniu`@`%` SQL SECURITY DEFINER VIEW `juniu_transfer` AS
-(select `juniu_order_create_goods_sku`.`goods_id` AS `goods_id`,`juniu_order_create_goods_sku`.`goods_count` AS `goods_count`,`juniu_order_create_goods_sku`.`goods_price` AS `goods_price`,`juniu_order_create_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_order_create_goods_sku`.`store_id` AS `store_id`,`juniu_order_create_goods_sku`.`customer_id` AS `customer_id`,`juniu_order_create_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_order_create_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_order_create_goods_sku`.`timestamp` AS `timestamp`,`juniu_order_create_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_order_create_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_order_create_goods_sku`.`deleted_at` AS `deleted_at` from `juniu_order_create_goods_sku`)
+(select `juniu_order_create_goods_sku`.`goods_id` AS `goods_id`,`juniu_order_create_goods_sku`.`goods_count` AS `goods_count`,`juniu_order_create_goods_sku`.`goods_price` AS `goods_price`,`juniu_order_create_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_order_create_goods_sku`.`store_id` AS `store_id`,`juniu_order_create_goods_sku`.`customer_id` AS `customer_id`,`juniu_order_create_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_order_create_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_order_create_goods_sku`.`timestamp` AS `timestamp`,`juniu_order_create_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_order_create_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_order_create_goods_sku`.`deleted_at` AS `deleted_at`
+ from `juniu_order_create_goods_sku`)
 union all
-(select `juniu_order_modification_goods_sku`.`goods_id` AS `goods_id`,`juniu_order_modification_goods_sku`.`goods_count_diff` AS `goods_count_diff`,`juniu_order_modification_goods_sku`.`goods_price` AS `goods_price`,`juniu_order_modification_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_order_modification_goods_sku`.`store_id` AS `store_id`,`juniu_order_modification_goods_sku`.`customer_id` AS `customer_id`,`juniu_order_modification_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_order_modification_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_order_modification_goods_sku`.`timestamp` AS `timestamp`,`juniu_order_modification_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_order_modification_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_order_modification_goods_sku`.`deleted_at` AS `deleted_at` from `juniu_order_modification_goods_sku`)
+(select `juniu_order_modification_goods_sku`.`goods_id` AS `goods_id`,`juniu_order_modification_goods_sku`.`goods_count_diff` AS `goods_count_diff`,`juniu_order_modification_goods_sku`.`goods_price` AS `goods_price`,`juniu_order_modification_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_order_modification_goods_sku`.`store_id` AS `store_id`,`juniu_order_modification_goods_sku`.`customer_id` AS `customer_id`,`juniu_order_modification_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_order_modification_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_order_modification_goods_sku`.`timestamp` AS `timestamp`,`juniu_order_modification_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_order_modification_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_order_modification_goods_sku`.`deleted_at` AS `deleted_at`
+  from `juniu_order_modification_goods_sku`)
 union all
-(select `juniu_return_goods_sku`.`goods_id` AS `goods_id`,(-(1) * `juniu_return_goods_sku`.`goods_count`) AS `-1*goods_count`,`juniu_return_goods_sku`.`goods_price` AS `goods_price`,`juniu_return_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_return_goods_sku`.`store_id` AS `store_id`,`juniu_return_goods_sku`.`customer_id` AS `customer_id`,`juniu_return_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_return_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_return_goods_sku`.`timestamp` AS `timestamp`,`juniu_return_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_return_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_return_goods_sku`.`deleted_at` AS `deleted_at` from `juniu_return_goods_sku`);
+(select `juniu_return_goods_sku`.`goods_id` AS `goods_id`,(-(1) * `juniu_return_goods_sku`.`goods_count`) AS `-1*goods_count`,`juniu_return_goods_sku`.`goods_price` AS `goods_price`,`juniu_return_goods_sku`.`goods_sku_id` AS `goods_sku_id`,`juniu_return_goods_sku`.`store_id` AS `store_id`,`juniu_return_goods_sku`.`customer_id` AS `customer_id`,`juniu_return_goods_sku`.`seller_user_id` AS `seller_user_id`,`juniu_return_goods_sku`.`operate_user_id` AS `operate_user_id`,`juniu_return_goods_sku`.`timestamp` AS `timestamp`,`juniu_return_goods_sku`.`transaction_id` AS `transaction_id`,`juniu_return_goods_sku`.`dev_flag` AS `dev_flag`,`juniu_return_goods_sku`.`deleted_at` AS `deleted_at`
+  from `juniu_return_goods_sku`);
 </code></p>
 
 <p>这就是创建的视图，它有了我们想要的goods_count和goods_price，并且将ReturnGoodsSku的goods_count改为了负数，这样我们可以一次性SUM起来，
