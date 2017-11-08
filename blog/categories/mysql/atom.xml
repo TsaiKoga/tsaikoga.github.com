@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2017-10-03T11:14:17+08:00</updated>
+  <updated>2017-11-08T22:01:32+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -72,6 +72,9 @@ union all
 <p>然后在取出所有数据之前对结果集进行排序。最后通过top或limit取出来；</p>
 
 <p>你也可以先建立这个视图的Model，然后就可以通过ORM来获取结果集。</p>
+
+<p>最后，说说效果，其实效果还是不能接受，因为三张表的数据 union all 后数据量太庞大，导致加载速度还是非常非常慢；
+mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 ]]></content>
   </entry>
   
