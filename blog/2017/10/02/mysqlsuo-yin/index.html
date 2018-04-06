@@ -6,7 +6,7 @@
 	<title>Mysql索引 - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="1.索引的优缺点原因 1.1为什么添加索引，查询速度变快 1.2为什么添加上索引，速度会变慢 2.索引的类别 2.1主键索引 2.2唯一索引 2.3普通索引 2.4多列索引 2.5全文索引 之前一直对索引没有很清晰的认识，每次一创建表时，就给外键加索引，只知道索引提高mysql搜索效率； &hellip;">
+	<meta name="description" content="1.索引的优缺点原因 1.1为什么添加索引，查询速度变快 1.2为什么添加上索引，速度会变慢 2.索引的类别 2.1主键索引 2.2唯一索引 2.3普通索引 2.4多列索引 2.5全文索引 3.加索引情况 3.1 关键词 之前一直对索引没有很清晰的认识，每次一创建表时，就给外键加索引， &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -115,6 +115,10 @@
 <h5><a href="#2.4">2.4多列索引</a></h5>
 
 <h5><a href="#2.5">2.5全文索引</a></h5>
+
+<h4><a href="#3">3.加索引情况</a></h4>
+
+<h5><a href="#3.1">3.1 关键词</a></h5>
 
 <br/>
 
@@ -270,6 +274,32 @@
 
 <br/>
 
+
+
+
+<p><h2 id='3'>加索引的情况</h3></p>
+
+<p><h3 id='3.1'> 关键词 </h3>
+一些关键词代表可能会经常用到索引：</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">group</span> <span class="k">by</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">order</span> <span class="k">by</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">SUM</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">MAX</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
+但是给 created_at 添加索引之后，点击排序，反应相当快。</p>
 </div>
 
 <div class="meta">

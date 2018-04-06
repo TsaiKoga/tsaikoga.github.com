@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-04-06T12:52:07+08:00</updated>
+  <updated>2018-04-06T13:02:59+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -307,6 +307,10 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <h5><a href="#2.5">2.5全文索引</a></h5>
 
+<h4><a href="#3">3.加索引情况</a></h4>
+
+<h5><a href="#3.1">3.1 关键词</a></h5>
+
 <br/>
 
 
@@ -461,6 +465,32 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <br/>
 
+
+
+
+<p><h2 id='3'>加索引的情况</h3></p>
+
+<p><h3 id='3.1'> 关键词 </h3>
+一些关键词代表可能会经常用到索引：</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">group</span> <span class="k">by</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">order</span> <span class="k">by</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">SUM</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">MAX</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
+但是给 created_at 添加索引之后，点击排序，反应相当快。</p>
 ]]></content>
   </entry>
   
