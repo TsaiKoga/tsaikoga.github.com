@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "利用视图解决分页与排序的矛盾"
+title: "利用select union join 解决分页与排序的矛盾"
 date: 2017-10-02 18:34
 comments: true
 categories: [Mysql]
@@ -27,7 +27,7 @@ categories: [Mysql]
 
 但是这样就无法真正意义上的分页了，所以有没有办法 **在排序后，取出结果集前进行分页** 呢？
 
-答案是使用视图。
+CTO建议使用视图。
 
 
 ### 什么是视图
@@ -61,5 +61,108 @@ union all
 
 你也可以先建立这个视图的Model，然后就可以通过ORM来获取结果集。
 
-最后，说说效果，其实效果还是不能接受，因为三张表的数据 union all 后数据量太庞大，导致加载速度还是非常非常慢；
+最后，说说效果，其实效果还是不能接受，因为三张表的数据 union all 后数据量太庞大，导致加载速度还是非常非常慢，union all时间实在太长了；
 mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。
+
+### 使用 select union join as 解决排序与分页的矛盾
+
+那么该怎么办呢，我是可以试图把union all的数据减少，也就是先用 where 进行筛选然后再 union all；
+然后对这些已经筛选并且合并的数据进行 join 关联操作（这样可以 **大大减少 join 关联的内容**）；
+最后再次将他们 select 出来：
+
+``` sql
+SELECT
+	g.goods_id,
+	SUM(t.saleVolumn) AS saleVolumn
+FROM
+	juniu_goods AS g
+LEFT JOIN (
+	(
+		SELECT
+			c.goods_id AS goods_id,
+			c.goods_count AS goods_count,
+			c.goods_price AS goods_price,
+			sum(
+				c.goods_count * c.goods_price
+			) AS saleVolumn,
+			c.goods_sku_id AS goods_sku_id,
+			c.store_id AS store_id,
+			c.customer_id AS customer_id,
+			c.seller_user_id AS seller_user_id,
+			c.operate_user_id AS operate_user_id,
+			c. TIMESTAMP AS TIMESTAMP,
+			c.transaction_id AS transaction_id,
+			c.dev_flag AS dev_flag,
+			c.deleted_at AS deleted_at,
+			'create' AS order_type,
+			0 AS return_count
+		FROM
+			juniu_order_create_goods_sku AS c
+		WHERE
+			c.store_id = 651
+		GROUP BY
+			goods_id
+	)
+	UNION ALL
+		(
+			SELECT
+				m.goods_id AS goods_id,
+				m.goods_count_diff AS goods_count_diff,
+				m.goods_price AS goods_price,
+				sum(
+					m.goods_count_diff * m.goods_price
+				) AS saleVolumn,
+				m.goods_sku_id AS goods_sku_id,
+				m.store_id AS store_id,
+				m.customer_id AS customer_id,
+				m.seller_user_id AS seller_user_id,
+				m.operate_user_id AS operate_user_id,
+				m. TIMESTAMP AS TIMESTAMP,
+				m.transaction_id AS transaction_id,
+				m.dev_flag AS dev_flag,
+				m.deleted_at AS deleted_at,
+				'modification' AS order_type,
+				0 AS return_count
+			FROM
+				juniu_order_modification_goods_sku AS m
+			WHERE
+				m.store_id = 651
+			GROUP BY
+				goods_id
+		)
+	UNION ALL
+		(
+			SELECT
+				r.goods_id AS goods_id,
+				(- 1 * r.goods_count) AS goods_count,
+				r.goods_price AS goods_price,
+				sum(- 1 * r.goods_price) AS saleVolumn,
+				r.goods_sku_id AS goods_sku_id,
+				r.store_id AS store_id,
+				r.customer_id AS customer_id,
+				r.seller_user_id AS seller_user_id,
+				r.operate_user_id AS operate_user_id,
+				r. TIMESTAMP AS TIMESTAMP,
+				r.transaction_id AS transaction_id,
+				r.dev_flag AS dev_flag,
+				r.deleted_at AS deleted_at,
+				'return' AS order_type,
+				r.goods_count AS return_count
+			FROM
+				juniu_return_goods_sku AS r
+			WHERE
+				r.store_id = 651
+			GROUP BY
+				goods_id
+		)
+) AS t ON g.goods_id = t.goods_id
+WHERE
+	g.store_id = 651
+GROUP BY
+	g.goods_id
+ORDER BY
+	saleVolumn DESC
+LIMIT 0,
+ 20
+```
+这个效果拔群！
