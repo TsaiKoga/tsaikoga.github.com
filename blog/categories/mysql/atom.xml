@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-04-30T15:37:44+08:00</updated>
+  <updated>2018-04-30T15:48:16+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -392,8 +392,14 @@ select SUM()
 select MAX()
 </code></p>
 
+<p><code>sql
+JOIN()
+</code></p>
+
 <p>其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
-但是给 created_at 添加索引之后，点击排序，反应相当快。</p>
+但是给 created_at 添加索引之后，点击排序，反应相当快。
+或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，如果直接使用union，每个union语句中有
+join语句，join语句如果不加索引速度非常慢，加了索引在使用union 速度提升很多；</p>
 ]]></content>
   </entry>
   
