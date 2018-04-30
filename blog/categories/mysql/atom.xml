@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-04-06T13:10:29+08:00</updated>
+  <updated>2018-04-30T15:37:44+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -267,6 +267,8 @@ WHERE</p>
 
 <p>根据上面的回答，添加索引会 <strong>建立有序的索引列表</strong>，建立 <strong>索引都需要维护</strong>，你  <strong>创建、插入或删除</strong> 记录，都要到索引列表查询索引的位置并进行创建、插入或删除索引，这样非常耗时。那如果压根没去用索引，或者很少用它，这种无效索引反而会降低效率。</p>
 
+<p>不过庆幸的是，我们目前很多主键都是使用自增 id，这样插入更新等操作都可以通过寻找到指定索引，新增叶子节点，效率挺高。</p>
+
 <br/>
 
 
@@ -327,11 +329,16 @@ ALTER TABLE `table_name` ADD INDEX index_name ( `column`)
 
 <hr />
 
-<p>添加多列索引</p>
+<p>也叫联合索引；
+添加多列索引</p>
 
 <p><code>sql
 ALTER TABLE `table_name` ADD INDEX index_name ( `column1`,`column2`, `column3` )
-</code></p>
+</code>
+一般用在 where 几个字段，并且使用频繁的语句；
+当使用联合索引后，第一个 column1 将是一级目录，所以不用单独给它做索引，因为他已经是单独的索引了；</p>
+
+<p>第二个 column2 是二级目录索引，所以如果你也可以增加多一个单独索引，因为不可能直接使用二级目录的；</p>
 
 <br/>
 
