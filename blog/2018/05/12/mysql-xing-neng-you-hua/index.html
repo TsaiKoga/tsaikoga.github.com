@@ -1,0 +1,640 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Mysql 性能优化 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="1.数据库优化的目的： 2.SQL及索引优化 一、慢查询日志设置 二、慢查询日志的分析工具 2.1 如何通过慢查询日志发现有问题的SQL 2.2 如何分析SQL查询 三、建立索引 3.1 如何选择合适的列建立索引： 3.2 索引的维护和优化—重复及冗余索引 3.3 删除不用索引 四、系统配置优化 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->   
+    <script src="/javascripts/ajaxify.js"></script>
+   
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  
+  
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+        
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Mysql 性能优化</h2>
+	<div class="entry-content"><h3><a href="#1">1.数据库优化的目的：</a></h3>
+
+<h3><a href="#2">2.SQL及索引优化</a></h3>
+
+<h4><a href="#2.1">一、慢查询日志设置</a></h4>
+
+<h4><a href="#2.2">二、慢查询日志的分析工具</a></h4>
+
+<h5><a href="#2.2.1">2.1 如何通过慢查询日志发现有问题的SQL</a></h5>
+
+<h5><a href="#2.2.2">2.2 如何分析SQL查询</a></h5>
+
+<h4><a href="#2.2">三、建立索引</a></h4>
+
+<h5><a href="#2.3.1">3.1 如何选择合适的列建立索引：</a></h5>
+
+<h5><a href="#2.3.2">3.2 索引的维护和优化—重复及冗余索引</a></h5>
+
+<h5><a href="#2.3.3">3.3 删除不用索引</a></h5>
+
+<h4><a href="#2.4">四、系统配置优化</a></h4>
+
+<h3><a href="#3">硬件要求</a></h3>
+
+<h1 id='1'>数据库优化的目的：</h1>
+
+
+<hr />
+
+<h4>避免出现页面访问错误</h4>
+
+<ul>
+<li>由于数据库连接timeout产生页面5xx错误</li>
+<li>由于慢查询造成页面无法加载</li>
+<li>由于阻塞（加锁）造成数据无法提交</li>
+</ul>
+
+
+<br/>
+
+
+<h4>增加数据库稳定性</h4>
+
+<ul>
+<li>很多数据库查询都是由低效的查询引起的</li>
+</ul>
+
+
+<br/>
+
+
+<h4>优化用户体验</h4>
+
+<ul>
+<li>流畅页面访问速度</li>
+<li>良好的网站功能体验</li>
+</ul>
+
+
+<br/>
+
+
+<p><img src="/images/posts/2018-05-12/mysql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E9%87%91%E5%AD%97%E5%A1%94.gif" title="mysql性能优化金字塔" alt="mysql性能优化金字塔" /></p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h1 id='2'>SQL及索引优化</h1>
+
+
+<hr />
+
+<h3>如何发现有问题的SQL？</h3>
+
+<br/>
+
+
+
+
+<h2 id='2.1'>一、慢查询日志设置</h2>
+
+
+<hr />
+
+<p>使用 Mysql 慢查日志对有效率问题的 SQL 进行监控</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="o">#</span> <span class="err">首先进入</span> <span class="n">mysql</span> <span class="err">的</span><span class="n">cli</span>
+</span><span class='line'><span class="k">show</span> <span class="n">variables</span> <span class="k">like</span> <span class="ss">&quot;slow_query_log&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/posts/2018-05-12/mysql_query_log.gif" title="mysql query log" alt="mysql query log" /></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">set</span> <span class="k">global</span> <span class="n">slow_query_log_file</span><span class="o">=</span><span class="s1">&#39;/home/mysql/sql_log/mysql_slow.log&#39;</span> <span class="o">#</span> <span class="err">设置慢查询日志存储路径</span>
+</span><span class='line'><span class="k">set</span> <span class="k">global</span> <span class="n">log_queries_now_using_indexes</span><span class="o">=</span><span class="k">on</span><span class="p">;</span>                        <span class="o">#</span> <span class="err">将没有索引的慢查询加入到慢查询日志中</span>
+</span><span class='line'><span class="k">set</span> <span class="k">global</span> <span class="n">long_query_time</span><span class="o">=</span><span class="mi">1</span>                                        <span class="o">#</span> <span class="err">将大于</span><span class="mi">1</span><span class="n">s</span><span class="err">的设置到慢查询日志中</span>
+</span><span class='line'><span class="k">Set</span> <span class="k">global</span> <span class="n">slow_query_log</span><span class="o">=</span><span class="k">on</span><span class="p">;</span>                                       <span class="o">#</span> <span class="err">开启慢查询日志记录</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>慢查询日志所包含的内容</h3>
+
+<blockquote><p>执行 SQL 的主机信息
+User@Host:root[root] @ localhost []
+SQL的执行信息
+Query_time: 0.000024 Lock_time: 0.0000 Rows_sent: 0  Rows_examined: 0
+SQL执行时间
+SET timestamp=1402389328
+SQL的内容
+select CONCAT(’storage engine:’,  @@storage_engine) as INFO;</p></blockquote>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='2.2'>二、慢查询日志的分析工具：</h2>
+
+
+<hr />
+
+<h4>mysqldumpslow</h4>
+
+<p><strong>mysqldumpslow</strong> [OPTS…] [LOGS…]    官方分析工具
+返回count为查询次数，time为查询时间 ，rows为查询返回行数</p>
+
+<p><img src="/images/posts/2018-05-12/mysqldumpslow.gif" alt="mysql dump slow" /></p>
+
+<br/>
+
+
+<h4>pt-query-digest</h4>
+
+<p>输出到文件：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">pt</span><span class="o">-</span><span class="n">query</span><span class="o">-</span><span class="n">digest</span> <span class="n">slow</span><span class="o">-</span><span class="n">log</span> <span class="o">&gt;</span> <span class="n">slow_log</span><span class="p">.</span><span class="n">report</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>输出到数据库表：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">pt</span><span class="o">-</span><span class="n">query</span><span class="o">-</span><span class="n">digest</span> <span class="n">slow</span><span class="p">.</span><span class="n">log</span> <span class="o">-</span><span class="n">review</span> <span class="n">h</span><span class="o">=</span><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">test</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mi">3306</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">query_review</span> <span class="c1">--create-reviewtable --review-history t=hostname_slow</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/posts/2018-05-12/pt-query-digest.gif" title="pt-query-digest" alt="图片无法显示" />
+<img src="/images/posts/2018-05-12/pt-query-digest2.gif" title="pt-query-digest" alt="图片无法显示" /></p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='2.2.1'>如何通过慢查询日志发现有问题的SQL</h2>
+
+
+<hr />
+
+<h4>1.查询次数多且每次查询占用时间长的SQL</h4>
+
+<p>通常为 pt-query-digest 分析的前几个查询</p>
+
+<h4>2.IO大的SQL</h4>
+
+<p>注意 pt-query-digest 分析中的 Rows examine 项【扫描行数越多，IO越大】</p>
+
+<h4>3.未命中索引的SQL</h4>
+
+<p>注意 pt-query-digest 分析中Rows examines 和 Rows Send 的对比 【如果扫描行数 远大于 发送行数，要么没有索引，要么索引无效，导致类似于全表扫描】</p>
+
+<p><img src="/images/posts/2018-05-12/pt-query-digest3.gif" title="pt-query-digest" alt="图片无法显示" /></p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='2.2.2'>如何分析SQL查询：</h2>
+
+
+<hr />
+
+<p>使用 explain 查询 SQL 的执行计划</p>
+
+<p><img src="/images/posts/2018-05-12/explain.gif" title="explain" alt="图片无法显示" /></p>
+
+<p>table：                显示这一行数据属于哪张表
+type：                 重要的列，显示连接使用了何种类型。从最好到最差的链接类型为const、eq_reg、ref、range、index 和 ALL
+possible_keys：        显示可能应用这张表中的索引。如果为空，没有可能的索引。
+Key：                  实际使用的索引。如果为NULL，则没有使用索引；
+key_len：              使用索引的长度。在不损失精确性的情况下，长度越短越好；
+ref：                  显示索引的哪一列被使用了，如果可能的话，是一个常数
+rows：                 MYSQL认为必须检查的用来返回请求数据的行数</p>
+
+<br/>
+
+
+<h3>Max优化：</h3>
+
+<p>对max字段使用索引，优化了explain的type；</p>
+
+<h3>子查询的优化：</h3>
+
+<p>通常情况下，把子查询优化成join，要注意是否一对多的关系，注意重复数据</p>
+
+<h3>Limit优化：</h3>
+
+<p>limit常用于分页操作，时常会伴随order by 从句使用，因此会使用 filesorts 这样会造成大量IO问题；</p>
+
+<h4>优化步骤1：</h4>
+
+<p>使用主键，或者索引列来进行Order by 操作；</p>
+
+<h4>优化步骤2：</h4>
+
+<p>记录上次返回主键，在下次查询使用主键过滤；【如果主键不是顺序增长的，有空缺，则返回的数量每页可能变少】，避免了数据量大时扫描过多的记录</p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id="2.3">三、建立索引</h2>
+
+
+<hr />
+
+<h3 id="2.3.1"> 3.1 如何选择合适的列建立索引：</h3>
+
+
+<hr />
+
+<br/>
+
+
+<p>1.在where从句，group by从句，order by从句，on从句出现的列；</p>
+
+<p>2.索引字段越小越好；</p>
+
+<p>3.离散度越大的列放在联合索引前面；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">payment</span> <span class="k">where</span> <span class="n">staff_id</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">and</span> <span class="n">customer_id</span> <span class="o">=</span> <span class="mi">584</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<br/>
+
+
+<p>是 index(staff_id, customer_id) 好？还是 index(customer_id, staff_id) 好？</p>
+
+<br/>
+
+
+<p>由于 customer_id 的离散度更大，所以应该使用 index(customer_id, staff_id)
+那么如何知道离散程度：
+可以通过一下查询：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">customer_id</span><span class="p">),</span> <span class="k">count</span><span class="p">(</span><span class="k">distinct</span> <span class="n">staff_id</span><span class="p">)</span> <span class="k">from</span> <span class="n">payment</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="/images/posts/2018-05-12/%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%E7%A6%BB%E6%95%A3%E5%BA%A6.gif" alt="联合索引离散度" /></p>
+
+<br/>
+
+
+<p>得到staff_id比较集中，离散程度比较好，所以选择 customer_id 来作为联合索引前面的字段；</p>
+
+<br/>
+
+
+
+
+<h3 id="2.3.2"> 索引的维护和优化—重复及冗余索引</h3>
+
+
+<p>重复的索引是指相同的列以相同的顺序建立的同类型的索引，如下表的 unique 索引中包含了 primary key 索引</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">create</span> <span class="k">table</span> <span class="n">test</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">id</span> <span class="nb">int</span> <span class="k">not</span> <span class="k">null</span> <span class="k">primary</span> <span class="k">key</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">name</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">title</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="k">not</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">Unique</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span><span class="n">engine</span><span class="o">=</span><span class="n">innodb</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用pt-duplicate-key-checker工具检查重复及冗余索引</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">pt</span><span class="o">-</span><span class="n">duplicate</span><span class="o">-</span><span class="k">key</span><span class="o">-</span><span class="n">checker</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">p</span> <span class="o">-</span><span class="n">h127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h3 id="2.3.3"> 删除不用索引：</h3>
+
+
+<p> mysql没有记录索引使用情况，但在PerconMysql，MariaDB中有INDEX_STATISTICS表来查看哪些索引未使用，但在mysql中目前只能通过慢查询日志来配合 pt-index-usage 工具来进行索引使用情况分析；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">pt</span><span class="o">-</span><span class="k">index</span><span class="o">-</span><span class="k">usage</span> <span class="o">-</span><span class="n">uroot</span> <span class="o">-</span><span class="n">p</span> <span class="n">mysql</span><span class="o">-</span><span class="n">slow</span><span class="p">.</span><span class="n">log</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<h2 id='2.4'>四、系统配置优化：</h2>
+
+
+<hr />
+
+<p>Mysql 配置文件-常用参数说明</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">Innodb_buffer_pool_size</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>配置innodb的缓冲池，如果数据库中只有innodb表，则推荐配置量为总内存的75%；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">innodb_buffer_pool_instances</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以控制缓冲池的个数，默认一个缓冲池</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">innodb_log_buffer_size</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Innodb log 缓冲的大小，由于日志最长每秒就会刷新所以一般不用太大；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">innodb_flush_log_at_trx_commit</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>关键参数，对 innodb 影响很大。默认值为1，可以取0，1，2三个值，一般建议设为2，如果安全性要求高则使用默认值1；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">innodb_read_io_threads</span>
+</span><span class='line'><span class="n">Innodb_write_io_threads</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>读写io进程数，默认为4；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">innodb_file_per_table</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>关键参数，控制 Innodb 每个表使用独立的表空间，默认为OFF，也就是所有表会建立在共享表空间中，IO 会形成瓶颈；
+建议设置为 ON，这样每个使用独立的共享表空间；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="n">Innodb_stats_on_metadata</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>决定 mysql 什么情况下会刷新 innodb 表的统计信息；</p>
+
+<p>上述信息可以使用 Per Configuration Wizard 配置</p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h1 id="3">硬件要求：</h1>
+
+
+<hr />
+
+<p>如何选择CPU
+1. Mysql一些工作只能用单核CPU：   SQL语句执行，Replicate；
+2. Mysql对核数并不是越多越好：mysql5.5 不要超过32核；</p>
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2018
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://TsaiKoga.github.com/blog/2018/05/12/mysql-xing-neng-you-hua/';
+        var disqus_url = 'http://TsaiKoga.github.com/blog/2018/05/12/mysql-xing-neng-you-hua/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>

@@ -89,7 +89,7 @@
 
     <section id="sidebar">
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (3)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
 </section>
 
 
@@ -286,7 +286,8 @@
 <p><h2 id='3'>加索引的情况</h3></p>
 
 <p><h3 id='3.1'> 关键词 </h3>
-一些关键词代表可能会经常用到索引：</p>
+一些关键词代表可能会经常用到索引，具体还是要把 SQL 语句从程序中 debug 出来，
+然后在 mysql 中查看用 explain 是否有用到该索引：</p>
 
 <p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">group</span> <span class="k">by</span>
@@ -308,10 +309,22 @@
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">JOIN</span><span class="p">()</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p>其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
-但是给 created_at 添加索引之后，点击排序，反应相当快。
-或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，如果直接使用union，每个union语句中有
+<p>还有要注意无效索引：
+例如：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">WHERE</span> <span class="n">DATE_FORMATE</span><span class="p">(</span><span class="n">created_at</span><span class="p">,</span> <span class="s1">&#39;%Y/%m%/d&#39;</span><span class="p">)</span> <span class="o">=</span> <span class="s1">&#39;2018-05-12&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+它先对日期值使用 DATE_FORMATE 方法，所以索引无效；</p>
+
+<p>对于是否变快，其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
+但是给 created_at 添加索引之后，点击排序，反应相当快。</p>
+
+<p>或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，
+如果直接使用union，每个union语句中有
 join语句，join语句如果不加索引速度非常慢，加了索引在使用union 速度提升很多；</p>
+
+<p><br/>
+注意：使用 EXPLAIN 函数来获取操作信息，查看扫描行数和</p>
 </div>
 
 <div class="meta">
