@@ -136,7 +136,8 @@ SELECT * FROM article WHERE MATCH(title, content) AGAINST('查询字符串')
 <h2 id='3'>加索引的情况</h3>
 
 <h3 id='3.1'> 关键词 </h3>
-一些关键词代表可能会经常用到索引：
+一些关键词代表可能会经常用到索引，具体还是要把 SQL 语句从程序中 debug 出来，
+然后在 mysql 中查看用 explain 是否有用到该索引：
 
 ``` sql
 group by
@@ -158,7 +159,20 @@ select MAX()
 JOIN()
 ```
 
-其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
+还有要注意无效索引：
+例如：
+``` sql
+WHERE DATE_FORMATE(created_at, '%Y/%m%/d') = '2018-05-12'
+```
+它先对日期值使用 DATE_FORMATE 方法，所以索引无效；
+
+
+对于是否变快，其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
 但是给 created_at 添加索引之后，点击排序，反应相当快。
-或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，如果直接使用union，每个union语句中有
+
+或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，
+如果直接使用union，每个union语句中有
 join语句，join语句如果不加索引速度非常慢，加了索引在使用union 速度提升很多；
+
+<br/>
+注意：使用 EXPLAIN 函数来获取操作信息，查看扫描行数和
