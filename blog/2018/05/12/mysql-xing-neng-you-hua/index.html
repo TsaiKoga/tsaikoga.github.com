@@ -6,7 +6,7 @@
 	<title>Mysql 性能优化 - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="1.数据库优化的目的： 2.SQL及索引优化 一、慢查询日志设置 二、慢查询日志的分析工具 2.1 如何通过慢查询日志发现有问题的SQL 2.2 如何分析SQL查询 三、建立索引 3.1 如何选择合适的列建立索引： 3.2 索引的维护和优化—重复及冗余索引 3.3 删除不用索引 四、系统配置优化 &hellip;">
+	<meta name="description" content="1. 数据库优化的目的 2. SQL及索引优化 一、慢查询日志设置 二、慢查询日志的分析工具 2.1 如何通过慢查询日志发现有问题的SQL 2.2 如何分析SQL查询 三、建立索引 3.1 如何选择合适的列建立索引： 3.2 索引的维护和优化—重复及冗余索引 3.3 删除不用索引 四、系统配置优化 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -98,29 +98,29 @@
     <div id="content" class="inner">
         <article class="post">
 	<h2 class="title">Mysql 性能优化</h2>
-	<div class="entry-content"><h3><a href="#1">1.数据库优化的目的：</a></h3>
+	<div class="entry-content"><h4><a href="#1">1. 数据库优化的目的</a></h4>
 
-<h3><a href="#2">2.SQL及索引优化</a></h3>
+<h4><a href="#2">2. SQL及索引优化</a></h4>
 
-<h4><a href="#2.1">一、慢查询日志设置</a></h4>
+<h5><a href="#2.1">一、慢查询日志设置</a></h5>
 
-<h4><a href="#2.2">二、慢查询日志的分析工具</a></h4>
+<h5><a href="#2.2">二、慢查询日志的分析工具</a></h5>
 
-<h5><a href="#2.2.1">2.1 如何通过慢查询日志发现有问题的SQL</a></h5>
+<h6><a href="#2.2.1">2.1 如何通过慢查询日志发现有问题的SQL</a></h6>
 
-<h5><a href="#2.2.2">2.2 如何分析SQL查询</a></h5>
+<h6><a href="#2.2.2">2.2 如何分析SQL查询</a></h6>
 
-<h4><a href="#2.2">三、建立索引</a></h4>
+<h5><a href="#2.2">三、建立索引</a></h5>
 
-<h5><a href="#2.3.1">3.1 如何选择合适的列建立索引：</a></h5>
+<h6><a href="#2.3.1">3.1 如何选择合适的列建立索引：</a></h6>
 
-<h5><a href="#2.3.2">3.2 索引的维护和优化—重复及冗余索引</a></h5>
+<h6><a href="#2.3.2">3.2 索引的维护和优化—重复及冗余索引</a></h6>
 
-<h5><a href="#2.3.3">3.3 删除不用索引</a></h5>
+<h6><a href="#2.3.3">3.3 删除不用索引</a></h6>
 
-<h4><a href="#2.4">四、系统配置优化</a></h4>
+<h5><a href="#2.4">四、系统配置优化</a></h5>
 
-<h3><a href="#3">硬件要求</a></h3>
+<h4><a href="#3">3. 硬件要求</a></h4>
 
 <h1 id='1'>数据库优化的目的：</h1>
 
@@ -259,8 +259,8 @@ select CONCAT(’storage engine:’,  @@storage_engine) as INFO;</p></blockquote
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p><img src="/images/posts/2018-05-12/pt-query-digest.gif" title="pt-query-digest" alt="图片无法显示" />
-<img src="/images/posts/2018-05-12/pt-query-digest2.gif" title="pt-query-digest" alt="图片无法显示" /></p>
+<p><img src="/images/posts/2018-05-12/pt-query-digest.gif" title="pt-query-digest" alt="pt-query-digest" />
+<img src="/images/posts/2018-05-12/pt-query-digest2.gif" title="pt-query-digest" alt="pt-query-digest" /></p>
 
 <br/>
 
@@ -287,7 +287,7 @@ select CONCAT(’storage engine:’,  @@storage_engine) as INFO;</p></blockquote
 
 <p>注意 pt-query-digest 分析中Rows examines 和 Rows Send 的对比 【如果扫描行数 远大于 发送行数，要么没有索引，要么索引无效，导致类似于全表扫描】</p>
 
-<p><img src="/images/posts/2018-05-12/pt-query-digest3.gif" title="pt-query-digest" alt="图片无法显示" /></p>
+<p><img src="/images/posts/2018-05-12/pt-query-digest3.gif" title="pt-query-digest" alt="pt-query-digest" /></p>
 
 <br/>
 
@@ -304,7 +304,7 @@ select CONCAT(’storage engine:’,  @@storage_engine) as INFO;</p></blockquote
 
 <p>使用 explain 查询 SQL 的执行计划</p>
 
-<p><img src="/images/posts/2018-05-12/explain.gif" title="explain" alt="图片无法显示" /></p>
+<p><img src="/images/posts/2018-05-12/explain.gif" title="explain" alt="explain" /></p>
 
 <p>table：                显示这一行数据属于哪张表
 type：                 重要的列，显示连接使用了何种类型。从最好到最差的链接类型为const、eq_reg、ref、range、index 和 ALL
