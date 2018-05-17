@@ -211,14 +211,21 @@
 
 <h3>慢查询日志所包含的内容</h3>
 
-<blockquote><p>执行 SQL 的主机信息
-User@Host:root[root] @ localhost []
-SQL的执行信息
-Query_time: 0.000024 Lock_time: 0.0000 Rows_sent: 0  Rows_examined: 0
-SQL执行时间
-SET timestamp=1402389328
-SQL的内容
-select CONCAT(’storage engine:’,  @@storage_engine) as INFO;</p></blockquote>
+<blockquote><p>执行 SQL 的主机信息</p>
+
+<p>User@Host:root[root] @ localhost []</p>
+
+<p>SQL的执行信息</p>
+
+<p>Query_time: 0.000024 Lock_time: 0.0000 Rows_sent: 0  Rows_examined: 0</p>
+
+<p>SQL执行时间</p>
+
+<p>SET timestamp=1402389328</p>
+
+<p>SQL的内容</p>
+
+<p>select CONCAT(’storage engine:’,  @@storage_engine) as INFO;</p></blockquote>
 
 <br/>
 
@@ -556,9 +563,13 @@ rows：                 MYSQL认为必须检查的用来返回请求数据的行
 
 <hr />
 
-<p>如何选择CPU
-1. Mysql一些工作只能用单核CPU：   SQL语句执行，Replicate；
-2. Mysql对核数并不是越多越好：mysql5.5 不要超过32核；</p>
+<p>如何选择CPU</p>
+
+<ol>
+<li><p>Mysql一些工作只能用单核CPU：   SQL语句执行，Replicate；</p></li>
+<li><p>Mysql对核数并不是越多越好：mysql5.5 不要超过32核；</p></li>
+</ol>
+
 </div>
 
 <div class="meta">
