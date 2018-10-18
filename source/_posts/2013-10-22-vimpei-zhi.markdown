@@ -10,7 +10,22 @@ categories: [Editor]
 
 ![图片无法显示](/images/posts/2013-10-22/vim.jpg "Vim图")
 
-#### vim 中容易忘掉但非常有用的命令
+## 目录
+#### [1 vim 中容易忘掉但非常有用的命令](#1)
+#### [2 .vimrc配置文件](#2)
+##### [2.1 基本配置说明](#2.1)
+##### [2.2 括号补全](#2.2)
+#### [3 VIM 常用插件](#3)
+##### [3.1 NERDTree 目录树](#3.1)
+##### [3.2 NERDCommenter 注释](#3.2)
+##### [3.3 Scsope 跳转](#3.3)
+
+<br/>
+<br/>
+
+<h2 id='1'>1 vim 中容易忘掉但非常有用的命令</h2>
+
+-------------------------
 
 - 多选        ctrl+v(mac), ctrl+q(windows/linux)
 - 打开文件    :open filename
@@ -18,8 +33,17 @@ categories: [Editor]
 - 解除注释     NERD_commenter命令是\\cu或,cu
 - 开启高亮    :syntax on
 - 开启行号    :set number
+- 跳转方法    cscope 的命令 ctl+]（必须先建立数据库和连接）
+- 回退方法    cscope 的命令 ctl+t
+- 跳到目录树  ctrl+w+h
+- 跳回文件页  ctrl+w+l
 
-####.vimrc配置文件
+
+<h2 id='2'>2 .vimrc配置文件</h2>
+
+------------------------------
+
+<h3 id="2.1">2.1 基本配置说明</h3>
 
 以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:
 
@@ -67,9 +91,13 @@ categories: [Editor]
 		nnoremap <C-j> <C-w>j
 		nnoremap <C-k> <C-w>k
 		nnoremap <C-l> <C-w>l
+```
 
-接下来是括号补全：
+<br/>
 
+<h3 id='2.2'>2.2 括号补全：</h3>
+
+``` sh
 		inoremap (	()<Esc>i				" inoremap表示输入模式下的匹配,当有"("时，匹配")"并退出重新进入"i编辑模式"
 		inoremap [	[]<Esc>i
 		inoremap {	{}<Esc>i
@@ -110,9 +138,24 @@ categories: [Editor]
 				return a:char.a:char."\<Esc>i"
 			endif
 		endf
+```
 
-下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：
+<br/>
+<br/>
 
+
+<h2 id='3'>3 VIM 常用插件</h2>
+
+--------------------------
+
+<h3 id='3.1'>3.1 NERDTree 目录树</h3>
+
+功能：用于展示目录树
+安装：下载之后，在 .vim/ 目录中创建 plugin/ 和 doc/ 目录，
+     将 NERDTree.txt 放入 doc/，将 NERDTree.vim 放入 plugin/。
+用法：https://www.jianshu.com/p/eXMxGx
+
+``` sh
 		"-----------------------------------------------------------------
 		" plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
 		" :ERDtree 打开NERD_tree         :NERDtreeClose    关闭NERD_tree
@@ -126,8 +169,15 @@ categories: [Editor]
 		" F3 NERDTree 切换
 		map <F3> :NERDTreeToggle<CR>
 		imap <F3> <ESC>:NERDTreeToggle<CR>
+```
 
+<br/>
 
+<h3 id='3.2'>3.2 NERDCommenter 注释</h3>
+
+功能：用于快速注释和解除注释，使用命令请查看顶部
+
+``` sh
 		"-----------------------------------------------------------------
 		" plugin - NERD_commenter.vim   注释代码用的，
 		" [count],cc 光标以下count行逐行添加注释(7,cc)
@@ -139,5 +189,113 @@ categories: [Editor]
 		let NERDSpaceDelims=1       " 让注释符与语句之间留一个空格
 		let NERDCompactSexyComs=1   " 多行注释时样子更好看
 ```
+
+<br/>
+
+<h3 id='3.3'>3.3 Scsope 跳转</h3>
+
+cscope 可以说是 ctags 的升级版本
+功能：可以对函数以及部分类型定义进行跳转
+
+``` sh
+sudo apt-get install cscope
+```
+
+使用举例：
+在终端下，转到你源码的所在目录然后
+
+``` sh
+cscope -Rbkq  <回车>
+```
+
+##### 参数说明：
+> R 表示把所有子目录里的文件也建立索引
+>
+> b 表示cscope不启动自带的用户界面，而仅仅建立符号数据库
+>
+> q 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度
+>
+> k 在生成索引文件时，不搜索/usr/include目录
+
+之后会在当前目录生成几个文件，  cscope.in.out和cscope.po.out文件,cscope.out，
+
+vim的normal模式下输入[建立cscope数据库]
+
+``` sh
+:cs add cscope.out
+```
+
+或者在 .vimrc 中加入，这样每次打开vim就可以直接使用cscope了。
+
+``` sh
+if filereadable("cscope.out")
+    cs add cscope.out
+endif
+```
+
+默认情况下cscope值会在当前目录下针对c、iex和yacc（扩展名分别为.c、.h、.I、.y）程序文件进行解析（如果指定了-R参数则包含其自身的子目录）。
+这样出现的问题就是，我们对于C++、Java、PHP 等文件怎么办，
+解决方案是：我们可以生成一个名为cscope.finds的文件列表，并交由cscope去解析。
+在Linux系统中，生成这个文件列表的方法是：
+
+``` sh
+find –name "*.php" > cscope.files
+```
+
+然后运行下面命令 **重新生成数据库** 就OK了。
+
+``` sh
+cscope –b
+```
+
+然后进入文件，输入你需要查找的方法，就会直接跳转到该方法：
+
+``` sh
+:cs find g checkStoreEmployee
+```
+
+也可以在 .vimrc 中加入：
+
+``` sh
+if has("cscope")
+
+  set csprg=/usr/local/bin/cscope
+
+  set csto=0
+
+  set cst
+
+  set nocsverb
+
+  " add any database in current directory
+
+  if filereadable("cscope.out")
+
+    cs add cscope.out
+
+    " else add database pointed to by environment
+
+  elseif $CSCOPE_DB != ""
+
+    cs add $CSCOPE_DB
+
+  endif
+
+  set csverb
+
+endif
+```
+
+在 vim normal 模式下执行：
+
+```sh
+:source ~/.vimrc
+```
+
+即可方便使用 ```ctl + ]```来快速跳到方法 和 ```ctl + t``` 回退到原方法。
+
+<br/>
+
+
 
 _感谢使用vim配置，记住要将vim编辑器重启后才生效。_
