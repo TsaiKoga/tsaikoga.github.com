@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Editor | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/editor/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-05-17T13:41:37+08:00</updated>
+  <updated>2018-10-18T11:39:56+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -827,7 +827,36 @@
 
 <p><img src="/images/posts/2013-10-22/vim.jpg" title="Vim图" alt="图片无法显示" /></p>
 
-<h4>vim 中容易忘掉但非常有用的命令</h4>
+<h2>目录</h2>
+
+<h4><a href="#1">1 vim 中容易忘掉但非常有用的命令</a></h4>
+
+<h4><a href="#2">2 .vimrc配置文件</a></h4>
+
+<h5><a href="#2.1">2.1 基本配置说明</a></h5>
+
+<h5><a href="#2.2">2.2 括号补全</a></h5>
+
+<h4><a href="#3">3 VIM 常用插件</a></h4>
+
+<h5><a href="#3.1">3.1 NERDTree 目录树</a></h5>
+
+<h5><a href="#3.2">3.2 NERDCommenter 注释</a></h5>
+
+<h5><a href="#3.3">3.3 Scsope 跳转</a></h5>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='1'>1 vim 中容易忘掉但非常有用的命令</h2>
+
+
+<hr />
 
 <ul>
 <li>多选        ctrl+v(mac), ctrl+q(windows/linux)</li>
@@ -836,10 +865,18 @@
 <li>解除注释     NERD_commenter命令是\cu或,cu</li>
 <li>开启高亮    :syntax on</li>
 <li>开启行号    :set number</li>
+<li>跳转方法    cscope 的命令 ctl+]（必须先建立数据库和连接）</li>
+<li>回退方法    cscope 的命令 ctl+t</li>
 </ul>
 
 
-<h4>.vimrc配置文件</h4>
+<h2 id='2'>2 .vimrc配置文件</h2>
+
+
+<hr />
+
+<h3 id="2.1">2.1 基本配置说明</h3>
+
 
 <p>以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:</p>
 
@@ -890,7 +927,17 @@
     nnoremap &lt;C-l&gt; &lt;C-w&gt;l
 </code></pre>
 
-<p>接下来是括号补全：</p>
+<p>```</p>
+
+<br/>
+
+
+
+
+<h3 id='2.2'>2.2 括号补全：</h3>
+
+
+<p>``` sh</p>
 
 <pre><code>    inoremap (  ()&lt;Esc&gt;i                " inoremap表示输入模式下的匹配,当有"("时，匹配")"并退出重新进入"i编辑模式"
     inoremap [  []&lt;Esc&gt;i
@@ -934,7 +981,27 @@
     endf
 </code></pre>
 
-<p>下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：</p>
+<p>```</p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='3'>3 VIM 常用插件</h2>
+
+
+<hr />
+
+<h3 id='3.1'>3.1 NERDTree 目录树</h3>
+
+
+<p>功能：用于展示目录树</p>
+
+<p>``` sh</p>
 
 <pre><code>    "-----------------------------------------------------------------
     " plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
@@ -949,9 +1016,23 @@
     " F3 NERDTree 切换
     map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;
     imap &lt;F3&gt; &lt;ESC&gt;:NERDTreeToggle&lt;CR&gt;
+</code></pre>
+
+<p>```</p>
+
+<br/>
 
 
-    "-----------------------------------------------------------------
+
+
+<h3 id='3.2'>3.2 NERDCommenter 注释</h3>
+
+
+<p>功能：用于快速注释和解除注释，使用命令请查看顶部</p>
+
+<p>``` sh</p>
+
+<pre><code>    "-----------------------------------------------------------------
     " plugin - NERD_commenter.vim   注释代码用的，
     " [count],cc 光标以下count行逐行添加注释(7,cc)
     " [count],cu 光标以下count行逐行取消注释(7,cu)
@@ -964,6 +1045,123 @@
 </code></pre>
 
 <p>```</p>
+
+<br/>
+
+
+
+
+<h3 id='3.3'>3.3 Scsope 跳转</h3>
+
+
+<p>cscope 可以说是 ctags 的升级版本
+功能：可以对函数以及部分类型定义进行跳转</p>
+
+<p><code>sh
+sudo apt-get install cscope
+</code></p>
+
+<p>使用举例：
+在终端下，转到你源码的所在目录然后</p>
+
+<p><code>sh
+cscope -Rbkq  &lt;回车&gt;
+</code></p>
+
+<h5>参数说明：</h5>
+
+<blockquote><p>R 表示把所有子目录里的文件也建立索引</p>
+
+<p>b 表示cscope不启动自带的用户界面，而仅仅建立符号数据库</p>
+
+<p>q 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度</p>
+
+<p>k 在生成索引文件时，不搜索/usr/include目录</p></blockquote>
+
+<p>之后会在当前目录生成几个文件，  cscope.in.out和cscope.po.out文件,cscope.out，</p>
+
+<p>vim的normal模式下输入[建立cscope数据库]</p>
+
+<p><code>sh
+:cs add cscope.out
+</code></p>
+
+<p>或者在 .vimrc 中加入，这样每次打开vim就可以直接使用cscope了。</p>
+
+<p>``` sh
+if filereadable(&ldquo;cscope.out&rdquo;)</p>
+
+<pre><code>cs add cscope.out
+</code></pre>
+
+<p>endif
+```</p>
+
+<p>默认情况下cscope值会在当前目录下针对c、iex和yacc（扩展名分别为.c、.h、.I、.y）程序文件进行解析（如果指定了-R参数则包含其自身的子目录）。
+这样出现的问题就是，我们对于C++、Java、PHP 等文件怎么办，
+解决方案是：我们可以生成一个名为cscope.finds的文件列表，并交由cscope去解析。
+在Linux系统中，生成这个文件列表的方法是：</p>
+
+<p><code>sh
+find . –name "*.php" &gt; cscope.files
+</code></p>
+
+<p>然后运行下面命令 <strong>重新生成数据库</strong> 就OK了。</p>
+
+<p><code>sh
+cscope –b
+</code></p>
+
+<p>然后进入文件，输入你需要查找的方法，就会直接跳转到该方法：</p>
+
+<p><code>sh
+:cs find g checkStoreEmployee
+</code></p>
+
+<p>也可以在 .vimrc 中加入：</p>
+
+<p>``` sh
+if has(&ldquo;cscope&rdquo;)</p>
+
+<p>  set csprg=/usr/local/bin/cscope</p>
+
+<p>  set csto=0</p>
+
+<p>  set cst</p>
+
+<p>  set nocsverb</p>
+
+<p>  &ldquo; add any database in current directory</p>
+
+<p>  if filereadable(&ldquo;cscope.out&rdquo;)</p>
+
+<pre><code>cs add cscope.out
+
+" else add database pointed to by environment
+</code></pre>
+
+<p>  elseif $CSCOPE_DB != &ldquo;&rdquo;</p>
+
+<pre><code>cs add $CSCOPE_DB
+</code></pre>
+
+<p>  endif</p>
+
+<p>  set csverb</p>
+
+<p>endif
+```</p>
+
+<p>在 vim normal 模式下执行：</p>
+
+<p><code>sh
+:source ~/.vimrc
+</code></p>
+
+<p>即可方便使用 <code>ctl + ]</code>来快速跳到方法 和 <code>ctl + t</code> 回退到原方法。</p>
+
+<br/>
+
 
 <p><em>感谢使用vim配置，记住要将vim编辑器重启后才生效。</em></p>
 ]]></content>

@@ -6,9 +6,7 @@
 	<title>Vim配置 - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。 vim 中容易忘掉但非常有用的命令 多选 ctrl+v(mac), ctrl+q(windows/linux)
-打开文件 :open filename
-注释 NERD_commenter命令是\cc或,cc &hellip;">
+	<meta name="description" content="说到vim，大家应该都不陌生。它是类似于vi的编辑器，在vi的基础上增加了很多新特性。 目录 1 vim 中容易忘掉但非常有用的命令 2 .vimrc配置文件 2.1 基本配置说明 2.2 括号补全 3 VIM 常用插件 3.1 NERDTree 目录树 3.2 NERDCommenter 注释 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -104,7 +102,36 @@
 
 <p><img src="/images/posts/2013-10-22/vim.jpg" title="Vim图" alt="图片无法显示" /></p>
 
-<h4>vim 中容易忘掉但非常有用的命令</h4>
+<h2>目录</h2>
+
+<h4><a href="#1">1 vim 中容易忘掉但非常有用的命令</a></h4>
+
+<h4><a href="#2">2 .vimrc配置文件</a></h4>
+
+<h5><a href="#2.1">2.1 基本配置说明</a></h5>
+
+<h5><a href="#2.2">2.2 括号补全</a></h5>
+
+<h4><a href="#3">3 VIM 常用插件</a></h4>
+
+<h5><a href="#3.1">3.1 NERDTree 目录树</a></h5>
+
+<h5><a href="#3.2">3.2 NERDCommenter 注释</a></h5>
+
+<h5><a href="#3.3">3.3 Scsope 跳转</a></h5>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='1'>1 vim 中容易忘掉但非常有用的命令</h2>
+
+
+<hr />
 
 <ul>
 <li>多选        ctrl+v(mac), ctrl+q(windows/linux)</li>
@@ -113,10 +140,18 @@
 <li>解除注释     NERD_commenter命令是\cu或,cu</li>
 <li>开启高亮    :syntax on</li>
 <li>开启行号    :set number</li>
+<li>跳转方法    cscope 的命令 ctl+]（必须先建立数据库和连接）</li>
+<li>回退方法    cscope 的命令 ctl+t</li>
 </ul>
 
 
-<h4>.vimrc配置文件</h4>
+<h2 id='2'>2 .vimrc配置文件</h2>
+
+
+<hr />
+
+<h3 id="2.1">2.1 基本配置说明</h3>
+
 
 <p>以下内容复制到用户目录下的.vimrc文件，可以更改vim配置，使Vim更美观，更好用:</p>
 
@@ -163,77 +198,6 @@
 <span class='line-number'>41</span>
 <span class='line-number'>42</span>
 <span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-<span class='line-number'>112</span>
-<span class='line-number'>113</span>
-<span class='line-number'>114</span>
 </pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="nb">set </span>nocompatible            <span class="s2">&quot; 关闭 vi 兼容模式</span>
 </span><span class='line'><span class="s2"> syntax on                   &quot;</span> 自动语法高亮
 </span><span class='line'>  colorscheme molokai         <span class="s2">&quot; 设定配色方案</span>
@@ -277,10 +241,62 @@
 </span><span class='line'>  nnoremap &lt;C-j&gt; &lt;C-w&gt;j
 </span><span class='line'>  nnoremap &lt;C-k&gt; &lt;C-w&gt;k
 </span><span class='line'>  nnoremap &lt;C-l&gt; &lt;C-w&gt;l
-</span><span class='line'>
-</span><span class='line'>接下来是括号补全：
-</span><span class='line'>
-</span><span class='line'>  inoremap <span class="o">(</span>   <span class="o">()</span>&lt;Esc&gt;i               <span class="s2">&quot; inoremap表示输入模式下的匹配,当有&quot;</span><span class="o">(</span><span class="s2">&quot;时，匹配&quot;</span><span class="o">)</span><span class="s2">&quot;并退出重新进入&quot;</span>i编辑模式<span class="s2">&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id='2.2'>2.2 括号补全：</h3>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>   inoremap <span class="o">(</span>   <span class="o">()</span>&lt;Esc&gt;i               <span class="s2">&quot; inoremap表示输入模式下的匹配,当有&quot;</span><span class="o">(</span><span class="s2">&quot;时，匹配&quot;</span><span class="o">)</span><span class="s2">&quot;并退出重新进入&quot;</span>i编辑模式<span class="s2">&quot;</span>
 </span><span class='line'><span class="s2"> inoremap [  []&lt;Esc&gt;i</span>
 </span><span class='line'><span class="s2"> inoremap {  {}&lt;Esc&gt;i</span>
 </span><span class='line'><span class="s2"> autocmd Syntax html,vim inoremap &lt; &lt;lt&gt;&gt;&lt;Esc&gt;i | inoremap &gt; &lt;c-r&gt;=ClosePair(&#39;&gt;&#39;)&lt;CR&gt;</span>
@@ -320,10 +336,43 @@
 </span><span class='line'>          <span class="k">return </span>a:char.a:char.<span class="s2">&quot;\&lt;Esc&gt;i&quot;</span>
 </span><span class='line'>      endif
 </span><span class='line'>  endf
-</span><span class='line'>
-</span><span class='line'>下列两款vim插件非常好用，安装完，也必须在.vimrc中添加如下内容：
-</span><span class='line'>
-</span><span class='line'>  <span class="s2">&quot;-----------------------------------------------------------------</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='3'>3 VIM 常用插件</h2>
+
+
+<hr />
+
+<h3 id='3.1'>3.1 NERDTree 目录树</h3>
+
+
+<p>功能：用于展示目录树</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>   <span class="s2">&quot;-----------------------------------------------------------------</span>
 </span><span class='line'><span class="s2"> &quot;</span> plugin - NERD_tree.vim 以树状方式浏览系统中的文件和目录
 </span><span class='line'>  <span class="s2">&quot; :ERDtree 打开NERD_tree         :NERDtreeClose    关闭NERD_tree</span>
 </span><span class='line'><span class="s2"> &quot;</span> o 打开关闭文件或者目录         t 在标签页中打开
@@ -333,22 +382,196 @@
 </span><span class='line'><span class="s2"> &quot;</span> u 打开上层目录                 m 显示文件系统菜单（添加、删除、移动操作）
 </span><span class='line'>  <span class="s2">&quot; r 递归刷新当前目录             R 递归刷新当前根目录</span>
 </span><span class='line'><span class="s2"> &quot;</span>-----------------------------------------------------------------
-</span><span class='line'>  <span class="s2">&quot; F3 NERDTree 切换</span>
-</span><span class='line'><span class="s2"> map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;</span>
-</span><span class='line'><span class="s2"> imap &lt;F3&gt; &lt;ESC&gt;:NERDTreeToggle&lt;CR&gt;</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'><span class="s2"> &quot;</span>-----------------------------------------------------------------
-</span><span class='line'>  <span class="s2">&quot; plugin - NERD_commenter.vim   注释代码用的，</span>
-</span><span class='line'><span class="s2"> &quot;</span> <span class="o">[</span>count<span class="o">]</span>,cc 光标以下count行逐行添加注释<span class="o">(</span>7,cc<span class="o">)</span>
-</span><span class='line'>  <span class="s2">&quot; [count],cu 光标以下count行逐行取消注释(7,cu)</span>
-</span><span class='line'><span class="s2"> &quot;</span> <span class="o">[</span>count<span class="o">]</span>,cm 光标以下count行尝试添加块注释<span class="o">(</span>7,cm<span class="o">)</span>
-</span><span class='line'>  <span class="s2">&quot; ,cA 在行尾插入 /* */,并且进入插入模式。 这个命令方便写注释。</span>
-</span><span class='line'><span class="s2"> &quot;</span> 注：count参数可选，无则默认为选中行或当前行
-</span><span class='line'>  <span class="s2">&quot;-----------------------------------------------------------------</span>
-</span><span class='line'><span class="s2"> let NERDSpaceDelims=1       &quot;</span> 让注释符与语句之间留一个空格
-</span><span class='line'>  <span class="nb">let </span><span class="nv">NERDCompactSexyComs</span><span class="o">=</span>1   <span class="err">&quot;</span> 多行注释时样子更好看
+</span><span class='line'>  <span class="err">&quot;</span> F3 NERDTree 切换
+</span><span class='line'>  map &lt;F3&gt; :NERDTreeToggle&lt;CR&gt;
+</span><span class='line'>  imap &lt;F3&gt; &lt;ESC&gt;:NERDTreeToggle&lt;CR&gt;
 </span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id='3.2'>3.2 NERDCommenter 注释</h3>
+
+
+<p>功能：用于快速注释和解除注释，使用命令请查看顶部</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>   <span class="s2">&quot;-----------------------------------------------------------------</span>
+</span><span class='line'><span class="s2"> &quot;</span> plugin - NERD_commenter.vim   注释代码用的，
+</span><span class='line'>  <span class="s2">&quot; [count],cc 光标以下count行逐行添加注释(7,cc)</span>
+</span><span class='line'><span class="s2"> &quot;</span> <span class="o">[</span>count<span class="o">]</span>,cu 光标以下count行逐行取消注释<span class="o">(</span>7,cu<span class="o">)</span>
+</span><span class='line'>  <span class="s2">&quot; [count],cm 光标以下count行尝试添加块注释(7,cm)</span>
+</span><span class='line'><span class="s2"> &quot;</span> ,cA 在行尾插入 /* */,并且进入插入模式。 这个命令方便写注释。
+</span><span class='line'>  <span class="s2">&quot; 注：count参数可选，无则默认为选中行或当前行</span>
+</span><span class='line'><span class="s2"> &quot;</span>-----------------------------------------------------------------
+</span><span class='line'>  <span class="nb">let </span><span class="nv">NERDSpaceDelims</span><span class="o">=</span>1       <span class="s2">&quot; 让注释符与语句之间留一个空格</span>
+</span><span class='line'><span class="s2"> let NERDCompactSexyComs=1   &quot;</span> 多行注释时样子更好看
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+
+
+<h3 id='3.3'>3.3 Scsope 跳转</h3>
+
+
+<p>cscope 可以说是 ctags 的升级版本
+功能：可以对函数以及部分类型定义进行跳转</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>sudo apt-get install cscope
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>使用举例：
+在终端下，转到你源码的所在目录然后</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>cscope -Rbkq  &lt;回车&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h5>参数说明：</h5>
+
+<blockquote><p>R 表示把所有子目录里的文件也建立索引</p>
+
+<p>b 表示cscope不启动自带的用户界面，而仅仅建立符号数据库</p>
+
+<p>q 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度</p>
+
+<p>k 在生成索引文件时，不搜索/usr/include目录</p></blockquote>
+
+<p>之后会在当前目录生成几个文件，  cscope.in.out和cscope.po.out文件,cscope.out，</p>
+
+<p>vim的normal模式下输入[建立cscope数据库]</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>:cs add cscope.out
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>或者在 .vimrc 中加入，这样每次打开vim就可以直接使用cscope了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="k">if </span>filereadable<span class="o">(</span><span class="s2">&quot;cscope.out&quot;</span><span class="o">)</span>
+</span><span class='line'>    cs add cscope.out
+</span><span class='line'>endif
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>默认情况下cscope值会在当前目录下针对c、iex和yacc（扩展名分别为.c、.h、.I、.y）程序文件进行解析（如果指定了-R参数则包含其自身的子目录）。
+这样出现的问题就是，我们对于C++、Java、PHP 等文件怎么办，
+解决方案是：我们可以生成一个名为cscope.finds的文件列表，并交由cscope去解析。
+在Linux系统中，生成这个文件列表的方法是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . –name <span class="s2">&quot;*.php&quot;</span> &gt; cscope.files
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后运行下面命令 <strong>重新生成数据库</strong> 就OK了。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>cscope –b
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后进入文件，输入你需要查找的方法，就会直接跳转到该方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>:cs find g checkStoreEmployee
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也可以在 .vimrc 中加入：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="k">if </span>has<span class="o">(</span><span class="s2">&quot;cscope&quot;</span><span class="o">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">set </span><span class="nv">csprg</span><span class="o">=</span>/usr/local/bin/cscope
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">set </span><span class="nv">csto</span><span class="o">=</span>0
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">set </span>cst
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">set </span>nocsverb
+</span><span class='line'>
+</span><span class='line'>  <span class="s2">&quot; add any database in current directory</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">  if filereadable(&quot;</span>cscope.out<span class="s2">&quot;)</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">    cs add cscope.out</span>
+</span><span class='line'>
+</span><span class='line'><span class="s2">    &quot;</span> <span class="k">else </span>add database pointed to by environment
+</span><span class='line'>
+</span><span class='line'>  elseif <span class="nv">$CSCOPE_DB</span> !<span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    cs add <span class="nv">$CSCOPE_DB</span>
+</span><span class='line'>
+</span><span class='line'>  endif
+</span><span class='line'>
+</span><span class='line'>  <span class="nb">set </span>csverb
+</span><span class='line'>
+</span><span class='line'>endif
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在 vim normal 模式下执行：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>:source ~/.vimrc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>即可方便使用 <code>ctl + ]</code>来快速跳到方法 和 <code>ctl + t</code> 回退到原方法。</p>
+
+<br/>
 
 
 <p><em>感谢使用vim配置，记住要将vim编辑器重启后才生效。</em></p>
