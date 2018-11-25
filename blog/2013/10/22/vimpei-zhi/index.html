@@ -89,7 +89,7 @@
 
     <section id="sidebar">
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (3)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (2)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (4)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
 </section>
 
 
@@ -142,6 +142,8 @@
 <li>开启行号    :set number</li>
 <li>跳转方法    cscope 的命令 ctl+]（必须先建立数据库和连接）</li>
 <li>回退方法    cscope 的命令 ctl+t</li>
+<li>跳到目录树  ctrl+w+h</li>
+<li>跳回文件页  ctrl+w+l</li>
 </ul>
 
 
@@ -357,7 +359,13 @@
 <h3 id='3.1'>3.1 NERDTree 目录树</h3>
 
 
-<p>功能：用于展示目录树</p>
+<p>功能：用于展示目录树
+安装：下载之后，在 .vim/ 目录中创建 plugin/ 和 doc/ 目录，</p>
+
+<pre><code> 将 NERDTree.txt 放入 doc/，将 NERDTree.vim 放入 plugin/。
+</code></pre>
+
+<p>用法：<a href="https://www.jianshu.com/p/eXMxGx">https://www.jianshu.com/p/eXMxGx</a></p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -485,7 +493,7 @@
 在Linux系统中，生成这个文件列表的方法是：</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sh'><span class='line'>find . –name <span class="s2">&quot;*.php&quot;</span> &gt; cscope.files
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>find –name <span class="s2">&quot;*.php&quot;</span> &gt; cscope.files
 </span></code></pre></td></tr></table></div></figure>
 
 

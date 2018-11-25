@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-10-18T11:39:56+08:00</updated>
+  <updated>2018-10-30T15:19:33+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,210 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[录单APP项目中的问题]]></title>
+    <link href="http://TsaiKoga.github.com/blog/2018/10/28/lu-dan-appxiang-mu-zhong-de-wen-ti/"/>
+    <updated>2018-10-28T15:46:00+08:00</updated>
+    <id>http://TsaiKoga.github.com/blog/2018/10/28/lu-dan-appxiang-mu-zhong-de-wen-ti</id>
+    <content type="html"><![CDATA[<h2>目录</h2>
+
+<h4><a href="#1">分页重复数据问题</a></h4>
+
+<h4><a href="#2">防止订单重复问题</a></h4>
+
+<h4><a href="#3">订单号唯一问题</a></h4>
+
+<h4><a href="#4">Web端报表系统使用导致APP端使用卡顿</a></h4>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id="1">分页重复数据问题</h2>
+
+
+<hr />
+
+<h4>背景：</h4>
+
+<p>先解释一下，我们 app 项目中有一个录入订单模块，在这里每个店铺的工作人员会因为客户下单，在当天不停的进行录单；</p>
+
+<p>这些订单按照当天的顺序形成一个单号，例如1，2，3，4&hellip; &hellip; 就这样；</p>
+
+<p>app 中还有一个功能，就是插单，也就是如果有一张单据昨天忘记录入，那么可以添加插单时间到昨天，那么这张订单就插入了昨天；</p>
+
+<p>但是，录单的工作人员有几个人，也就是同时有人会刷新这个页面，看到订单列表；</p>
+
+<p>因为 app 是下拉刷新，加载第二页数据，并且是按照单据倒叙排列的，最先出现的是最新的单据；</p>
+
+<p>这时候员工A如果开单到 25 号单据，然后再开第26的时候，员工B想要刷新第二页（按照每10张一页），那么本来应该看到的是15号单开始的第二页，</p>
+
+<p>由于员工A完成26号单，这时候刷出来的是16号单开始的第二页，也就是25,24,23,&hellip;,16,16,15,14,&hellip;中间重单了；</p>
+
+<br/>
+
+
+<h4>解决方法：</h4>
+
+<p>为了防止这种现象，必须在后台增加一个 <strong>过滤条件</strong>；</p>
+
+<p>因为由时间排序，那么只要拿创建时间 <code>created_at</code> 与 前端传来查询时间 <code>search_at</code> 进行比较就可以筛选出第二页；</p>
+
+<p>由于还有插单，所以插单的时间绝对不能覆盖创建时间 <code>created_at</code>，要有一个插单时间 <code>inserted_at</code>，这样排序用 <code>inserted_at</code> 来排序即可；</p>
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='2'>防止订单重复问题</h2>
+
+
+<hr />
+
+<h4>背景：</h4>
+
+<p>由于这是一个给批发市场店铺的 app ；所以批发市场的店铺人员有限，但每天的订单数量又比较多，</p>
+
+<p>这时候员工录入订单往往快速而又烦躁，对订单开单后可能会不停点击提交；虽然 IOS 端和 Android 端以对点击按钮做了屏蔽；</p>
+
+<p>但是还是无法百分百杜绝一个单重复性提交；</p>
+
+<p>这时候需要前端和后端配合一起防止同一张订单重复问题；</p>
+
+<br/>
+
+
+<h4>解决方法：</h4>
+
+<p>前端给订单生成一个唯一码，一般用时间戳+随机数生成，这里我们用单词 exist_flag 代替；</p>
+
+<p>然后前端发出请求，带上这个参数到后端；</p>
+
+<p>后端接收到请求后首先将其用 redis 进行检验判断是否重复；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nx">Redis</span><span class="o">::</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;orders:&#39;</span><span class="o">.</span> <span class="nv">$user_id</span> <span class="o">.</span> <span class="s1">&#39;-&#39;</span> <span class="o">.</span> <span class="nv">$exist_flag</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fail</span><span class="p">(</span><span class="nx">self</span><span class="o">::</span><span class="na">ERROR_CODE</span><span class="p">,</span> <span class="s2">&quot;你还有订单正在进行中，请勿重复提交&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">Redis</span><span class="o">::</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;orders:&#39;</span><span class="o">.</span> <span class="nv">$user_id</span> <span class="o">.</span> <span class="s1">&#39;-&#39;</span> <span class="o">.</span> <span class="nv">$exist_flag</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">180</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='3'>订单号唯一问题</h2>
+
+
+<hr />
+
+<h4>背景：</h4>
+
+<p>正如前面所提到的，订单按照每日生成唯一的订单号1,2,3,4,5 &hellip;&hellip;；</p>
+
+<p>这是针对当天唯一的号码，并且当天不能重复，并且生成单据最好能较快，不要因为顺序问题影响体验；</p>
+
+<br/>
+
+
+<h4>解决方法：</h4>
+
+<p>利用联合唯一索引来解决；</p>
+
+<p>例如单号字段为 <code>transaction_daily_serial</code>, 时间为 <code>inserted_at</code></p>
+
+<p>这里使用插单是插入选择日期的最后单据，因为这样不会导致重新更改其他单号；</p>
+
+<p>那么联合唯一索引：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">alter</span> <span class="k">table</span> <span class="n">transaction</span> <span class="k">add</span> <span class="k">unique</span> <span class="k">index</span> <span class="n">daily_sel_ins_at</span><span class="p">(</span><span class="n">transaction_daily_serial</span><span class="p">,</span> <span class="n">inserted_at</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br/>
+
+
+<br/>
+
+
+
+
+<h2 id='4'>Web端报表系统使用导致APP端使用卡顿</h2>
+
+
+<hr />
+
+<h4>背景：</h4>
+
+<p>APP 作为一个有点类似 ERP 的在线客户端，客户需要一些导出的Excel报表数据，包括（出入库数据，货品数据，订单总览）等等内容；</p>
+
+<p>但由于数据内容非常庞大，并且客户不想要分批下载，他要一张excel展示所有时间段的数据；一开始数据量不多的时候，系统也没有为他们加时间限制；</p>
+
+<p>后期，数据库数据量已经达到10G以上的时候，一段时间在业务高峰期出现 app 使用卡顿现象；</p>
+
+<p>通过查询后台日志，我发现在这些卡顿时间都出现报表导出接口；</p>
+
+<p>并且 APP 和 web 报表系统 是放在同一台服务器上；</p>
+
+<br/>
+
+
+<h4>解决方法：</h4>
+
+<p>预想方案是有以下几个：</p>
+
+<ol>
+<li><p>分库【主从数据库】：因为 web 报表系统是查询数据，导出数据的系统，所以是只读系统，而 APP 是可读可写的；
+分库可以保证 web 报表操作不影响 APP 手机端；</p></li>
+<li><p>数据归档：将旧数据进行归档存储；</p></li>
+<li><p>解决慢查询SQL</p></li>
+<li><p>限制导出数据大小</p></li>
+</ol>
+
+
+<br/>
+
+
+<p>由于公司项目较多，经费有限，无法再提供多一台服务器来专门用作 web 报表系统，所以方案一被取消；</p>
+
+<p>数据归档虽然 CTO 答应采纳，但是当务之急是先解决目前问题，所以先从 方案三 和 方案四 下手；</p>
+
+<p>方案三：通过阿里云的慢查询日志，定位到 SQL 语句，从而定位代码段；大部分慢查询可以通过添加联合索引解决；
+但是一部分 smelly 的 SQL ORM 旧代码，就得重新编写优化；</p>
+
+<p>方案四：根据客户需求和对应一个月的单据数量，给出最多只能下载一个月的数据；</p>
+
+<br/>
+
+
+<br/>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Mysql 性能优化]]></title>
@@ -7732,221 +7936,6 @@ application.rb这个文件将会加载Rails。</p>
 <p>15 20 * * 6: 每周星期6的20：15执行1次</p></blockquote>
 
 <hr />
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rails表的关联]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian/"/>
-    <updated>2013-10-22T21:47:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/22/railsbiao-de-guan-lian</id>
-    <content type="html"><![CDATA[<p>一段时间没有用到表的关联，回想如何使用时，知识却模糊不清，所以将它记下以便以后查看。
-Rails中表的关联主要有三种：单表继承,多态关联,自引用。</p>
-
-<p>个人觉得：</p>
-
-<ul>
-<li><p><strong>单表继承</strong>是通过增加<strong>冗余字段</strong>来<strong>减少表的数量</strong>。</p></li>
-<li><p><strong>多态关联</strong>是通过建立<strong>虚拟表</strong>来<strong>减少关联数</strong>（belongs_to）和<strong>字段</strong>（外键），方便于以后又有表要关联。</p></li>
-<li><p><strong>自引用</strong>也是利用<strong>冗余</strong>而共用<strong>一张表</strong>。</p></li>
-</ul>
-
-
-<p>共同特点：</p>
-
-<blockquote><p>都需要增加type字段，即增加冗余字段。</p></blockquote>
-
-<p>差别：</p>
-
-<blockquote><p>多态可以让子类有自己的行为特征（通过type字段呈现&#8221;多重形态&#8221;）。
-单表继承必须拥有共同属性。
-自引用必须牺牲一些字段（不需用到的字段的值为null）。</p></blockquote>
-
-<hr />
-
-<h3>详述</h3>
-
-<h4>单表继承：</h4>
-
-<p>一个继承体系<strong>所有类映射到同一张数据库表</strong>，这张表包含<strong>所有类拥有的属性</strong>。记住：所有属性哦，他们可以为null值（:null=>true，即null是可有可无的）。
-它通过一个<strong>附加字段type来确认当前记录的对象</strong>属于什么<strong>类型</strong>&mdash;&mdash;ActiveRecord约定。</p>
-
-<p>顾名思义，单表就是一张表，那么怎么呈现多种表的形态呢。当其他表引用它时，可以给予其他名字，但是要声明它实际是那张表(belongs_to :manager, :class_name => &ldquo;Person&rdquo;)，举例：</p>
-
-<p>person.rb:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Class</span> <span class="no">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>      <span class="n">belongs_to</span> <span class="no">XXX</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">manager</span><span class="o">.</span><span class="n">rb</span><span class="p">:(</span><span class="err">继承</span><span class="no">Person</span><span class="err">类</span><span class="p">)</span>
-</span><span class='line'>  <span class="no">Class</span> <span class="no">Manager</span> <span class="o">&lt;</span> <span class="no">Person</span>
-</span><span class='line'>  <span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>rails console:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">XXX</span><span class="o">.</span><span class="n">first</span><span class="o">.</span><span class="n">manager</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>mysql:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">select</span> <span class="n">people</span><span class="o">.</span><span class="n">*</span> <span class="n">from</span> <span class="n">people</span> <span class="n">where</span> <span class="n">people</span><span class="o">.</span><span class="n">type</span> <span class="k">in</span> <span class="p">(</span><span class="s2">&quot;Manager&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">people</span><span class="o">.</span><span class="n">id</span><span class="o">=</span><span class="mi">1</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr />
-
-<h4>多态关联：</h4>
-
-<p>通过建立虚拟表，通过虚拟表（先通过<strong>类型找到关联表</strong>，再通过<strong>外键找到对应的记录</strong>）访问。</p>
-
-<p><strong>举例：</strong></p>
-
-<p>假设我們已经有了Article与Photo这两个Model，然后我们希望这两个Model都可以被留言。不用多态关联的话，你得分別建立ArticleComment和PhotoComment的model。或者一个comment中要有两个外键：article_id和photo_id，虽然用多态也是两个字段，但当表多了就可以看出多态的好处。</p>
-
-<p>现有个场景，有两个model：person和album，需要添加一个图片来做为其头像/封面。添加一个image model，按照以往需要对这几个model做以下关联设置：</p>
-
-<p>没用多态关联前：不复杂，但是麻烦，如果<strong>以后加个book model之类</strong>的，也需要有个图做封面的，那又要<strong>改image model里的关联和migration</strong>了，一点都不DRY。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>  <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Album</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>     <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">class</span> <span class="nc">Image</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>    <span class="n">belongs_to</span> <span class="ss">:person</span>
-</span><span class='line'>    <span class="n">belongs_to</span> <span class="ss">:album</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>相应的image的migration要添加上关联字段：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">column</span> <span class="ss">:person_id</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="mi">0</span>
-</span><span class='line'><span class="n">t</span><span class="o">.</span><span class="n">column</span> <span class="ss">:album_id</span><span class="p">,</span> <span class="ss">:integer</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="mi">0</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>使用多态关联后：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Person</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>    <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="ss">:iconable</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Album</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>    <span class="n">has_one</span> <span class="ss">:image</span><span class="p">,</span> <span class="ss">:as</span> <span class="o">=&gt;</span> <span class="ss">:iconable</span><span class="p">,</span> <span class="ss">:dependent</span> <span class="o">=&gt;</span> <span class="ss">:destroy</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">Image</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>    <span class="n">belongs_to</span> <span class="ss">:iconable</span><span class="p">,</span> <span class="ss">:polymorphic</span> <span class="o">=&gt;</span> <span class="kp">true</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Person和Album有了<strong>共同的一个虚拟的名字</strong>叫做iconable,image表就可以直接用外键iconable_id关联它,</p>
-
-<p><strong>使用方法：</strong></p>
-
-<p>添加：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="vi">@person</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:person</span><span class="o">]</span><span class="p">)</span>
-</span><span class='line'>  <span class="vi">@person</span><span class="o">.</span><span class="n">build_image</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:image</span><span class="o">]</span><span class="p">)</span>
-</span><span class='line'>  <span class="vi">@person</span><span class="o">.</span><span class="n">save</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>读取：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@person</span><span class="o">.</span><span class="n">image</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>image 的属主：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="vi">@person</span><span class="o">.</span><span class="n">iconable</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr />
-
-<h4>自引用：</h4>
-
-<p>自引用就是<strong>一条记录可能引用同一张表的另一条记录</strong>：公司员工都有主管，主管也是员工。使用:class_name 和foregin_key加上has_many/has_one和belongs_to.</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Employee</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
-</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:manager</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">:foregin_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;manager_id&quot;</span>
-</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:mentor</span><span class="p">,</span>
-</span><span class='line'>      <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
-</span><span class='line'>      <span class="ss">:foregin_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;mentor_id&quot;</span>
-</span><span class='line'>  <span class="n">has_many</span> <span class="err">：</span><span class="n">mentored_employees</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">:foreign_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;mentor_id&quot;</span>
-</span><span class='line'>  <span class="n">has_many</span> <span class="err">：</span><span class="n">managed_employees</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">:class_name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Employee&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="ss">:foreign_key</span> <span class="o">=&gt;</span> <span class="s2">&quot;manager_id&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
 ]]></content>
   </entry>
   

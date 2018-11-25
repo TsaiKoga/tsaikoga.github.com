@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Editor | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/editor/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-10-18T11:39:56+08:00</updated>
+  <updated>2018-10-30T15:19:50+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -867,6 +867,8 @@
 <li>开启行号    :set number</li>
 <li>跳转方法    cscope 的命令 ctl+]（必须先建立数据库和连接）</li>
 <li>回退方法    cscope 的命令 ctl+t</li>
+<li>跳到目录树  ctrl+w+h</li>
+<li>跳回文件页  ctrl+w+l</li>
 </ul>
 
 
@@ -999,7 +1001,13 @@
 <h3 id='3.1'>3.1 NERDTree 目录树</h3>
 
 
-<p>功能：用于展示目录树</p>
+<p>功能：用于展示目录树
+安装：下载之后，在 .vim/ 目录中创建 plugin/ 和 doc/ 目录，</p>
+
+<pre><code> 将 NERDTree.txt 放入 doc/，将 NERDTree.vim 放入 plugin/。
+</code></pre>
+
+<p>用法：<a href="https://www.jianshu.com/p/eXMxGx">https://www.jianshu.com/p/eXMxGx</a></p>
 
 <p>``` sh</p>
 
@@ -1103,7 +1111,7 @@ if filereadable(&ldquo;cscope.out&rdquo;)</p>
 在Linux系统中，生成这个文件列表的方法是：</p>
 
 <p><code>sh
-find . –name "*.php" &gt; cscope.files
+find –name "*.php" &gt; cscope.files
 </code></p>
 
 <p>然后运行下面命令 <strong>重新生成数据库</strong> 就OK了。</p>
