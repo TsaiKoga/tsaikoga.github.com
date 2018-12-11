@@ -289,32 +289,53 @@
 一些关键词代表可能会经常用到索引，具体还是要把 SQL 语句从程序中 debug 出来，
 然后在 mysql 中查看用 explain 是否有用到该索引：</p>
 
-<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>1.分组字段：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">group</span> <span class="k">by</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>2.排序字段：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">order</span> <span class="k">by</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">SUM</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure></p>
-
-<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>3.统计字段，【注意运算不会用索引，例如:SUM, YEAR】：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="k">MAX</span><span class="p">()</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p>4.主键外键字段：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">JOIN</span><span class="p">()</span>
 </span></code></pre></td></tr></table></div></figure></p>
 
-<p>还有要注意无效索引：
-例如：
+<p>还有要注意无效索引：</p>
+
+<p>1.运算字段：
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">WHERE</span> <span class="n">DATE_FORMATE</span><span class="p">(</span><span class="n">created_at</span><span class="p">,</span> <span class="s1">&#39;%Y/%m%/d&#39;</span><span class="p">)</span> <span class="o">=</span> <span class="s1">&#39;2018-05-12&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-它先对日期值使用 DATE_FORMATE 方法，所以索引无效；</p>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>2.Like语句：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">like</span> <span class="ss">&quot;%aaa%&quot;</span> <span class="o">//</span> <span class="err">不会用到索引</span>
+</span><span class='line'><span class="k">like</span> <span class="ss">&quot;aaa%&quot;</span> <span class="o">//</span> <span class="err">会用到索引</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>3.含有NULL值的列【注意：给默认值】</p>
+
+<p>4.NOT IN语句【注意：可以改成 NOT EXISTS】：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">WHERE</span> <span class="n">id</span> <span class="k">NOT</span> <span class="k">IN</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>5.OR 语句：
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">WHERE</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">id</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>它先对日期值使用 DATE_FORMATE 方法，所以索引无效；</p>
 
 <p>对于是否变快，其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
 但是给 created_at 添加索引之后，点击排序，反应相当快。</p>
