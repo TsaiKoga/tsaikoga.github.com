@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Mysql 性能优化"
+title: "利用 Mysql 日志及插件进行性能优化"
 date: 2018-05-12 17:37
 comments: true
 categories: [Mysql]

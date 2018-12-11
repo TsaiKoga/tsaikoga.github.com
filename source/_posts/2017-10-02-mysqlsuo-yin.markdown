@@ -19,6 +19,10 @@ categories: [Mysql]
 
 #### [3.加索引情况](#3)
 #####   [3.1 关键词](#3.1)
+#####   [3.2 小技巧](#3.2)
+
+#### [4.索引生成文件](#4)
+#####   [4.1 索引文件](#4.1)
 
 <br/>
 
@@ -38,19 +42,32 @@ categories: [Mysql]
 
 为什么？
 
-计算机先在索引列表中找到记录的 **位置**，既 **rowid**，然后直接去表中的对应位置取出记录，我就不明白了，查找索引列表难道不需要一条一条的匹配？计算机又不会出现说，看索引列表比直接看表中的记录要快，先在索引列表中找到记录对应的rowid也是要遍历的？难道不是同样的吗？
+计算机先在索引列表中找到记录的 **位置**，既 **rowid**，然后直接去表中的对应位置取出记录，我就不明白了，查找索引列表难道不需要一条一条的匹配？计算机又不会出现说，看索引列表比直接看表中的记录要快，先在索引列表中找到记录对应的 rowid 也是要遍历的？难道不是同样的吗？
+<br/>
 
-原因在于 **索引列表是排好序的**，可以通过类似于 **二分查找** 快速找到。直接查找是O(n)，二分查找是log2(n)
+Mysql 索引主要两种：
+<br/>
+**1.BTree**
+取中间数作为根，比根小的数再取中间数放左边，大数放右边作为右边树叶；
+时间复杂度就是log2(n)；
+<br/>
 
+**2.Hash**
+key-value 保存;
+时间复杂度是(n);
+缺点：不支持范围查询，只能指定查询；
+
+<br/>
 <br/>
 
 <h3 id='1.2'>为什么添加上索引，速度会变慢</h3>
 
 ------------------
 
-根据上面的回答，添加索引会 **建立有序的索引列表**，建立 **索引都需要维护**，你  **创建、插入或删除** 记录，都要到索引列表查询索引的位置并进行创建、插入或删除索引，这样非常耗时。那如果压根没去用索引，或者很少用它，这种无效索引反而会降低效率。
+1. DML 耗时：根据上面的回答，添加索引会 **构建 BTree **，建立 **索引都需要维护**，你  **创建、插入或删除** 记录，都要重新构建部分 BTree；
+【所以唯一性太差的字段不适合创建索引；字段频繁变化的字段也不适合创建索引】
 
-不过庆幸的是，我们目前很多主键都是使用自增 id，这样插入更新等操作都可以通过寻找到指定索引，新增叶子节点，效率挺高。
+2. 消耗磁盘空间；
 
 <br/>
 <br/>
@@ -79,6 +96,8 @@ ALTER TABLE `table_name` ADD PRIMARY KEY ( `column` )
 ``` sql
 ALTER TABLE `table_name` ADD UNIQUE ( `column` )
 ```
+
+**唯一索引中 null 不代表重复，可以有多个 null；**
 
 <br/>
 <h3 id='2.3'>普通索引</h3>
@@ -114,6 +133,10 @@ ALTER TABLE `table_name` ADD INDEX index_name ( `column1`,`column2`, `column3` )
 ------------------
 
 添加FULLTEXT(全文索引)
+
+
+全文索引只能在 **MYISAM** 引擎中使用：
+
 ``` sql
 ALTER TABLE `table_name` ADD FULLTEXT (`column`)
 ```
@@ -130,6 +153,36 @@ SELECT * FROM article WHERE content LIKE '%查询字符串%'
 SELECT * FROM article WHERE MATCH(title, content) AGAINST('查询字符串')
 ```
 
+PS: 全文索引并不是所有文本都加索引，而是通过“停止词”；
+对一些常用词，没什么特殊含义的词（a, the, at, which, want...）不加索引，这些词叫做停止词；
+
+<br/>
+
+
+<h3 id='2.6'>查询、修改、删除索引</h3>
+------------------------
+
+1.查询
+desc 表名;【该方法的缺点，不能显示索引名】
+``` sql
+show index from 表名;
+show keys from 表名;
+```
+<br/>
+
+2.删除
+``` sql
+alter table 表名 drop index 索引名;
+如果删除主键索引：
+alter table 表名 drop primary key;
+```
+<br/>
+
+3.修改
+
+先删除，再重新创建；
+
+<br/>
 <br/>
 
 
@@ -139,40 +192,100 @@ SELECT * FROM article WHERE MATCH(title, content) AGAINST('查询字符串')
 一些关键词代表可能会经常用到索引，具体还是要把 SQL 语句从程序中 debug 出来，
 然后在 mysql 中查看用 explain 是否有用到该索引：
 
+1.分组字段：
 ``` sql
 group by
 ```
+很多人觉得不会用到，其实会用到的；
+按照 explain 可以看出单独对驱动表使用 group by，mysql 计划是会使用索引的；
+```
+explain
+select *
+from juniu_return_goods_sku
+group by juniu_return_goods_sku.goods_id
+```
+这里返回使用了索引，并且不会 用到 using temporary;
+所以加了索引，用 explain 验证一下即可；
 
+
+2.排序字段：
 ``` sql
 order by
 ```
 
-``` sql
-select SUM()
-```
-
+3.统计字段，【注意运算不会用索引，例如:SUM, YEAR】：
 ``` sql
 select MAX()
 ```
 
+4.主键外键字段：
 ``` sql
 JOIN()
 ```
 
 还有要注意无效索引：
-例如：
+
+1.运算字段：
 ``` sql
 WHERE DATE_FORMATE(created_at, '%Y/%m%/d') = '2018-05-12'
 ```
+
+2.Like语句：
+``` sql
+like "%aaa%" // 不会用到索引
+like "aaa%" // 会用到索引
+```
+
+3.含有NULL值的列【注意：给默认值】
+
+
+4.NOT IN语句【注意：可以改成 NOT EXISTS】：
+``` sql
+WHERE id NOT IN (1,2,3);
+```
+
+5.OR 语句：
+``` sql
+WHERE id = 1 OR id = 2;
+```
+
+
 它先对日期值使用 DATE_FORMATE 方法，所以索引无效；
 
+<br/>
+<br/>
 
-对于是否变快，其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
-但是给 created_at 添加索引之后，点击排序，反应相当快。
 
-或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，
-如果直接使用union，每个union语句中有
-join语句，join语句如果不加索引速度非常慢，加了索引在使用union 速度提升很多；
+<h3 id='3.2'> 小技巧 </h3>
+
+1. 在使用 **group by** 分组查询时，默认分组后，还会排序，可能会降低速度；
+例如：在一张表中对一个索引字段进行 group by ，explain后发现他不会使用索引，但是 extra 中有 **Using filesort**；
+解决：group by 后面加上 **order by null**;
+
+2. 有些情况下，可以使用连接代替子查询。
+因为使用 join，Mysql 不需要在 **内存** 中创建 **临时表(不使用索引)**，
+除非指定了联接条件时，满足查询条件的记录行数少的表为[驱动表]，未指定联接条件时，行数少的表为[驱动表]，多表联合查询时
+
+``` sql
+select * from dept, emp where dept.no = emp.no; // 简单处理方式
+select * from dept left join emp on dept.no = emp.no; // 左连接
+```
+
 
 <br/>
-注意：使用 EXPLAIN 函数来获取操作信息，查看扫描行数和
+<br/>
+
+
+<h2 id='4'>4. 索引生成文件</h2>
+
+<h3 id='4.1'>索引文件</h3>
+
+可以通过 my.ini 看到索引的目录文件，一般每一张表有三个文件：
+- .frm 记录表的结构，【innodb 数据库的数据放在外层目录的 ibdata 文件；】
+
+- .myd 表的数据
+
+- .myi 记录表的索引
+
+<br/>
+<br/>
