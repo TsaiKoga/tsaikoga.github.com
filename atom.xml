@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-12-11T10:16:49+08:00</updated>
+  <updated>2018-12-19T15:05:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -1001,6 +1001,12 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <h5><a href="#3.1">3.1 关键词</a></h5>
 
+<h5><a href="#3.2">3.2 小技巧</a></h5>
+
+<h4><a href="#4">4.索引生成文件</a></h4>
+
+<h5><a href="#4.1">4.1 索引文件</a></h5>
+
 <br/>
 
 
@@ -1026,9 +1032,20 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <p>为什么？</p>
 
-<p>计算机先在索引列表中找到记录的 <strong>位置</strong>，既 <strong>rowid</strong>，然后直接去表中的对应位置取出记录，我就不明白了，查找索引列表难道不需要一条一条的匹配？计算机又不会出现说，看索引列表比直接看表中的记录要快，先在索引列表中找到记录对应的rowid也是要遍历的？难道不是同样的吗？</p>
+<p>计算机先在索引列表中找到记录的 <strong>位置</strong>，既 <strong>rowid</strong>，然后直接去表中的对应位置取出记录，我就不明白了，查找索引列表难道不需要一条一条的匹配？计算机又不会出现说，看索引列表比直接看表中的记录要快，先在索引列表中找到记录对应的 rowid 也是要遍历的？难道不是同样的吗？</p>
 
-<p>原因在于 <strong>索引列表是排好序的</strong>，可以通过类似于 <strong>二分查找</strong> 快速找到。直接查找是O(n)，二分查找是log2(n)</p>
+<p>Mysql 索引主要两种：
+1. BTree
+取中间数作为根，比根小的数再取中间数放左边，大数放右边作为右边树叶；
+时间复杂度就是log2(n)；</p>
+
+<ol>
+<li>Hash
+key-value 保存;
+时间复杂度是(n);
+缺点：不支持范围查询，只能指定查询；</li>
+</ol>
+
 
 <br/>
 
@@ -1040,9 +1057,12 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <hr />
 
-<p>根据上面的回答，添加索引会 <strong>建立有序的索引列表</strong>，建立 <strong>索引都需要维护</strong>，你  <strong>创建、插入或删除</strong> 记录，都要到索引列表查询索引的位置并进行创建、插入或删除索引，这样非常耗时。那如果压根没去用索引，或者很少用它，这种无效索引反而会降低效率。</p>
+<ol>
+<li><p>DML 耗时：根据上面的回答，添加索引会 <strong>构建 BTree </strong>，建立 <strong>索引都需要维护</strong>，你  <strong>创建、插入或删除</strong> 记录，都要重新构建部分 BTree；
+【所以唯一性太差的字段不适合创建索引；字段频繁变化的字段也不适合创建索引】</p></li>
+<li><p>消耗磁盘空间；</p></li>
+</ol>
 
-<p>不过庆幸的是，我们目前很多主键都是使用自增 id，这样插入更新等操作都可以通过寻找到指定索引，新增叶子节点，效率挺高。</p>
 
 <br/>
 
@@ -1086,7 +1106,7 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-
+<p><strong>唯一索引中 null 不代表重复，可以有多个 null；</strong></p>
 
 <br/>
 
@@ -1136,6 +1156,8 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <p>添加FULLTEXT(全文索引)</p>
 
+<p>全文索引只能在 <strong>MYISAM</strong> 引擎中使用：</p>
+
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="o">`</span><span class="k">table_name</span><span class="o">`</span> <span class="k">ADD</span> <span class="n">FULLTEXT</span> <span class="p">(</span><span class="o">`</span><span class="k">column</span><span class="o">`</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -1157,6 +1179,51 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>PS: 全文索引并不是所有文本都加索引，而是通过“停止词”；
+对一些常用词，没什么特殊含义的词（a, the, at, which, want&hellip;）不加索引，这些词叫做停止词；</p>
+
+<br/>
+
+
+
+
+<h3 id='2.6'>查询、修改、删除索引</h3>
+
+
+<hr />
+
+<p>1.查询
+desc 表名;【该方法的缺点，不能显示索引名】</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">show</span> <span class="k">index</span> <span class="k">from</span> <span class="err">表名</span><span class="p">;</span>
+</span><span class='line'><span class="k">show</span> <span class="n">keys</span> <span class="k">from</span> <span class="err">表名</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<br/>
+
+
+<p>2.删除</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">alter</span> <span class="k">table</span> <span class="err">表名</span> <span class="k">drop</span> <span class="k">index</span> <span class="err">索引名</span><span class="p">;</span>
+</span><span class='line'><span class="err">如果删除主键索引：</span>
+</span><span class='line'><span class="k">alter</span> <span class="k">table</span> <span class="err">表名</span> <span class="k">drop</span> <span class="k">primary</span> <span class="k">key</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<br/>
+
+
+<p>3.修改</p>
+
+<p>先删除，再重新创建；</p>
+
+<br/>
 
 
 <br/>
@@ -1173,7 +1240,20 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 <p>1.分组字段：
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">group</span> <span class="k">by</span>
-</span></code></pre></td></tr></table></div></figure></p>
+</span></code></pre></td></tr></table></div></figure>
+很多人觉得不会用到，其实会用到的；
+按照 explain 可以看出单独对驱动表使用 group by，mysql 计划是会使用索引的；
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">explain</span>
+</span><span class='line'><span class="k">select</span> <span class="o">*</span>
+</span><span class='line'><span class="k">from</span> <span class="n">juniu_return_goods_sku</span>
+</span><span class='line'><span class="k">group</span> <span class="k">by</span> <span class="n">juniu_return_goods_sku</span><span class="p">.</span><span class="n">goods_id</span>
+</span></code></pre></td></tr></table></div></figure>
+这里返回使用了索引，并且不会 用到 using temporary;
+所以加了索引，用 explain 验证一下即可；</p>
 
 <p>2.排序字段：
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1218,15 +1298,45 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <p>它先对日期值使用 DATE_FORMATE 方法，所以索引无效；</p>
 
-<p>对于是否变快，其实你也可以通过在可视化界面上点击排序，例如点击“created_at”，数据量很多时，点了需要等一段时间，
-但是给 created_at 添加索引之后，点击排序，反应相当快。</p>
+<p><br/>
+<br/></p>
 
-<p>或者可以看 《利用 select union join解决分页与排序矛盾》这篇文章，
-如果直接使用union，每个union语句中有
-join语句，join语句如果不加索引速度非常慢，加了索引在使用union 速度提升很多；</p>
+<p><h3 id='3.2'> 小技巧 </h3></p>
+
+<ol>
+<li><p>在使用 <strong>group by</strong> 分组查询时，默认分组后，还会排序，可能会降低速度；
+例如：在一张表中对一个索引字段进行 group by ，explain后发现他不会使用索引，但是 extra 中有 <strong>Using filesort</strong>；
+解决：group by 后面加上 <strong>order by null</strong>;</p></li>
+<li><p>有些情况下，可以使用连接代替子查询。
+因为使用 join，Mysql 不需要在 <strong>内存</strong> 中创建 <strong>临时表(不使用索引)</strong>，
+除非指定了联接条件时，满足查询条件的记录行数少的表为[驱动表]，未指定联接条件时，行数少的表为[驱动表]，多表联合查询时</p></li>
+</ol>
+
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="o"><em></span> <span class="k">from</span> <span class="n">dept</span><span class="p">,</span> <span class="n">emp</span> <span class="k">where</span> <span class="n">dept</span><span class="p">.</span><span class="k">no</span> <span class="o">=</span> <span class="n">emp</span><span class="p">.</span><span class="k">no</span><span class="p">;</span> <span class="o">//</span> <span class="err">简单处理方式</span>
+</span><span class='line'><span class="k">select</span> <span class="o"></em></span> <span class="k">from</span> <span class="n">dept</span> <span class="k">left</span> <span class="k">join</span> <span class="n">emp</span> <span class="k">on</span> <span class="n">dept</span><span class="p">.</span><span class="k">no</span> <span class="o">=</span> <span class="n">emp</span><span class="p">.</span><span class="k">no</span><span class="p">;</span> <span class="o">//</span> <span class="err">左连接</span>
+</span></code></pre></td></tr></table></div></figure></p>
 
 <p><br/>
-注意：使用 EXPLAIN 函数来获取操作信息，查看扫描行数和</p>
+<br/></p>
+
+<p><h2 id='4'>4. 索引生成文件</h2></p>
+
+<p><h3 id='4.1'>索引文件</h3></p>
+
+<p>可以通过 my.ini 看到索引的目录文件，一般每一张表有三个文件：
+&ndash; .frm 记录表的结构，【innodb 数据库的数据放在外层目录的 ibdata 文件；】</p>
+
+<ul>
+<li><p>.myd 表的数据</p></li>
+<li><p>.myi 记录表的索引</p></li>
+</ul>
+
+
+<p><br/>
+<br/></p>
 ]]></content>
   </entry>
   
