@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
   <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
   <link href="http://TsaiKoga.github.com/"/>
-  <updated>2018-12-19T15:05:48+08:00</updated>
+  <updated>2018-12-24T16:41:48+08:00</updated>
   <id>http://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -701,17 +701,27 @@ WHERE</p>
 
 <p>计算机先在索引列表中找到记录的 <strong>位置</strong>，既 <strong>rowid</strong>，然后直接去表中的对应位置取出记录，我就不明白了，查找索引列表难道不需要一条一条的匹配？计算机又不会出现说，看索引列表比直接看表中的记录要快，先在索引列表中找到记录对应的 rowid 也是要遍历的？难道不是同样的吗？</p>
 
-<p>Mysql 索引主要两种：
-1. BTree
+<br/>
+
+
+<p>Mysql 索引主要两种：</p>
+
+<br/>
+
+
+<p><strong>1.BTree</strong>
 取中间数作为根，比根小的数再取中间数放左边，大数放右边作为右边树叶；
 时间复杂度就是log2(n)；</p>
 
-<ol>
-<li>Hash
+<br/>
+
+
+<p><strong>2.Hash</strong>
 key-value 保存;
 时间复杂度是(n);
-缺点：不支持范围查询，只能指定查询；</li>
-</ol>
+缺点：不支持范围查询，只能指定查询；</p>
+
+<br/>
 
 
 <br/>
