@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Net | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/net/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/net/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[使用hosts文件上facebook等网站]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan/"/>
     <updated>2013-10-19T20:52:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/19/shi-yong-hostswen-jian-shang-facebookdeng-wang-zhan</id>
     <content type="html"><![CDATA[<h3>原因：</h3>
 
 <p>  hosts文件是<strong>本地域名解析文件</strong>,</p>

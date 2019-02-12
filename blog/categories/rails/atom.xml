@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Rails | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/rails/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Rails 利用批量操作提速]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/"/>
+    <link href="https://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/"/>
     <updated>2016-08-21T14:29:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su</id>
+    <id>https://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su</id>
     <content type="html"><![CDATA[<h4><a href="#1.1">1.1 批量查找数据</a></h4>
 
 <h5><a href="#1.2">1.2 操作代码</a></h5>
@@ -248,9 +248,9 @@ end
   
   <entry>
     <title type="html"><![CDATA[Routing]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2015/08/03/routing/"/>
+    <link href="https://TsaiKoga.github.com/blog/2015/08/03/routing/"/>
     <updated>2015-08-03T14:55:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2015/08/03/routing</id>
+    <id>https://TsaiKoga.github.com/blog/2015/08/03/routing</id>
     <content type="html"><![CDATA[<h3>目录：</h3>
 
 <h4><a href="#2.1">2.1 路由的两个目标</a></h4>
@@ -1520,9 +1520,9 @@ $ rake routes CONTROLLER=products
   
   <entry>
     <title type="html"><![CDATA[Rails Enviroments and Configuration]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration/"/>
+    <link href="https://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration/"/>
     <updated>2015-07-25T13:03:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration</id>
+    <id>https://TsaiKoga.github.com/blog/2015/07/25/rails-enviroments-and-configuration</id>
     <content type="html"><![CDATA[<p>对于 Rails 的环境和配置，这里翻译了一篇文章。如果有翻译错的地方，欢迎指出。</p>
 
 <h2>目录：</h2>
@@ -2890,9 +2890,9 @@ int(11) DEFAULT NULL auto_increment PRIMARYKEY,'user_id' int(11))
   
   <entry>
     <title type="html"><![CDATA[Rails Assets Pipeline]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline/"/>
     <updated>2013-10-26T10:10:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline</id>
     <content type="html"><![CDATA[<p>本章我将从三个方面介绍Assets Pipeline:</p>
 
 <ol>
@@ -3143,9 +3143,9 @@ assets pipeline会**自动解析erb**，你可以在CSS增加扩展名.erb，这
   
   <entry>
     <title type="html"><![CDATA[加载Rails]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails/"/>
     <updated>2013-10-25T22:58:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails</id>
     <content type="html"><![CDATA[<p>在上一篇文章<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>,最后加载的config/application.rb文件中显示：</p>
 
 <p>``` ru</p>

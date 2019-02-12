@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: ProjectManagement | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/projectmanagement/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/projectmanagement/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[录单APP项目中的问题]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2018/10/28/lu-dan-appxiang-mu-zhong-de-wen-ti/"/>
+    <link href="https://TsaiKoga.github.com/blog/2018/10/28/lu-dan-appxiang-mu-zhong-de-wen-ti/"/>
     <updated>2018-10-28T15:46:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2018/10/28/lu-dan-appxiang-mu-zhong-de-wen-ti</id>
+    <id>https://TsaiKoga.github.com/blog/2018/10/28/lu-dan-appxiang-mu-zhong-de-wen-ti</id>
     <content type="html"><![CDATA[<h2>目录</h2>
 
 <h4><a href="#1">分页重复数据问题</a></h4>
@@ -215,9 +215,9 @@ alter table transaction add unique index daily_sel_ins_at(transaction_daily_seri
   
   <entry>
     <title type="html"><![CDATA[公司项目中 Git 的使用方法]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/"/>
+    <link href="https://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/"/>
     <updated>2016-08-06T16:10:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa</id>
+    <id>https://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa</id>
     <content type="html"><![CDATA[<p>Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。</p>
 
 <p>它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。</p>
@@ -409,9 +409,9 @@ export PS1=&ldquo;(<code>basename \"$VIRTUAL_ENV\"</code>)\u@\h:\w\$git_branch\$
   
   <entry>
     <title type="html"><![CDATA[敏捷开发]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2014/02/25/min-jie-kai-fa/"/>
+    <link href="https://TsaiKoga.github.com/blog/2014/02/25/min-jie-kai-fa/"/>
     <updated>2014-02-25T13:23:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2014/02/25/min-jie-kai-fa</id>
+    <id>https://TsaiKoga.github.com/blog/2014/02/25/min-jie-kai-fa</id>
     <content type="html"><![CDATA[<p><img src="/images/posts/2014-02-25/minjie.jpg" title="敏捷开发图" alt="图片无法显示" /></p>
 
 <h5>敏捷开发的定义：</h5>
@@ -471,9 +471,9 @@ export PS1=&ldquo;(<code>basename \"$VIRTUAL_ENV\"</code>)\u@\h:\w\$git_branch\$
   
   <entry>
     <title type="html"><![CDATA[项目代码实现]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/11/06/xiang-mu-dai-ma-shi-xian/"/>
     <updated>2013-11-06T13:14:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/11/06/xiang-mu-dai-ma-shi-xian</id>
+    <id>https://TsaiKoga.github.com/blog/2013/11/06/xiang-mu-dai-ma-shi-xian</id>
     <content type="html"><![CDATA[<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;转眼间已经到了大四，想想大三和暑假在做的项目，自己在其中参与开发也曾参与管理；提到开发，从一开始对语言和业务都很陌生，任务不能按时完成；到后来逐渐掌握方法，准时完成任务。这个期间是一个逐渐迷失，然后发现问题，之后解决问题的过程。所以，在这里总结一下自己的经验和体会。</p>
 
 <p>在讲述之前先说一下背景:</p>

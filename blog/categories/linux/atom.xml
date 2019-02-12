@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Linux | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/linux/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/linux/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[PS 查看进程]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng/"/>
+    <link href="https://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng/"/>
     <updated>2014-04-23T13:53:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng</id>
+    <id>https://TsaiKoga.github.com/blog/2014/04/23/ps-cha-kan-jin-cheng</id>
     <content type="html"><![CDATA[<p>如果你使用Linux进行操作，不可避免要接触ps命令，他可以显示进程。</p>
 
 <p>首先，我们来介绍一下进程：</p>
@@ -155,9 +155,9 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
   
   <entry>
     <title type="html"><![CDATA[Linux用户和权限]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/11/07/linuxyong-hu-he-quan-xian/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/11/07/linuxyong-hu-he-quan-xian/"/>
     <updated>2013-11-07T16:14:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/11/07/linuxyong-hu-he-quan-xian</id>
+    <id>https://TsaiKoga.github.com/blog/2013/11/07/linuxyong-hu-he-quan-xian</id>
     <content type="html"><![CDATA[<p>Linux是一个多用户，多任务操作系统。这意味多个用户可以同时使用一个操作系统。虽然便利，但也带来了许多潜在的威胁。
 为了解决这些安全性问题,Linux为用户设置了权限。</p>
 
@@ -228,9 +228,9 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
   
   <entry>
     <title type="html"><![CDATA[Ubuntu常用命令]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/"/>
     <updated>2013-10-23T16:20:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling</id>
     <content type="html"><![CDATA[<p><img src="/images/posts/2013-10-23/ubuntu.jpg" title="ubuntu" alt="无法显示图片" /></p>
 
 <h3>先介绍关于文件和目录的命令：</h3>
@@ -475,9 +475,9 @@ crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
   
   <entry>
     <title type="html"><![CDATA[Linux的文件系统]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu/"/>
     <updated>2013-10-22T09:49:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/22/linuxde-wen-jian-he-mu-lu</id>
     <content type="html"><![CDATA[<hr />
 
 <h3>文件系统：</h3>

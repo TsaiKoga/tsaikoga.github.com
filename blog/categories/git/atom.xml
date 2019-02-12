@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Git | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/git/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/git/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[公司项目中 Git 的使用方法]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/"/>
+    <link href="https://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa/"/>
     <updated>2016-08-06T16:10:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa</id>
+    <id>https://TsaiKoga.github.com/blog/2016/08/06/gong-si-xiang-mu-zhong-git-de-shi-yong-fang-fa</id>
     <content type="html"><![CDATA[<p>Git 是开源的分布式版本控制器，用于敏捷高效地处理任何或小或大的项目。</p>
 
 <p>它被应用到很多 Rails 开发项目中。 公司对于 Git 也有适合的一套用法。</p>

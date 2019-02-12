@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Nosql | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/nosql/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/nosql/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Nosql简介]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/15/nosqljian-jie/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/15/nosqljian-jie/"/>
     <updated>2013-10-15T13:21:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/15/nosqljian-jie</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/15/nosqljian-jie</id>
     <content type="html"><![CDATA[<h4>背景：</h4>
 
 <p>  众所周知，随着社交网络，网络视频，网络游戏的使用，网络资料量呈现爆炸性增长；这时，大数据时代出现。
@@ -136,9 +136,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ubuntu下安装redis 及安全配置]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis/"/>
     <updated>2013-10-15T10:02:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis</id>
+    <id>https://TsaiKoga.github.com/blog/2013/10/15/ubuntuxia-an-zhuang-redis</id>
     <content type="html"><![CDATA[<h3>目录：</h3>
 
 <h4><a href="#1">1.安装步骤</a></h4>

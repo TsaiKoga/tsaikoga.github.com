@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Mysql | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/mysql/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[利用 Mysql 日志及插件进行性能优化]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2018/05/12/li-yong-mysql-ri-zhi-ji-cha-jian-jin-xing-xing-neng-you-hua/"/>
+    <link href="https://TsaiKoga.github.com/blog/2018/05/12/li-yong-mysql-ri-zhi-ji-cha-jian-jin-xing-xing-neng-you-hua/"/>
     <updated>2018-05-12T17:37:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2018/05/12/li-yong-mysql-ri-zhi-ji-cha-jian-jin-xing-xing-neng-you-hua</id>
+    <id>https://TsaiKoga.github.com/blog/2018/05/12/li-yong-mysql-ri-zhi-ji-cha-jian-jin-xing-xing-neng-you-hua</id>
     <content type="html"><![CDATA[<h4><a href="#1">1. 数据库优化的目的</a></h4>
 
 <h4><a href="#2">2. SQL及索引优化</a></h4>
@@ -457,9 +457,9 @@ Innodb_stats_on_metadata
   
   <entry>
     <title type="html"><![CDATA[利用select union join 解决分页与排序的矛盾]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2017/10/02/li-yong-select-union-join-jie-jue-fen-ye-yu-pai-xu-de-mao-dun/"/>
+    <link href="https://TsaiKoga.github.com/blog/2017/10/02/li-yong-select-union-join-jie-jue-fen-ye-yu-pai-xu-de-mao-dun/"/>
     <updated>2017-10-02T18:34:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2017/10/02/li-yong-select-union-join-jie-jue-fen-ye-yu-pai-xu-de-mao-dun</id>
+    <id>https://TsaiKoga.github.com/blog/2017/10/02/li-yong-select-union-join-jie-jue-fen-ye-yu-pai-xu-de-mao-dun</id>
     <content type="html"><![CDATA[<p>刚入职新公司的时候，被数据库的设计吓了一跳；要在一个有缺陷的数据库上解决数据量很大而导致的查询速度慢问题。</p>
 
 <p>首先，先来讲一下这个场景，这是一个APP的交易页面，他要显示的列表信息是衣服的款号，在这款号下面有这个款的几个SKU
@@ -643,9 +643,9 @@ WHERE</p>
   
   <entry>
     <title type="html"><![CDATA[Mysql索引]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2017/10/02/mysqlsuo-yin/"/>
+    <link href="https://TsaiKoga.github.com/blog/2017/10/02/mysqlsuo-yin/"/>
     <updated>2017-10-02T18:05:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2017/10/02/mysqlsuo-yin</id>
+    <id>https://TsaiKoga.github.com/blog/2017/10/02/mysqlsuo-yin</id>
     <content type="html"><![CDATA[<h4><a href="#1">1.索引的优缺点原因</a></h4>
 
 <h5><a href="#1.1">1.1为什么添加索引，查询速度变快</a></h5>
@@ -994,9 +994,9 @@ select * from dept left join emp on dept.no = emp.no; // 左连接
   
   <entry>
     <title type="html"><![CDATA[Rails 利用批量操作提速]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/"/>
+    <link href="https://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su/"/>
     <updated>2016-08-21T14:29:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su</id>
+    <id>https://TsaiKoga.github.com/blog/2016/08/21/rails-li-yong-pi-liang-cao-zuo-ti-su</id>
     <content type="html"><![CDATA[<h4><a href="#1.1">1.1 批量查找数据</a></h4>
 
 <h5><a href="#1.2">1.2 操作代码</a></h5>

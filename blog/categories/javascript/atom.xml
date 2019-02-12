@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Javascript | TsaiKoga Blog]]></title>
-  <link href="http://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
-  <link href="http://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T12:51:46+08:00</updated>
-  <id>http://TsaiKoga.github.com/</id>
+  <link href="https://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-02-12T13:05:30+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[JQuery重要知识点]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian/"/>
+    <link href="https://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian/"/>
     <updated>2017-03-10T15:14:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian</id>
+    <id>https://TsaiKoga.github.com/blog/2017/03/10/jqueryzhong-yao-zhi-shi-dian</id>
     <content type="html"><![CDATA[<p>对于Jquery，用起来很像很简单；但是有些知识点经常会忘记。这里特别写一篇来巩固。</p>
 
 <h3>加载：</h3>
@@ -190,9 +190,9 @@ load在包含数据对象参数时，会使用post方法</p>
   
   <entry>
     <title type="html"><![CDATA[Scroll to top]]></title>
-    <link href="http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
+    <link href="https://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top/"/>
     <updated>2013-08-30T21:57:00+08:00</updated>
-    <id>http://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top</id>
+    <id>https://TsaiKoga.github.com/blog/2013/08/30/scroll-to-top</id>
     <content type="html"><![CDATA[<p>许多网页都有提供一个便捷功能：当你浏览网页时，由于网页内容比较多，需要向下滑动；但是，当你要向上时，自己滑动太慢了。这里将的是一个自动向上滑的按钮。
 具体操作如下：</p>
 
