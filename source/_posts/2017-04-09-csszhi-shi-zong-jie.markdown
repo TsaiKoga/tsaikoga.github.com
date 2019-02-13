@@ -162,4 +162,10 @@ h1 {
 h1的大小是默认大小的1.5倍，即24像素（24/16=1.5）。
 <br/>
 
+##### vw 和 vh
+
+vw 和 vh 是相对视区宽度和高度，这里的 视区 指的是网页宽度高度，也就是 window.innerWidth 和 window.innerHeight
+然后 vw 如果为 10 ，也就是该元素相对网页宽度是 1/10；
+
+
 相关响应式资料资料：http://www.ruanyifeng.com/blog/2012/05/responsive_web_design.html
