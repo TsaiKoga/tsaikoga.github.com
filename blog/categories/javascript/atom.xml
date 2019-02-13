@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Javascript | TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-02-12T13:10:27+08:00</updated>
+  <updated>2019-02-13T11:14:18+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -185,6 +185,417 @@ load在包含数据对象参数时，会使用post方法</p>
 <p>ajaxStop()回调，ajax最后一次请求结束时调用，和 read() 一样只能由$(document)调用</p>
 
 <p>ajaxError()回调，参数是一个XMLHttpRequest的引用。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[React Node 初尝试]]></title>
+    <link href="https://TsaiKoga.github.com/blog/2016/12/20/React-Node-chu-chang-shi/"/>
+    <updated>2016-12-20T20:29:00+08:00</updated>
+    <id>https://TsaiKoga.github.com/blog/2016/12/20/React-Node-chu-chang-shi</id>
+    <content type="html"><![CDATA[<p>这是第一次写React和Node，选用的是前端Material-ui框架，后端使用的是Express框架，数据库采用的是Mongodb。</p>
+
+<p>项目代码在：<a href="https://github.com/TsaiKoga/lilu_movie">GitHub/lilu_movie</a></p>
+
+<p>这是一个通过从电影天堂抓取数据并显示的电影网站，demo部署在heroku上面。</p>
+
+<h2>安装</h2>
+
+<hr />
+
+<p>首先安装express框架；</p>
+
+<p><code>sh
+npm install express --save
+</code></p>
+
+<p>生成文件后，可以通过 npm start 启动应用。</p>
+
+<p>注意：ejs 从3.x后不支持layout，可以通过express-partials ，但是不支持4，4之后用include</p>
+
+<p>紧接着我迫不及待安装material-ui：</p>
+
+<p><code>sh
+npm install material-ui --save
+</code></p>
+
+<p>然后出现错误：</p>
+
+<p><img src="/images/posts/2016-12-20/material-ui-error.png" alt="material-ui-error" /></p>
+
+<p>所以必须安装react依赖：</p>
+
+<p>``` sh
+npm install react@^15.0.0 &mdash;save</p>
+
+<p>npm install react-dom@^15.0.0 &mdash;save</p>
+
+<p>npm install react-tap-event-plugin@^1.0.0 &mdash;save
+```</p>
+
+<p>安装nodemon</p>
+
+<p><code>sh
+nodemon ./bin/www #更改会自动重启服务
+</code></p>
+
+<p>本地安装数据库mongodb</p>
+
+<p>然后npm安装操作mongodb的mongoose</p>
+
+<p>``` sh
+npm install mongoose</p>
+
+<p>npm install express-mongoose
+```</p>
+
+<p>接着你会发现按照material-ui的import引入报错，</p>
+
+<p>使用es6查看系统支持哪些es6语法</p>
+
+<p><code>sh
+npm install es6-checker
+</code></p>
+
+<p>因为react使用es6和jsx语法，所以需要转化，安装如下包：</p>
+
+<p>``` sh
+npm install babel-loader babel-core babel-preset-es2015 —save-dev</p>
+
+<p>npm install jsx-loader —save-dev</p>
+
+<p>npm install babel-preset-react
+```</p>
+
+<p>安装webpack</p>
+
+<p>``` sh
+npm install webpack —save-dev</p>
+
+<p>npm install css-loader —save-dev</p>
+
+<p>npm install webpack-dev-server —save-dev  # 前端文件更新就能自动热启动，会启动端口，默认8080
+```</p>
+
+<p>这里有必要提一下：-save-dev代表安装的包适用于开发的，类似于rails中安装Gem放在:development环境下，这样生产环境就不会安装</p>
+
+<p>然后在webpack配置文件中babels的loaders中query加入presets</p>
+
+<p>因为需要一些css文件，react通过require style文件(js 文件中直接require css 文件)，需要安装</p>
+
+<p>``` sh
+npm install style-loader —save-dev</p>
+
+<p>npm install css-loader —save-dev // 这个和style一起用才有效果
+```</p>
+
+<p>在webpack中的config 加上loader: &ldquo;style-loader!css-loader”，就不用require使用style!css!了</p>
+
+<br/>
+
+
+<h2>启动脚本：</h2>
+
+<hr />
+
+<p>配置package.json文件，给script添加命令</p>
+
+<p><code>js
+ "start": ["node ./bin/www", "webpack"],
+</code></p>
+
+<p>编写webpack.config.js配置文件，更改html引入文件</p>
+
+<p>在webpack-dev-server 没有真正生成文件，还得要引入<script src=“localhost:8080/assets/bundle.js"></script></p>
+
+<p>运行</p>
+
+<p><code>sh
+npm run dev
+</code></p>
+
+<p>看webpack-dev-server效果</p>
+
+<br/>
+
+
+<h2>Express后端流程改变：</h2>
+
+<hr />
+
+<p>刚开始，我用一贯的后台思路通过routes渲染页面，页面html引入react的js文件，reactjs文件link后台js响应；后台相应通过连接mongodb获取数据库内容。</p>
+
+<p>很成功，获取到相应的内容了，但是因为使用react(React适合做SPA)，所以不好每次都取加载一次内容，所以就不用引擎模板，这些数据如何放入state让react用diff算法自己计算呢？怎样变成单页面应用呢？</p>
+
+<p>这时候我想到就是ajax；上网google一下，发现用fetch能实现像ajax那样的请求。同一个component可以很容易实现fetch数据改变this的state。</p>
+
+<p>详情更改请看我的这个commit：<a href="https://github.com/TsaiKoga/lilu_movie/commit/16fef9918a0fc1a2a34e851d88328fcd99b1c2c8">add client store to fetch movie&rsquo;s data from server</a></p>
+
+<p>这时候发现不知道怎么通过点击侧边栏标签，渲染新页面（注意：侧边栏是一个组件，而右边的电影列表又是一个组件，他们是两个不同的组件）</p>
+
+<p><img src="/images/posts/2016-12-20/sidebar.png" alt="侧边栏组件" /></p>
+
+<br/>
+
+
+<h2>使用React-Router</h2>
+
+<hr />
+
+<p>由于react规定父元素只能改变子元素，但是不好将子元素改变父元素；</p>
+
+<p>一般我们都会把许多内容都搞到最顶级那个父元素的state，这样其他都有可能与他有关联，而子元素改变父元素的state的方法就是通过回调setState；</p>
+
+<p>所以这里我们可以将movies放在最顶的component，然后点击标签，就去回调去改变这个父元素的state，用到这个state的子元素就会刷新。</p>
+
+<p> 代码详见这个 <a href="https://github.com/TsaiKoga/lilu_movie/commit/248258b5faf0161f66655c745c2bc8e33ffc9798">commit</a></p>
+
+<p><strong>但是这样太hacky了，违背react理念，代码难理解；</strong></p>
+
+<br/>
+
+
+<p>有没有其他更好的办法呢？</p>
+
+<p>Google查找答案发现有两种方法：</p>
+
+<ol>
+<li><p>使用react-router</p></li>
+<li><p>如果不是用react-router，则得这样写<a href="https://github.com/ReactTraining/react-router/blob/master/docs/Introduction.md">https://github.com/ReactTraining/react-router/blob/master/docs/Introduction.md</a></p></li>
+</ol>
+
+
+<p>react-route根据history传入的链接，找到你对应routes的component，然后改变children，成功渲染改组件。</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>对于不同组件改变同个内容还是使用react-router</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>使用react-router发现client端通过router的链接，局部更新内容；</p>
+
+<p>这样子说，完全不需要server后台每个路由每次渲染不同页面了，只需要server不同链接给出不同内容，然后渲染同一个页面，这个页面通过react-router去改变内容即可。</p>
+
+<p>所以删除后端所有router路由；</p>
+
+<p>按照React Router官方教程实现相应代码。</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>这时候发现一个问题：</p>
+
+<p>渲染同一个页面就要在后端引入前端的routes，也就需要到es6了，但是之前后端没有通过webpack进行es6的转化，所以还要对后端的入口文件进行webpack转化。</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>对后端server.js进行webpack的bundle后，很容易报错，首先要在web pack中排除掉node_module的文件，然后需要引入各种loader；</p>
+
+<br/>
+
+
+<p>server端要import client端的routes过来，但是route的component会引用相应的component。如果遇到client的内容，有些react-router/server是处理不了的，会报没有window错误。</p>
+
+<br/>
+
+
+<p>以下是最终的webpack.server.config.js</p>
+
+<p>``` js
+var webpack = require(&ldquo;webpack&rdquo;);
+var fs = require(&ldquo;fs&rdquo;);
+var path = require(&ldquo;path&rdquo;);</p>
+
+<p>module.exports = {
+  entry: [</p>
+
+<pre><code>path.resolve(__dirname, 'server.js')
+</code></pre>
+
+<p>  ],</p>
+
+<p>  output: {</p>
+
+<pre><code>filename: 'server.bundle.js'
+</code></pre>
+
+<p>  },
+  target: &lsquo;node&rsquo;,</p>
+
+<p>  externals: fs.readdirSync(path.resolve(__dirname, &lsquo;node_modules&rsquo;)).concat([</p>
+
+<pre><code>'react-dom/server', 'react/addons',
+</code></pre>
+
+<p>  ]).reduce(function (ext, mod) {</p>
+
+<pre><code>ext[mod] = 'commonjs ' + mod
+return ext
+</code></pre>
+
+<p>  }, {}),</p>
+
+<p>  node: {</p>
+
+<pre><code>__filename: true,
+__dirname: true
+</code></pre>
+
+<p>  },
+  module: {</p>
+
+<pre><code>loaders: [
+  {
+    test: /\.css$/,
+    loader: "style-loader!css-loader"
+  }, {
+    test: /\.js$/,
+    exclude: /node_modules/,
+    loader: "babel",
+    query: { presets: ['react', 'es2015'] }
+  }, {
+    test: /.json$/, loader: 'json-loader'
+  }, {
+    test: /.node$/, loader: 'node-loader'
+  }]
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>事实上使用react react-router已经足够完成功能，但是考虑到如果之后想要扩展，例如现在我又要增加用户注册，登录页面；那么很有可能随着页面组件增多，这个项目将会变成意大利面；</p>
+
+<br/>
+
+
+<h2>使用Redux</h2>
+
+<hr />
+
+<p>这时候应该引入redux;</p>
+
+<p>``` sh</p>
+
+<p>npm install react-redux</p>
+
+<p>npm install redux</p>
+
+<p>```</p>
+
+<p>关于redux，其实应用中所有的 state 都以一个对象树的形式储存在一个单一的 store 中。惟一改变 state 的办法是触发 action，一个描述发生什么的对象。</p>
+
+<p>为了描述 action 如何改变 state 树，你需要编写 reducers。</p>
+
+<p>通过写reducer，可以很好的管理actions，这样更加条理。可以看我的redux目录</p>
+
+<blockquote><p>actions：用来fetch后台数据或者直接返回改变的内容</p>
+
+<p>reducers：通过actions返回的数据，改变state</p>
+
+<p>constants：每个actions的常量名</p>
+
+<p>configureStore.js:通过传入reducers和初始的states，返回store（包含改变的states）</p></blockquote>
+
+<p>然后前台app.js渲染之前，必须先通过<Provide>传入store；</p>
+
+<br/>
+
+
+<p>``` js
+const store = configureStore(window.<strong>INITIAL_STATE</strong>)</p>
+
+<p>/<em> 这里store存储某一时刻的state树，所以这里面通过action得到的states是不一样的
+ * 例如：如果一开始给tags，后面action没有给tags，则不会有原来的初始值tags,所以不用担心数据冗余。
+ </em>/</p>
+
+<p>ReactDOM.render(
+  <Provider store={store} ></p>
+
+<pre><code>&lt;Router routes={routes} history={browserHistory} /&gt;
+</code></pre>
+
+<p>  </Provider>,
+  document.getElementById(&lsquo;app&rsquo;)
+)
+```</p>
+
+<br/>
+
+
+<p>后台呢？也要相应根据么次fetch数据返回新的store。</p>
+
+<p>``` js</p>
+
+<pre><code>  const store = configureStore(initialState)
+  const state = store.getState()
+  const params = Object.assign(req.query, renderProps.params)
+
+  fetchComponentDataBeforeRender(store.dispatch, renderProps.components, params)
+  .then(() =&gt; {
+    // 这里redux的store给Provider，再通过mapStateToProps给对应的容器组件
+    const html = renderToString(
+      &lt;Provider store={store}&gt;
+        &lt;RouterContext {...renderProps} /&gt;
+      &lt;/Provider&gt;
+    )
+    res.send(renderFullPage(html, store.getState()));
+  })
+</code></pre>
+
+<p>```</p>
+
+<p>有了后台传回来新的store，如何应用到前台组件呢？</p>
+
+<br/>
+
+
+<p>就在组件中引入connect：</p>
+
+<p><code>js
+import { connect } from 'react-redux'
+</code></p>
+
+<p>``` js
+class MoviesGridList extends React.Component {
+&hellip; &hellip;.
+  // 将store最新的state.movies给props，
+  function mapStateToProps(state, props) {</p>
+
+<pre><code>let tags = props.location.query.tags
+let movies
+if (tags === undefined) {
+  movies = state.movies
+} else {
+  movies = getMoviesByTag(state, tags)
+}
+return {
+  tags: tags,
+  movies: movies
+}
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>export default connect(mapStateToProps)(MoviesGridList)
+```</p>
 ]]></content>
   </entry>
   

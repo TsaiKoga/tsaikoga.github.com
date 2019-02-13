@@ -1,0 +1,692 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>React Node 初尝试 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="这是第一次写React和Node，选用的是前端Material-ui框架，后端使用的是Express框架，数据库采用的是Mongodb。 项目代码在：GitHub/lilu_movie 这是一个通过从电影天堂抓取数据并显示的电影网站，demo部署在heroku上面。 安装 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='https://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->
+    <script src="/javascripts/ajaxify.js"></script>
+
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  <!-- GitHub -->
+  <li>
+  <a href="https://github.com/tsaikoga" class="github" title="Github"></a>
+  </li>
+  
+  
+  
+  
+  <!-- Twitter -->
+  <li>
+  <a href="http://www.twitter.com/tsaikoga" class="twitter" title="Twitter"></a>
+  </li>
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+	<li><a href="/MyResume">My Resume</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+    
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (3)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (4)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">React Node 初尝试</h2>
+	<div class="entry-content"><p>这是第一次写React和Node，选用的是前端Material-ui框架，后端使用的是Express框架，数据库采用的是Mongodb。</p>
+
+<p>项目代码在：<a href="https://github.com/TsaiKoga/lilu_movie">GitHub/lilu_movie</a></p>
+
+<p>这是一个通过从电影天堂抓取数据并显示的电影网站，demo部署在heroku上面。</p>
+
+<h2>安装</h2>
+
+<hr />
+
+<p>首先安装express框架；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install express --save
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>生成文件后，可以通过 npm start 启动应用。</p>
+
+<p>注意：ejs 从3.x后不支持layout，可以通过express-partials ，但是不支持4，4之后用include</p>
+
+<p>紧接着我迫不及待安装material-ui：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install material-ui --save
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>然后出现错误：</p>
+
+<p><img src="/images/posts/2016-12-20/material-ui-error.png" alt="material-ui-error" /></p>
+
+<p>所以必须安装react依赖：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install react@^15.0.0 --save
+</span><span class='line'>
+</span><span class='line'>npm install react-dom@^15.0.0 --save
+</span><span class='line'>
+</span><span class='line'>npm install react-tap-event-plugin@^1.0.0 --save
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装nodemon</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>nodemon ./bin/www <span class="c">#更改会自动重启服务</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>本地安装数据库mongodb</p>
+
+<p>然后npm安装操作mongodb的mongoose</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install mongoose
+</span><span class='line'>
+</span><span class='line'>npm install express-mongoose
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接着你会发现按照material-ui的import引入报错，</p>
+
+<p>使用es6查看系统支持哪些es6语法</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install es6-checker
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>因为react使用es6和jsx语法，所以需要转化，安装如下包：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install babel-loader babel-core babel-preset-es2015 —save-dev
+</span><span class='line'>
+</span><span class='line'>npm install jsx-loader —save-dev
+</span><span class='line'>
+</span><span class='line'>npm install babel-preset-react
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安装webpack</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install webpack —save-dev
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>npm install css-loader —save-dev
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>npm install webpack-dev-server —save-dev  <span class="c"># 前端文件更新就能自动热启动，会启动端口，默认8080</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里有必要提一下：-save-dev代表安装的包适用于开发的，类似于rails中安装Gem放在:development环境下，这样生产环境就不会安装</p>
+
+<p>然后在webpack配置文件中babels的loaders中query加入presets</p>
+
+<p>因为需要一些css文件，react通过require style文件(js 文件中直接require css 文件)，需要安装</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install style-loader —save-dev
+</span><span class='line'>
+</span><span class='line'>npm install css-loader —save-dev // 这个和style一起用才有效果
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在webpack中的config 加上loader: &ldquo;style-loader!css-loader”，就不用require使用style!css!了</p>
+
+<br/>
+
+
+<h2>启动脚本：</h2>
+
+<hr />
+
+<p>配置package.json文件，给script添加命令</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'> <span class="s2">&quot;start&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;node ./bin/www&quot;</span><span class="p">,</span> <span class="s2">&quot;webpack&quot;</span><span class="p">],</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>编写webpack.config.js配置文件，更改html引入文件</p>
+
+<p>在webpack-dev-server 没有真正生成文件，还得要引入<script src=“localhost:8080/assets/bundle.js"></script></p>
+
+<p>运行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm run dev
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看webpack-dev-server效果</p>
+
+<br/>
+
+
+<h2>Express后端流程改变：</h2>
+
+<hr />
+
+<p>刚开始，我用一贯的后台思路通过routes渲染页面，页面html引入react的js文件，reactjs文件link后台js响应；后台相应通过连接mongodb获取数据库内容。</p>
+
+<p>很成功，获取到相应的内容了，但是因为使用react(React适合做SPA)，所以不好每次都取加载一次内容，所以就不用引擎模板，这些数据如何放入state让react用diff算法自己计算呢？怎样变成单页面应用呢？</p>
+
+<p>这时候我想到就是ajax；上网google一下，发现用fetch能实现像ajax那样的请求。同一个component可以很容易实现fetch数据改变this的state。</p>
+
+<p>详情更改请看我的这个commit：<a href="https://github.com/TsaiKoga/lilu_movie/commit/16fef9918a0fc1a2a34e851d88328fcd99b1c2c8">add client store to fetch movie&rsquo;s data from server</a></p>
+
+<p>这时候发现不知道怎么通过点击侧边栏标签，渲染新页面（注意：侧边栏是一个组件，而右边的电影列表又是一个组件，他们是两个不同的组件）</p>
+
+<p><img src="/images/posts/2016-12-20/sidebar.png" alt="侧边栏组件" /></p>
+
+<br/>
+
+
+<h2>使用React-Router</h2>
+
+<hr />
+
+<p>由于react规定父元素只能改变子元素，但是不好将子元素改变父元素；</p>
+
+<p>一般我们都会把许多内容都搞到最顶级那个父元素的state，这样其他都有可能与他有关联，而子元素改变父元素的state的方法就是通过回调setState；</p>
+
+<p>所以这里我们可以将movies放在最顶的component，然后点击标签，就去回调去改变这个父元素的state，用到这个state的子元素就会刷新。</p>
+
+<p> 代码详见这个 <a href="https://github.com/TsaiKoga/lilu_movie/commit/248258b5faf0161f66655c745c2bc8e33ffc9798">commit</a></p>
+
+<p><strong>但是这样太hacky了，违背react理念，代码难理解；</strong></p>
+
+<br/>
+
+
+<p>有没有其他更好的办法呢？</p>
+
+<p>Google查找答案发现有两种方法：</p>
+
+<ol>
+<li><p>使用react-router</p></li>
+<li><p>如果不是用react-router，则得这样写<a href="https://github.com/ReactTraining/react-router/blob/master/docs/Introduction.md">https://github.com/ReactTraining/react-router/blob/master/docs/Introduction.md</a></p></li>
+</ol>
+
+
+<p>react-route根据history传入的链接，找到你对应routes的component，然后改变children，成功渲染改组件。</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>对于不同组件改变同个内容还是使用react-router</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>使用react-router发现client端通过router的链接，局部更新内容；</p>
+
+<p>这样子说，完全不需要server后台每个路由每次渲染不同页面了，只需要server不同链接给出不同内容，然后渲染同一个页面，这个页面通过react-router去改变内容即可。</p>
+
+<p>所以删除后端所有router路由；</p>
+
+<p>按照React Router官方教程实现相应代码。</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>这时候发现一个问题：</p>
+
+<p>渲染同一个页面就要在后端引入前端的routes，也就需要到es6了，但是之前后端没有通过webpack进行es6的转化，所以还要对后端的入口文件进行webpack转化。</p>
+
+<br/>
+
+
+<br/>
+
+
+<p>对后端server.js进行webpack的bundle后，很容易报错，首先要在web pack中排除掉node_module的文件，然后需要引入各种loader；</p>
+
+<br/>
+
+
+<p>server端要import client端的routes过来，但是route的component会引用相应的component。如果遇到client的内容，有些react-router/server是处理不了的，会报没有window错误。</p>
+
+<br/>
+
+
+<p>以下是最终的webpack.server.config.js</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kd">var</span> <span class="nx">webpack</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;webpack&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;fs&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">entry</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>    <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;server.js&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">],</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">output</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">filename</span><span class="o">:</span> <span class="s1">&#39;server.bundle.js&#39;</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">target</span><span class="o">:</span> <span class="s1">&#39;node&#39;</span><span class="p">,</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">externals</span><span class="o">:</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readdirSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;node_modules&#39;</span><span class="p">)).</span><span class="nx">concat</span><span class="p">([</span>
+</span><span class='line'>    <span class="s1">&#39;react-dom/server&#39;</span><span class="p">,</span> <span class="s1">&#39;react/addons&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="p">]).</span><span class="nx">reduce</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">ext</span><span class="p">,</span> <span class="nx">mod</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">ext</span><span class="p">[</span><span class="nx">mod</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;commonjs &#39;</span> <span class="o">+</span> <span class="nx">mod</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nx">ext</span>
+</span><span class='line'>  <span class="p">},</span> <span class="p">{}),</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">node</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">__filename</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class='line'>    <span class="nx">__dirname</span><span class="o">:</span> <span class="kc">true</span>
+</span><span class='line'>  <span class="p">},</span>
+</span><span class='line'>  <span class="nx">module</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">loaders</span><span class="o">:</span> <span class="p">[</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>        <span class="nx">test</span><span class="o">:</span> <span class="sr">/\.css$/</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">loader</span><span class="o">:</span> <span class="s2">&quot;style-loader!css-loader&quot;</span>
+</span><span class='line'>      <span class="p">},</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">test</span><span class="o">:</span> <span class="sr">/\.js$/</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">exclude</span><span class="o">:</span> <span class="sr">/node_modules/</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">loader</span><span class="o">:</span> <span class="s2">&quot;babel&quot;</span><span class="p">,</span>
+</span><span class='line'>        <span class="nx">query</span><span class="o">:</span> <span class="p">{</span> <span class="nx">presets</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;react&#39;</span><span class="p">,</span> <span class="s1">&#39;es2015&#39;</span><span class="p">]</span> <span class="p">}</span>
+</span><span class='line'>      <span class="p">},</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">test</span><span class="o">:</span> <span class="sr">/.json$/</span><span class="p">,</span> <span class="nx">loader</span><span class="o">:</span> <span class="s1">&#39;json-loader&#39;</span>
+</span><span class='line'>      <span class="p">},</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">test</span><span class="o">:</span> <span class="sr">/.node$/</span><span class="p">,</span> <span class="nx">loader</span><span class="o">:</span> <span class="s1">&#39;node-loader&#39;</span>
+</span><span class='line'>      <span class="p">}]</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>事实上使用react react-router已经足够完成功能，但是考虑到如果之后想要扩展，例如现在我又要增加用户注册，登录页面；那么很有可能随着页面组件增多，这个项目将会变成意大利面；</p>
+
+<br/>
+
+
+<h2>使用Redux</h2>
+
+<hr />
+
+<p>这时候应该引入redux;</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>npm install react-redux
+</span><span class='line'>
+</span><span class='line'>npm install redux
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>关于redux，其实应用中所有的 state 都以一个对象树的形式储存在一个单一的 store 中。惟一改变 state 的办法是触发 action，一个描述发生什么的对象。</p>
+
+<p>为了描述 action 如何改变 state 树，你需要编写 reducers。</p>
+
+<p>通过写reducer，可以很好的管理actions，这样更加条理。可以看我的redux目录</p>
+
+<blockquote><p>actions：用来fetch后台数据或者直接返回改变的内容</p>
+
+<p>reducers：通过actions返回的数据，改变state</p>
+
+<p>constants：每个actions的常量名</p>
+
+<p>configureStore.js:通过传入reducers和初始的states，返回store（包含改变的states）</p></blockquote>
+
+<p>然后前台app.js渲染之前，必须先通过<Provide>传入store；</p>
+
+<br/>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">configureStore</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">__INITIAL_STATE__</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="cm">/* 这里store存储某一时刻的state树，所以这里面通过action得到的states是不一样的</span>
+</span><span class='line'><span class="cm"> * 例如：如果一开始给tags，后面action没有给tags，则不会有原来的初始值tags,所以不用担心数据冗余。</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">ReactDOM</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="nx">Provider</span> <span class="nx">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}</span> <span class="o">&gt;</span>
+</span><span class='line'>    <span class="o">&lt;</span><span class="nx">Router</span> <span class="nx">routes</span><span class="o">=</span><span class="p">{</span><span class="nx">routes</span><span class="p">}</span> <span class="nx">history</span><span class="o">=</span><span class="p">{</span><span class="nx">browserHistory</span><span class="p">}</span> <span class="o">/&gt;</span>
+</span><span class='line'>  <span class="o">&lt;</span><span class="err">/Provider&gt;,</span>
+</span><span class='line'>  <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<br/>
+
+
+<p>后台呢？也要相应根据么次fetch数据返回新的store。</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'>  <span class="kr">const</span> <span class="nx">store</span> <span class="o">=</span> <span class="nx">configureStore</span><span class="p">(</span><span class="nx">initialState</span><span class="p">)</span>
+</span><span class='line'>  <span class="kr">const</span> <span class="nx">state</span> <span class="o">=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()</span>
+</span><span class='line'>  <span class="kr">const</span> <span class="nx">params</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">query</span><span class="p">,</span> <span class="nx">renderProps</span><span class="p">.</span><span class="nx">params</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">fetchComponentDataBeforeRender</span><span class="p">(</span><span class="nx">store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">,</span> <span class="nx">renderProps</span><span class="p">.</span><span class="nx">components</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// 这里redux的store给Provider，再通过mapStateToProps给对应的容器组件</span>
+</span><span class='line'>    <span class="kr">const</span> <span class="nx">html</span> <span class="o">=</span> <span class="nx">renderToString</span><span class="p">(</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="nx">Provider</span> <span class="nx">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}</span><span class="o">&gt;</span>
+</span><span class='line'>        <span class="o">&lt;</span><span class="nx">RouterContext</span> <span class="p">{...</span><span class="nx">renderProps</span><span class="p">}</span> <span class="o">/&gt;</span>
+</span><span class='line'>      <span class="o">&lt;</span><span class="err">/Provider&gt;</span>
+</span><span class='line'>    <span class="p">)</span>
+</span><span class='line'>    <span class="nx">res</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">renderFullPage</span><span class="p">(</span><span class="nx">html</span><span class="p">,</span> <span class="nx">store</span><span class="p">.</span><span class="nx">getState</span><span class="p">()));</span>
+</span><span class='line'>  <span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>有了后台传回来新的store，如何应用到前台组件呢？</p>
+
+<br/>
+
+
+<p>就在组件中引入connect：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">import</span> <span class="p">{</span> <span class="nx">connect</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-redux&#39;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='js'><span class='line'><span class="kr">class</span> <span class="nx">MoviesGridList</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
+</span><span class='line'><span class="p">...</span> <span class="p">....</span>
+</span><span class='line'>  <span class="c1">// 将store最新的state.movies给props，</span>
+</span><span class='line'>  <span class="kd">function</span> <span class="nx">mapStateToProps</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">tags</span> <span class="o">=</span> <span class="nx">props</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">tags</span>
+</span><span class='line'>    <span class="kd">let</span> <span class="nx">movies</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nx">tags</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">movies</span> <span class="o">=</span> <span class="nx">state</span><span class="p">.</span><span class="nx">movies</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">movies</span> <span class="o">=</span> <span class="nx">getMoviesByTag</span><span class="p">(</span><span class="nx">state</span><span class="p">,</span> <span class="nx">tags</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">{</span>
+</span><span class='line'>      <span class="nx">tags</span><span class="o">:</span> <span class="nx">tags</span><span class="p">,</span>
+</span><span class='line'>      <span class="nx">movies</span><span class="o">:</span> <span class="nx">movies</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kr">export</span> <span class="k">default</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">mapStateToProps</span><span class="p">)(</span><span class="nx">MoviesGridList</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2019
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://TsaiKoga.github.com/blog/2016/12/20/React-Node-chu-chang-shi/';
+        var disqus_url = 'https://TsaiKoga.github.com/blog/2016/12/20/React-Node-chu-chang-shi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>
