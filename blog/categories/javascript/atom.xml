@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Javascript | TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-02-13T11:14:18+08:00</updated>
+  <updated>2019-02-15T09:17:33+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -348,6 +348,10 @@ npm run dev
 
 <p>所以这里我们可以将movies放在最顶的component，然后点击标签，就去回调去改变这个父元素的state，用到这个state的子元素就会刷新。</p>
 
+<p>例如：父组件有一个属性callbackParent=某个callback函数。然后 子组件 通过事件 触发this.props.callbackParent这个函数，把你要的值传给callback，callback立马设置给父组件state</p>
+
+<p> 方案：<a href="http://stackoverflow.com/questions/22639534/pass-props-to-parent-component-in-react-js">stackoverflow</a></p>
+
 <p> 代码详见这个 <a href="https://github.com/TsaiKoga/lilu_movie/commit/248258b5faf0161f66655c745c2bc8e33ffc9798">commit</a></p>
 
 <p><strong>但是这样太hacky了，违背react理念，代码难理解；</strong></p>
@@ -489,7 +493,13 @@ __dirname: true
 
 <hr />
 
-<p>这时候应该引入redux;</p>
+<p>页面逐渐增多，涉及到了不相关或者层级比较多的组件之间的通信；</p>
+
+<p>以上父子组件通信已经不能满足需求，可以使用 Redux；</p>
+
+<p>他是 <strong>观察者模式</strong>，使用 <strong>订阅分发</strong> 实现：</p>
+
+<p>引入redux;</p>
 
 <p>``` sh</p>
 
@@ -501,9 +511,9 @@ __dirname: true
 
 <p>关于redux，其实应用中所有的 state 都以一个对象树的形式储存在一个单一的 store 中。惟一改变 state 的办法是触发 action，一个描述发生什么的对象。</p>
 
-<p>为了描述 action 如何改变 state 树，你需要编写 reducers。</p>
+<p>为了描述 action 如何改变 state 树，你需要编写 reducers，reducers 是一棵操作 state 的树，我用变量 <a href="https://github.com/TsaiKoga/lilu_movie/blob/master/redux/reducers/reducer.js">RootReducer</a> 命名更加形象。</p>
 
-<p>通过写reducer，可以很好的管理actions，这样更加条理。可以看我的redux目录</p>
+<p>通过写reducer，可以很好的管理 actions，这些 actions 操作形成了新的state，这样更加条理。可以看我的redux目录</p>
 
 <blockquote><p>actions：用来fetch后台数据或者直接返回改变的内容</p>
 
@@ -514,6 +524,8 @@ __dirname: true
 <p>configureStore.js:通过传入reducers和初始的states，返回store（包含改变的states）</p></blockquote>
 
 <p>然后前台app.js渲染之前，必须先通过<Provide>传入store；</p>
+
+<p>即：订阅了 reducers 树，触发 reducers 中某个 action，action 请求后台数据，返回 state 对象给添加订阅的 Provider store</p>
 
 <br/>
 
@@ -596,6 +608,24 @@ return {
 
 <p>export default connect(mapStateToProps)(MoviesGridList)
 ```</p>
+
+<h2>总结</h2>
+
+<hr />
+
+<p>在数据为王的网络世界中，数据永远都是页面的核心，那么对于数据管理的模式；</p>
+
+<p>react采用的是 <strong>单向数据流模式</strong>，</p>
+
+<p>单向也就是数据只能从一个方向流向另外一个方向而不能反过来，</p>
+
+<p>如果把dom想象成一颗树，<strong>单向数据流就是将数据自上向下的流动</strong>，为了让数据流到尽可能多的dom中，肯定要把数据尽可能放的高一点。这里的 <strong>根数据可以简单理解为state</strong>。</p>
+
+<p>而对于流到 <strong>下面的数据，dom通过props接收</strong>。这样模式就很显而易见了，尽可能高的组件对state进行更新，子组件的props也会随即更新，数据单向流动，这时候如果想通过子组件来反向更新state，就要通过上层组件传递一个函数，在函数中通过setState等方法来达到反向数据的更新。</p>
+
+<p>其实到这已经可以应付一些简单的应用了，但是对于复杂的应用，组件之间的数据通信有可能是交叉而又错综复杂的，这时候就希望通过一种统一的方式将数据好好管理起来，那么出现了redux。</p>
+
+<p>使用 <strong>Redux 实现观察者模式，进行 订阅分发</strong>；</p>
 ]]></content>
   </entry>
   
