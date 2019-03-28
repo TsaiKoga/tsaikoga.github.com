@@ -6,7 +6,7 @@
 	<title>Ubuntu常用命令 - TsaiKoga Blog</title>
     <meta name="author" content="TsaiKoga">
     
-	<meta name="description" content="先介绍关于文件和目录的命令： ls 列出当前目录文件（不包括隐含文件） ls -a 列出当前目录文件（包括隐含文件） ls -l 列出当前目录下文件的详细信息 cd .. 回当前目录的上一级目录 cd &ndash; 回上一次所在的目录 cd ~ 或 cd 回当前用户的宿主目录 mkdir &hellip;">
+	<meta name="description" content="目录： 1.先介绍关于文件和目录的命令 2.再介绍用户的命令 3.查看系统信息的命令 4.关于软件包操作的命令 5.常用命令 5.1. find命令 5.2. locat命令 5.3. grep命令 5.4. ack-grep命令 5.5. cat head tail命令 5.6. awk命令 5 &hellip;">
 	
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -100,7 +100,7 @@
 
     <section id="sidebar">
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (3)</a></li><li><a href='/blog/categories/linux'>Linux (4)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (4)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (3)</a></li><li><a href='/blog/categories/linux'>Linux (5)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (4)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
 </section>
 
 
@@ -109,9 +109,42 @@
     <div id="content" class="inner">
         <article class="post">
 	<h2 class="title">Ubuntu常用命令</h2>
-	<div class="entry-content"><p><img src="/images/posts/2013-10-23/ubuntu.jpg" title="ubuntu" alt="无法显示图片" /></p>
+	<div class="entry-content"><h2>目录：</h2>
 
-<h3>先介绍关于文件和目录的命令：</h3>
+<h4><a href="#1">1.先介绍关于文件和目录的命令</a></h4>
+
+<h4><a href="#2">2.再介绍用户的命令</a></h4>
+
+<h4><a href="#3">3.查看系统信息的命令</a></h4>
+
+<h4><a href="#4">4.关于软件包操作的命令</a></h4>
+
+<h4><a href="#5">5.常用命令</a></h4>
+
+<h5><a href="#5.1">5.1. find命令</a></h5>
+
+<h5><a href="#5.2">5.2. locat命令</a></h5>
+
+<h5><a href="#5.3">5.3. grep命令</a></h5>
+
+<h5><a href="#5.4">5.4. ack-grep命令</a></h5>
+
+<h5><a href="#5.5">5.5. cat head tail命令</a></h5>
+
+<h5><a href="#5.6">5.6. awk命令</a></h5>
+
+<h5><a href="#5.7">5.7. sed命令</a></h5>
+
+<h5><a href="#5.8">5.8. netstat命令</a></h5>
+
+<h5><a href="#5.9">5.9. telnet命令</a></h5>
+
+<h5><a href="#5.10">5.10. crontab命令</a></h5>
+
+<p><img src="/images/posts/2013-10-23/ubuntu.jpg" title="ubuntu" alt="无法显示图片" /></p>
+
+<h2 id="1"> 1.先介绍关于文件和目录的命令：</h2>
+
 
 <blockquote><p>ls 列出当前目录文件（不包括隐含文件）</p>
 
@@ -137,7 +170,8 @@
 
 <p>mv 文件名 新名称 在当前目录下改名</p></blockquote>
 
-<h3>再介绍用户的命令:</h3>
+<h2 id="2"> 2.再介绍用户的命令:</h2>
+
 
 <blockquote><p>useradd 创建一个新的用户</p>
 
@@ -153,7 +187,8 @@
 
 <p>  userdel–r 用户名 删除用户一切</p></blockquote>
 
-<h3>查看系统信息的命令：</h3>
+<h2 id="3"> 3.查看系统信息的命令：</h2>
+
 
 <blockquote><p>uname -a 查看内核版本</p>
 
@@ -175,7 +210,8 @@
 
 <p>ps -A 查看当前有哪些进程</p></blockquote>
 
-<h3>关于软件包操作的命令：</h3>
+<h2 id="4"> 4.关于软件包操作的命令：</h2>
+
 
 <blockquote><p>apt-cache search package 搜索包</p>
 
@@ -215,9 +251,13 @@
 
 <p>  sudo apt-get clean</p></blockquote>
 
-<h3>最后讲几个比较重要，在实际操作中提供方便的命令：</h3>
+<h2 id="5"> 5.最后讲几个比较重要，在实际操作中提供方便的命令：</h2>
 
-<h4>find命令</h4>
+
+
+
+<h3 id="5.1"> find命令</h3>
+
 
 <p>  find是最常见和最强大的查找命令，你可以用它找到任何你想找的文件。</p>
 
@@ -244,28 +284,40 @@
 </span></code></pre></td></tr></table></div></figure>
 
 
+
+
+<br>
+
+
 <hr />
 
-<h4>locate命令</h4>
+<p><h3 id="5.2"> locate命令<h3></p>
 
 <p>locate命令其实是&#8221;find -name&#8221;的另一种写法，但是要比后者快得多，原因在于它不搜索具体目录，而是搜索一个数据库（/var/lib/locatedb），这个数据库中含有本地所有文件信息。Linux系统自动创建这个数据库，并且每天自动更新一次，所以使用locate命令查不到最新变动过的文件。为了避免这种情况，可以在使用locate之前，先使用updatedb命令，手动更新数据库。</p>
 
+<p>例如，Docker 下载的镜像没有启动cron，启动后执行这个命令：</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo updatedb
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><br></p>
+
 <hr />
 
-<h4>grep命令</h4>
+<p><h3 id="5.3"> 5.3 grep命令</h3></p>
 
 <p>grep命令用于查找文件中的字符串。</p>
 
 <p><strong>命令格式如下：</strong></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>grep <span class="o">[</span>选项<span class="o">]</span> 查找模式 <span class="o">[</span>文件名1, 文件名2, ...<span class="o">]</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>grep <span class="o">[</span>选项<span class="o">]</span> 查找模式 <span class="o">[</span>文件名1, 文件名2, &hellip;<span class="o">]</span>
 </span><span class='line'>
-</span><span class='line'>grep <span class="o">[</span>选项<span class="o">]</span> <span class="o">[</span>-e 查找模式|-f 文件<span class="o">][</span>文件名1, 文件名2, ...<span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure>
-
+</span><span class='line'>grep <span class="o">[</span>选项<span class="o">]</span> <span class="o">[</span>-e 查找模式|-f 文件<span class="o">][</span>文件名1, 文件名2, &hellip;<span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></p>
 
 <blockquote><p>当然：最好用的参数</p>
 
@@ -277,9 +329,11 @@
 
 <p>  -R 以递归方式查询目录下所有子目录中的文件</p></blockquote>
 
+<p><br></p>
+
 <hr />
 
-<h4>ack-grep命令</h4>
+<p><h3 id="5.4"> 5.4 ack-grep命令</h3></p>
 
 <p>grep命令加强。首先，我们先了解什么是ack？</p>
 
@@ -293,44 +347,115 @@
 
 <p>注意：ubuntu下要安装<strong>ack-grep</strong>，因为在debian系中，ack这个名字被其他的软件占用了。</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install ack-grep
 </span></code></pre></td></tr></table></div></figure>
-
+<br></p>
 
 <hr />
 
-<h4>netstat命令</h4>
+<p><h3 id="5.5"> 5.5 cat head tail 输出命令</h3></p>
+
+<ul>
+<li>cat 查看所有</li>
+<li>head -n 查看前几行</li>
+<li>tail -n 查看后几行
+查看第500行，则是：</li>
+</ul>
+
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>head -n 500 xx.log | tail -n 1
+</span></code></pre></td></tr></table></div></figure></p>
+
+<h2><br></h2>
+
+<p><h3 id="5.6"> 5.6 awk 命令</h3></p>
+
+<p>AWK 命令可以对日志或其他文件内容进行自定义输出。
+例如：查看 apache 日志中时间在 某个区间内的所有行；</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cat access.log | awk <span class="s1">&#39;{if($4&gt;&quot;[19/Mar/2019:09:45:00 +0800]&quot; &amp;&amp; $4&lt;&quot;[19/Mar/2019:09:55:00 +0800]&quot;)print $0&#39;</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p>其中
+$0 是一整行；
+$1 是第一列，按着推，$2&hellip;$9是第二列到第九列；</p>
+
+<p>表达式写在 &lsquo;{}&rsquo; 中，输出内容用 print;</p>
+
+<p><br></p>
+
+<hr />
+
+<p><h3 id="5.7"> 5.7 sed 命令</h3></p>
+
+<p>SED 对文件中的内容进行添加删除操作；</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># 将文本插入文件中匹配的行：</span>
+</span><span class='line'>sed <span class="s1">&#39;/&lt;\/Host&gt;/i&amp;lt;Connector executor=&quot;tomcatThreadPool&quot; po&quot; URIEncoding=&quot;UTF-8&quot; protocol=&quot;HTTP/1.1&quot; connectionTimeout=&quot;20000&quot; redirectPort=&quot;8443&quot; /&gt;&#39;</span> /opt/appstack/apache-tomcat/conf/server.xml
+</span></code></pre></td></tr></table></div></figure>
+第一个 // 中为匹配内容；
+第二个 i 为插入；
+第三个 i 后面为插入内容；
+最后带上文件路径；</p>
+
+<h2><br></h2>
+
+<p><h3 id="5.8"> 5.8 netstat命令</h3></p>
 
 <p> Netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。</p>
 
 <p><strong>命令格式如下：</strong></p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 </pre></td><td class='code'><pre><code class='bash'><span class='line'>netstat -tulpn         <span class="c"># 显示服务器进程</span>
 </span><span class='line'>sudo netstat -antup   <span class="c"># 查看进程</span>
 </span><span class='line'>ack-grep <span class="k">function</span>     <span class="c"># 查找函数位置（必须在文件目录下）</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></p>
 
+<h2><br></h2>
+
+<p><h3 id="5.9"> 5.9 telnet命令</h3></p>
+
+<p>因为 ping 只能用于 ip 或单个域名；
+所以我们用 telnet 可以用来本地查看 远程服务器端口是否可连接；</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>telnet www.baidu.com 8080
+</span></code></pre></td></tr></table></div></figure></p>
+
+<p><br></p>
 
 <hr />
 
-<h4>crontab命令</h4>
+<p><h3 id="5.10"> 5.10 crontab命令</h3></p>
 
 <p>这个命令我非常喜欢，他是<strong>设置定时执行脚本或任务</strong>,可以用它来定时做一些事情。如定时周期性的备份网站数据库，并email发送到指定邮箱。</p>
 
 <p>参数就几个很简单：</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='bash'><span class='line'>crontab -l <span class="c"># 显示现有任务条目 </span>
-</span><span class='line'>crontab -r <span class="c"># 删除当前的任务 </span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>crontab -l <span class="c"># 显示现有任务条目</span>
+</span><span class='line'>crontab -r <span class="c"># 删除当前的任务</span>
 </span><span class='line'>crontab -e <span class="c"># 编辑任务单，一般使用 nano 编辑，如DH。</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure></p>
 
+<p>在 Docker 的 ubuntu 镜像中可能没有起动，</p>
+
+<p>输入</p>
+
+<p><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>cron
+</span></code></pre></td></tr></table></div></figure>
+就启动了进程 cron</p>
 
 <p><strong>时间参数：</strong></p>
 
@@ -342,7 +467,7 @@
 
 <p>15 20 * * 6: 每周星期6的20：15执行1次</p></blockquote>
 
-<hr />
+<h2><br></h2>
 </div>
 
 <div class="meta">

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-02-15T09:17:33+08:00</updated>
+  <updated>2019-03-28T11:37:49+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,100 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[服务器日志空间解决方案-外挂磁盘]]></title>
+    <link href="https://TsaiKoga.github.com/blog/2019/03/28/fu-wu-qi-ri-zhi-kong-jian-jie-jue-fang-an-wai-gua-ci-pan/"/>
+    <updated>2019-03-28T10:40:00+08:00</updated>
+    <id>https://TsaiKoga.github.com/blog/2019/03/28/fu-wu-qi-ri-zhi-kong-jian-jie-jue-fang-an-wai-gua-ci-pan</id>
+    <content type="html"><![CDATA[<p>最近 PHP 项目和 JAVA 项目放置在同一台服务器，但是 tomcat 日志过大导致空间爆满；
+PHP 项目用户数量比较大，每天早上用户6点准时开单，这个时候突然登录不了了，我登录服务器发现日志已经占满了空间；</p>
+
+<p>本身 Tomcat 项目已经做了切割日志，日志按天输出，但是有些 JAVA 开发，将大批量 SQL 写在日志上，导致某天的日志突然间过大，
+达到了 15G 以上；</p>
+
+<h2>方案：</h2>
+
+<p>在删除日志之后，我想的解决方案有两个：</p>
+
+<ol>
+<li><p>使用 logrotate 对日志进行压缩限制；
+这个方案觉得不合理，因为日志每天都要用来定位问题，如果压缩日志显得非常不方便，这个方案排除；</p></li>
+<li><p>外挂磁盘，将日志导出到磁盘，这样磁盘满了也不影响应用；
+外挂磁盘，然后日志目录建立软链接，指向外挂磁盘，这样日志满了，也不影响应用，另一方面也方便定位日志；</p></li>
+</ol>
+
+
+<br>
+
+
+<h2>步骤：</h2>
+
+<h4>一、购买外挂磁盘，登录 Ubuntu 服务器，然后查看：</h4>
+
+<p><code>sh
+df -h
+</code></p>
+
+<p>目前这样看不到磁盘，因为还没挂载；</p>
+
+<h4>二、查看磁盘：</h4>
+
+<p>``` sh
+fdisk -l</p>
+
+<blockquote><p>Disk /dev/vda: 40 GiB, 42949672960 bytes, 8388680 sectors
+&hellip;
+Disk /dev/vdb: 100 GiB, &hellip;
+```
+可以看到有另外的 100G 磁盘 /dev/vdb;</p></blockquote>
+
+<h4>三、建立新分区：</h4>
+
+<p><code>sh
+fdisk /dev/vdb
+</code>
+&ndash; n = 创建新分区
+&ndash; 1 = 成为磁盘上的首个分区
+&ndash; P = 直接创建主分区 （e是扩展分区，扩展分区无法直接用，需要在新建逻辑分区）</p>
+
+<p>我们选择 P
+PS：如果之前是重新建立分区，要先 unmount 磁盘，然后对磁盘删除，选择 d，然后再创建主分区；</p>
+
+<p>可以选择创建多少个分区，根据提示填写相应数字即可；</p>
+
+<h4>四、格式化分区：</h4>
+
+<p>创建完分区 /dev/vdb 之后 mkfs.ext4 直接格式话新建的分区就行</p>
+
+<p><code>sh
+mkfs.ext4 /dev/vdb
+</code></p>
+
+<h4>五、挂载：</h4>
+
+<p>将磁盘挂载到 /opt 目录下，原有/opt 下的内容将会看不见，因为被覆盖住了，需要 unmount 才能看到；</p>
+
+<p><code>sh
+mount /dev/vdb /opt
+</code></p>
+
+<p>最后查看挂载磁盘
+<code>sh
+df -h
+</code></p>
+
+<h4>六、创建软链接：</h4>
+
+<p>已经挂载上了，我们在这里建立一个 tomcat-logs/ 目录，然后到 tomcat 下，把原有 logs/ 目录删除，
+建立软链接 logs/ 指向 tomcat-logs/</p>
+
+<p><code>sh
+mkdir -p /opt/tomcat-logs/
+ln -s /xxx/tomcat/logs /opt/tomcat-logs/
+</code></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[PS 查看进程]]></title>
@@ -231,9 +325,42 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
     <link href="https://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling/"/>
     <updated>2013-10-23T16:20:00+08:00</updated>
     <id>https://TsaiKoga.github.com/blog/2013/10/23/ubuntuchang-yong-ming-ling</id>
-    <content type="html"><![CDATA[<p><img src="/images/posts/2013-10-23/ubuntu.jpg" title="ubuntu" alt="无法显示图片" /></p>
+    <content type="html"><![CDATA[<h2>目录：</h2>
 
-<h3>先介绍关于文件和目录的命令：</h3>
+<h4><a href="#1">1.先介绍关于文件和目录的命令</a></h4>
+
+<h4><a href="#2">2.再介绍用户的命令</a></h4>
+
+<h4><a href="#3">3.查看系统信息的命令</a></h4>
+
+<h4><a href="#4">4.关于软件包操作的命令</a></h4>
+
+<h4><a href="#5">5.常用命令</a></h4>
+
+<h5><a href="#5.1">5.1. find命令</a></h5>
+
+<h5><a href="#5.2">5.2. locat命令</a></h5>
+
+<h5><a href="#5.3">5.3. grep命令</a></h5>
+
+<h5><a href="#5.4">5.4. ack-grep命令</a></h5>
+
+<h5><a href="#5.5">5.5. cat head tail命令</a></h5>
+
+<h5><a href="#5.6">5.6. awk命令</a></h5>
+
+<h5><a href="#5.7">5.7. sed命令</a></h5>
+
+<h5><a href="#5.8">5.8. netstat命令</a></h5>
+
+<h5><a href="#5.9">5.9. telnet命令</a></h5>
+
+<h5><a href="#5.10">5.10. crontab命令</a></h5>
+
+<p><img src="/images/posts/2013-10-23/ubuntu.jpg" title="ubuntu" alt="无法显示图片" /></p>
+
+<h2 id="1"> 1.先介绍关于文件和目录的命令：</h2>
+
 
 <blockquote><p>ls 列出当前目录文件（不包括隐含文件）</p>
 
@@ -259,7 +386,8 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
 
 <p>mv 文件名 新名称 在当前目录下改名</p></blockquote>
 
-<h3>再介绍用户的命令:</h3>
+<h2 id="2"> 2.再介绍用户的命令:</h2>
+
 
 <blockquote><p>useradd 创建一个新的用户</p>
 
@@ -275,7 +403,8 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
 
 <p>  userdel–r 用户名 删除用户一切</p></blockquote>
 
-<h3>查看系统信息的命令：</h3>
+<h2 id="3"> 3.查看系统信息的命令：</h2>
+
 
 <blockquote><p>uname -a 查看内核版本</p>
 
@@ -297,7 +426,8 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
 
 <p>ps -A 查看当前有哪些进程</p></blockquote>
 
-<h3>关于软件包操作的命令：</h3>
+<h2 id="4"> 4.关于软件包操作的命令：</h2>
+
 
 <blockquote><p>apt-cache search package 搜索包</p>
 
@@ -337,9 +467,13 @@ root        10        0.0  0.0     0    0        ?                 S&lt;      Se
 
 <p>  sudo apt-get clean</p></blockquote>
 
-<h3>最后讲几个比较重要，在实际操作中提供方便的命令：</h3>
+<h2 id="5"> 5.最后讲几个比较重要，在实际操作中提供方便的命令：</h2>
 
-<h4>find命令</h4>
+
+
+
+<h3 id="5.1"> find命令</h3>
+
 
 <p>  find是最常见和最强大的查找命令，你可以用它找到任何你想找的文件。</p>
 
@@ -369,15 +503,26 @@ $ find . -type f -mmin -10    # 搜索当前目录中，所有过去10分钟中�
 
 <p>```</p>
 
+<br>
+
+
 <hr />
 
-<h4>locate命令</h4>
+<p><h3 id="5.2"> locate命令<h3></p>
 
 <p>locate命令其实是"find -name"的另一种写法，但是要比后者快得多，原因在于它不搜索具体目录，而是搜索一个数据库（/var/lib/locatedb），这个数据库中含有本地所有文件信息。Linux系统自动创建这个数据库，并且每天自动更新一次，所以使用locate命令查不到最新变动过的文件。为了避免这种情况，可以在使用locate之前，先使用updatedb命令，手动更新数据库。</p>
 
+<p>例如，Docker 下载的镜像没有启动cron，启动后执行这个命令：</p>
+
+<p><code>bash
+sudo updatedb
+</code></p>
+
+<p><br></p>
+
 <hr />
 
-<h4>grep命令</h4>
+<p><h3 id="5.3"> 5.3 grep命令</h3></p>
 
 <p>grep命令用于查找文件中的字符串。</p>
 
@@ -402,9 +547,11 @@ grep [选项] [-e 查找模式|-f 文件][文件名1, 文件名2, ...]
 
 <p>  -R 以递归方式查询目录下所有子目录中的文件</p></blockquote>
 
+<p><br></p>
+
 <hr />
 
-<h4>ack-grep命令</h4>
+<p><h3 id="5.4"> 5.4 ack-grep命令</h3></p>
 
 <p>grep命令加强。首先，我们先了解什么是ack？</p>
 
@@ -423,11 +570,64 @@ grep [选项] [-e 查找模式|-f 文件][文件名1, 文件名2, ...]
 <pre><code>sudo apt-get install ack-grep
 </code></pre>
 
-<p>```</p>
+<p>```
+<br></p>
 
 <hr />
 
-<h4>netstat命令</h4>
+<p><h3 id="5.5"> 5.5 cat head tail 输出命令</h3></p>
+
+<ul>
+<li>cat 查看所有</li>
+<li>head -n 查看前几行</li>
+<li>tail -n 查看后几行
+查看第500行，则是：</li>
+</ul>
+
+
+<p><code>bash
+head -n 500 xx.log | tail -n 1
+</code></p>
+
+<h2><br></h2>
+
+<p><h3 id="5.6"> 5.6 awk 命令</h3></p>
+
+<p>AWK 命令可以对日志或其他文件内容进行自定义输出。
+例如：查看 apache 日志中时间在 某个区间内的所有行；</p>
+
+<p><code>bash
+cat access.log | awk '{if($4&gt;"[19/Mar/2019:09:45:00 +0800]" &amp;&amp; $4&lt;"[19/Mar/2019:09:55:00 +0800]")print $0'}
+</code></p>
+
+<p>其中
+$0 是一整行；
+$1 是第一列，按着推，$2&hellip;$9是第二列到第九列；</p>
+
+<p>表达式写在 &lsquo;{}&rsquo; 中，输出内容用 print;</p>
+
+<p><br></p>
+
+<hr />
+
+<p><h3 id="5.7"> 5.7 sed 命令</h3></p>
+
+<p>SED 对文件中的内容进行添加删除操作；</p>
+
+<p>``` bash</p>
+
+<h1>将文本插入文件中匹配的行：</h1>
+
+<p>sed &lsquo;/&lt;\/Host>/i&lt;Connector executor=&ldquo;tomcatThreadPool&rdquo; po" URIEncoding=&ldquo;UTF-8&rdquo; protocol=&ldquo;HTTP/1.1&rdquo; connectionTimeout=&ldquo;20000&rdquo; redirectPort=&ldquo;8443&rdquo; />&rsquo; /opt/appstack/apache-tomcat/conf/server.xml
+```
+第一个 // 中为匹配内容；
+第二个 i 为插入；
+第三个 i 后面为插入内容；
+最后带上文件路径；</p>
+
+<h2><br></h2>
+
+<p><h3 id="5.8"> 5.8 netstat命令</h3></p>
 
 <p> Netstat是在内核中访问网络及相关信息的程序，它能提供TCP连接，TCP和UDP监听，进程内存管理的相关报告。</p>
 
@@ -442,9 +642,22 @@ ack-grep function     # 查找函数位置（必须在文件目录下）
 
 <p>```</p>
 
+<h2><br></h2>
+
+<p><h3 id="5.9"> 5.9 telnet命令</h3></p>
+
+<p>因为 ping 只能用于 ip 或单个域名；
+所以我们用 telnet 可以用来本地查看 远程服务器端口是否可连接；</p>
+
+<p><code>bash
+telnet www.baidu.com 8080
+</code></p>
+
+<p><br></p>
+
 <hr />
 
-<h4>crontab命令</h4>
+<p><h3 id="5.10"> 5.10 crontab命令</h3></p>
 
 <p>这个命令我非常喜欢，他是<strong>设置定时执行脚本或任务</strong>,可以用它来定时做一些事情。如定时周期性的备份网站数据库，并email发送到指定邮箱。</p>
 
@@ -452,12 +665,21 @@ ack-grep function     # 查找函数位置（必须在文件目录下）
 
 <p>``` bash</p>
 
-<pre><code>crontab -l # 显示现有任务条目 
-crontab -r # 删除当前的任务 
+<pre><code>crontab -l # 显示现有任务条目
+crontab -r # 删除当前的任务
 crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
 </code></pre>
 
 <p>```</p>
+
+<p>在 Docker 的 ubuntu 镜像中可能没有起动，</p>
+
+<p>输入</p>
+
+<p><code>bash
+cron
+</code>
+就启动了进程 cron</p>
 
 <p><strong>时间参数：</strong></p>
 
@@ -469,7 +691,7 @@ crontab -e # 编辑任务单，一般使用 nano 编辑，如DH。
 
 <p>15 20 * * 6: 每周星期6的20：15执行1次</p></blockquote>
 
-<hr />
+<h2><br></h2>
 ]]></content>
   </entry>
   

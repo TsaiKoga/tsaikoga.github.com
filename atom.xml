@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-02-15T09:17:15+08:00</updated>
+  <updated>2019-03-28T11:37:49+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,118 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[服务器日志空间解决方案-外挂磁盘]]></title>
+    <link href="https://TsaiKoga.github.com/blog/2019/03/28/fu-wu-qi-ri-zhi-kong-jian-jie-jue-fang-an-wai-gua-ci-pan/"/>
+    <updated>2019-03-28T10:40:00+08:00</updated>
+    <id>https://TsaiKoga.github.com/blog/2019/03/28/fu-wu-qi-ri-zhi-kong-jian-jie-jue-fang-an-wai-gua-ci-pan</id>
+    <content type="html"><![CDATA[<p>最近 PHP 项目和 JAVA 项目放置在同一台服务器，但是 tomcat 日志过大导致空间爆满；
+PHP 项目用户数量比较大，每天早上用户6点准时开单，这个时候突然登录不了了，我登录服务器发现日志已经占满了空间；</p>
+
+<p>本身 Tomcat 项目已经做了切割日志，日志按天输出，但是有些 JAVA 开发，将大批量 SQL 写在日志上，导致某天的日志突然间过大，
+达到了 15G 以上；</p>
+
+<h2>方案：</h2>
+
+<p>在删除日志之后，我想的解决方案有两个：</p>
+
+<ol>
+<li><p>使用 logrotate 对日志进行压缩限制；
+这个方案觉得不合理，因为日志每天都要用来定位问题，如果压缩日志显得非常不方便，这个方案排除；</p></li>
+<li><p>外挂磁盘，将日志导出到磁盘，这样磁盘满了也不影响应用；
+外挂磁盘，然后日志目录建立软链接，指向外挂磁盘，这样日志满了，也不影响应用，另一方面也方便定位日志；</p></li>
+</ol>
+
+
+<br>
+
+
+<h2>步骤：</h2>
+
+<h4>一、购买外挂磁盘，登录 Ubuntu 服务器，然后查看：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>df -h
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>目前这样看不到磁盘，因为还没挂载；</p>
+
+<h4>二、查看磁盘：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fdisk -l
+</span><span class='line'>
+</span><span class='line'>&gt; Disk /dev/vda: 40 GiB, 42949672960 bytes, 8388680 sectors
+</span><span class='line'>&gt; ...
+</span><span class='line'>&gt; Disk /dev/vdb: 100 GiB, ...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到有另外的 100G 磁盘 /dev/vdb;</p>
+
+<h4>三、建立新分区：</h4>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>fdisk /dev/vdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>n = 创建新分区</li>
+<li>1 = 成为磁盘上的首个分区</li>
+<li>P = 直接创建主分区 （e是扩展分区，扩展分区无法直接用，需要在新建逻辑分区）</li>
+</ul>
+
+
+<p>我们选择 P
+PS：如果之前是重新建立分区，要先 unmount 磁盘，然后对磁盘删除，选择 d，然后再创建主分区；</p>
+
+<p>可以选择创建多少个分区，根据提示填写相应数字即可；</p>
+
+<h4>四、格式化分区：</h4>
+
+<p>创建完分区 /dev/vdb 之后 mkfs.ext4 直接格式话新建的分区就行</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mkfs.ext4 /dev/vdb
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>五、挂载：</h4>
+
+<p>将磁盘挂载到 /opt 目录下，原有/opt 下的内容将会看不见，因为被覆盖住了，需要 unmount 才能看到；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mount /dev/vdb /opt
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后查看挂载磁盘</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>df -h
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h4>六、创建软链接：</h4>
+
+<p>已经挂载上了，我们在这里建立一个 tomcat-logs/ 目录，然后到 tomcat 下，把原有 logs/ 目录删除，
+建立软链接 logs/ 指向 tomcat-logs/</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>mkdir -p /opt/tomcat-logs/
+</span><span class='line'>ln -s /xxx/tomcat/logs /opt/tomcat-logs/
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[录单APP项目中的问题]]></title>
@@ -2590,7 +2702,7 @@ desc 表名;【该方法的缺点，不能显示索引名】</p>
 
 <p>然后前台app.js渲染之前，必须先通过<Provide>传入store；</p>
 
-<p>即：订阅了 reducers 树，触发 reducers 中某个 action，action 请求后台数据，返回 state 对象给添加订阅的 Provider store</p>
+<p>即：通过 connect() 方法订阅了 reducers 树，触发 reducers 中某个 action，action 请求后台数据，返回 state 对象给添加订阅的 Provider store</p>
 
 <br/>
 
@@ -7977,409 +8089,6 @@ assets pipeline会**自动解析erb**，你可以在CSS增加扩展名.erb，这
 <p></p>
 
 <p>以上代码使用Mongrel::HttpServer定义了server实例，然后使用server.run运行.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rails服务启动过程]]></title>
-    <link href="https://TsaiKoga.github.com/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/"/>
-    <updated>2013-10-24T14:51:00+08:00</updated>
-    <id>https://TsaiKoga.github.com/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng</id>
-    <content type="html"><![CDATA[<p>我们都知道，每当我们console中输入rails s时，系统就启动了你的rails应用程序。</p>
-
-<hr />
-
-<h3>app程序中的bin/rails脚本</h3>
-
-<p>它是由你的app程序的<strong>bin/rails脚本</strong>执行的(我们的rails命令在通过bin/rails脚本引用rails/commands.rb文件中)。</p>
-
-<p><em>如：example_</em>app/bin/rails_</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#!/usr/bin/env ruby</span>
-</span><span class='line'><span class="no">APP_PATH</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../config/application&#39;</span><span class="p">,</span>  <span class="bp">__FILE__</span><span class="p">)</span>
-</span><span class='line'><span class="n">require_relative</span> <span class="s1">&#39;../config/boot&#39;</span>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;rails/commands&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>APP_PATH常量将会在rails/commands中用到，而config/boot指向<strong>config/boot.rb</strong>文件，这个文件<strong>会加载和设置Bundler</strong>。</p>
-
-<hr />
-
-<h3>config/boot.rb加载gem</h3>
-
-<p>前面bin/rails引入两个文件,现在我们先说第一个文件
-config/boot.rb:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Set up gems listed in the Gemfile.</span>
-</span><span class='line'><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;BUNDLE_GEMFILE&#39;</span><span class="o">]</span> <span class="o">||=</span> <span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../Gemfile&#39;</span><span class="p">,</span> <span class="bp">__FILE__</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;bundler/setup&#39;</span> <span class="k">if</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;BUNDLE_GEMFILE&#39;</span><span class="o">]</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>config/boot.rb用ENV[&lsquo;BUNDLE_GEMFILE&rsquo;]定位Gemfile文件，当Gemfile文件存在时，就将它引入。这样一来，gem就被引入了。</p>
-
-<hr />
-
-<h3>rails/commands.rb执行rails命令</h3>
-
-<p>前面config/boot.rb引入的第二个文件,但这个文件必须在第一个文件config/boot.rb文件引入后才被引入。
-rails/commands.rb:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">ARGV</span> <span class="o">&lt;&lt;</span> <span class="s1">&#39;--help&#39;</span> <span class="k">if</span> <span class="no">ARGV</span><span class="o">.</span><span class="n">empty?</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>    <span class="s2">&quot;g&quot;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;generate&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;d&quot;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;destroy&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;c&quot;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;console&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;s&quot;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;server&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;db&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;dbconsole&quot;</span><span class="p">,</span>
-</span><span class='line'>    <span class="s2">&quot;r&quot;</span>  <span class="o">=&gt;</span> <span class="s2">&quot;runner&quot;</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">command</span> <span class="o">=</span> <span class="no">ARGV</span><span class="o">.</span><span class="n">shift</span>
-</span><span class='line'><span class="n">command</span> <span class="o">=</span> <span class="n">aliases</span><span class="o">[</span><span class="n">command</span><span class="o">]</span> <span class="o">||</span> <span class="n">command</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当你输入的是rails server的话，将会执行下列代码匹配你的命令：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">when</span> <span class="s1">&#39;server&#39;</span>
-</span><span class='line'>    <span class="c1"># Change to the application&#39;s path if there is no config.ru file in current dir.</span>
-</span><span class='line'>    <span class="c1"># This allows us to run `rails server` from other directories, but still get</span>
-</span><span class='line'>    <span class="c1"># the main config.ru and properly set the tmp directory.</span>
-</span><span class='line'>    <span class="no">Dir</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">,</span> <span class="no">APP_PATH</span><span class="p">))</span> <span class="k">unless</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s2">&quot;config.ru&quot;</span><span class="p">))</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nb">require</span> <span class="s1">&#39;rails/commands/server&#39;</span>
-</span><span class='line'>    <span class="ss">Rails</span><span class="p">:</span><span class="ss">:Server</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">tap</span> <span class="k">do</span> <span class="o">|</span><span class="n">server</span><span class="o">|</span>
-</span><span class='line'>        <span class="c1"># We need to require application after the server sets environment,</span>
-</span><span class='line'>        <span class="c1"># otherwise the --environment option given to the server won&#39;t propagate.</span>
-</span><span class='line'>        <span class="nb">require</span> <span class="no">APP_PATH</span>
-</span><span class='line'>        <span class="no">Dir</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">server</span><span class="o">.</span><span class="n">start</span>
-</span><span class='line'>    <span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p> ru</p>
-
-<p>刚才我们的bin/rails脚本中已经定义了常量APP_PATH为&#8221;config/application.rb&#8221;,而</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Dir</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand</span><span class="p">\</span><span class="n">_path</span><span class="p">(</span><span class="s1">&#39;../../&#39;</span><span class="p">,</span> <span class="no">APP</span><span class="p">\</span><span class="n">_PATH</span><span class="p">))</span> <span class="k">unless</span> <span class="no">File</span><span class="o">.</span><span class="n">exists?</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">expand</span><span class="p">\</span><span class="n">_path</span><span class="p">(</span><span class="s2">&quot;config.ru&quot;</span><span class="p">))</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>表示如果<strong>没有config.ru文件时，就加载rails/commands/server文件，否则加载config/application.rb</strong>。</p>
-
-<p>也就是，你<strong>启动了服务前才帮你加载程序的应用文件application.rb</strong>。
-application.rb这个文件将会加载Rails。</p>
-
-<hr />
-
-<h3>rails/commands/server.rb</h3>
-
-<p>来看一下rails/commands/server中定义的类Rails::Server吧。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;fileutils&#39;</span>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;optparse&#39;</span>
-</span><span class='line'><span class="nb">require</span> <span class="s1">&#39;action_dispatch&#39;</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">module</span> <span class="nn">Rails</span>
-</span><span class='line'>    <span class="k">class</span> <span class="nc">Server</span> <span class="o">&lt;</span> <span class="o">::</span><span class="ss">Rack</span><span class="p">:</span><span class="ss">:Server</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这里引入的<strong>fileutils和optparse</strong>是<strong>标准的ruby库</strong>，分别提供文件的辅助方法和转化选择。</p>
-
-<p>Rails::Server继承了Rack::Server,当<strong>Rack::Server被初始化(设置环境)</strong>时，Rack::Server也被初始化。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">super</span>
-</span><span class='line'>    <span class="n">set_environment</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr />
-
-<p>Rack::Server是为<strong>以Rack为基础的应用提供公用的服务接口</strong>，rails就是其中之一。</p>
-
-<ul>
-<li><p>初始化设置环境：</p>
-
-<p>  刚才提到的初始化代码如下：</p></li>
-</ul>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">set_environment</span>
-</span><span class='line'>    <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RAILS_ENV&quot;</span><span class="o">]</span> <span class="o">||=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:environment</span><span class="o">]</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>不要以为set_environment很少，options干了很多事情：
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">options</span>
-</span><span class='line'>    <span class="vi">@options</span> <span class="o">||=</span> <span class="n">parse_options</span><span class="p">(</span><span class="no">ARGV</span><span class="p">)</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>parse_options定义如下：
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">parse_options</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">options</span> <span class="o">=</span> <span class="n">default_options</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1"># Don&#39;t evaluate CGI ISINDEX parameters.</span>
-</span><span class='line'>    <span class="c1"># http://hoohoo.ncsa.uiuc.edu/cgi/cl.html</span>
-</span><span class='line'>    <span class="n">args</span><span class="o">.</span><span class="n">clear</span> <span class="k">if</span> <span class="no">ENV</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="s2">&quot;REQUEST_METHOD&quot;</span><span class="p">)</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">options</span><span class="o">.</span><span class="n">merge!</span> <span class="n">opt_parser</span><span class="o">.</span><span class="n">parse!</span> <span class="n">args</span>
-</span><span class='line'>    <span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span> <span class="o">=</span> <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span><span class="p">)</span>
-</span><span class='line'>    <span class="no">ENV</span><span class="o">[</span><span class="s2">&quot;RACK_ENV&quot;</span><span class="o">]</span> <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:environment</span><span class="o">]</span>
-</span><span class='line'>    <span class="n">options</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>我们将一行一行解释，
-
-(1)选择default_options如下设置：
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">default_options</span>
-</span><span class='line'>    <span class="p">{</span>
-</span><span class='line'>        <span class="ss">:environment</span> <span class="o">=&gt;</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;RACK_ENV&#39;</span><span class="o">]</span> <span class="o">||</span> <span class="s2">&quot;development&quot;</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:pid</span>         <span class="o">=&gt;</span> <span class="kp">nil</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:Port</span>        <span class="o">=&gt;</span> <span class="mi">9292</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:Host</span>        <span class="o">=&gt;</span> <span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:AccessLog</span>   <span class="o">=&gt;</span> <span class="o">[]</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:config</span>      <span class="o">=&gt;</span> <span class="s2">&quot;config.ru&quot;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>它**(Rack::Server)提供了默认环境和端口号等信息**，还记得当rails/commands.rb中，如果存在config.ru时，就加载config/applicaton.rb文件吗？
-
-(2)当ENV哈希环境中没有REQUEST_METHOD这个键时，跳过而去执行合并选项。
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="ss">Rack</span><span class="p">:</span><span class="ss">:Server</span><span class="err">中的</span><span class="n">opt_server</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="k">def</span> <span class="nf">opt_parser</span>
-</span><span class='line'>      <span class="no">Options</span><span class="o">.</span><span class="n">new</span>
-</span><span class='line'>  <span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>(3)Rails::Server重写parse!
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">parse!</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">args</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dup</span><span class="p">,</span> <span class="p">{}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="n">opt_parser</span> <span class="o">=</span> <span class="no">OptionParser</span><span class="o">.</span><span class="n">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">opts</span><span class="o">|</span>
-</span><span class='line'>        <span class="n">opts</span><span class="o">.</span><span class="n">banner</span> <span class="o">=</span> <span class="s2">&quot;Usage: rails server [mongrel, thin, etc] [options]&quot;</span>
-</span><span class='line'>        <span class="n">opts</span><span class="o">.</span><span class="n">on</span><span class="p">(</span><span class="s2">&quot;-p&quot;</span><span class="p">,</span> <span class="s2">&quot;--port=port&quot;</span><span class="p">,</span> <span class="nb">Integer</span><span class="p">,</span>
-</span><span class='line'>                        <span class="s2">&quot;Runs Rails on the specified port.&quot;</span><span class="p">,</span> <span class="s2">&quot;Default: 3000&quot;</span><span class="p">)</span> <span class="p">{</span> <span class="o">|</span><span class="n">v</span><span class="o">|</span> <span class="n">options</span><span class="o">[</span><span class="ss">:Port</span><span class="o">]</span> <span class="o">=</span> <span class="n">v</span> <span class="p">}</span>
-</span><span class='line'>    <span class="o">.</span><span class="n">.</span><span class="o">.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>刚才说default_options已经有了config.ru，这是回到之前rails.commands.rb文件，它加载了config/application.rb文件</p>
-
-<hr />
-
-<h3>config/application.rb</h3>
-
-<p>当require APP_PATH被执行，<strong>config/applicaton.rb被加载，server.start就被调用</strong>了。
-方法如下：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">start</span>
-</span><span class='line'>    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:SSLEnable</span><span class="o">]</span> <span class="p">?</span> <span class="s1">&#39;https&#39;</span> <span class="p">:</span> <span class="s1">&#39;http&#39;</span><span class="si">}</span><span class="s2">://</span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span><span class="si">}</span><span class="s2">:</span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:Port</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;=&gt; Booting </span><span class="si">#{</span><span class="ss">ActiveSupport</span><span class="p">:</span><span class="ss">:Inflector</span><span class="o">.</span><span class="n">demodulize</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;=&gt; Rails </span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2"> application starting in </span><span class="si">#{</span><span class="no">Rails</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2"> on </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;=&gt; Run `rails server -h` for more startup options&quot;</span>
-</span><span class='line'>    <span class="nb">trap</span><span class="p">(</span><span class="ss">:INT</span><span class="p">)</span> <span class="p">{</span> <span class="nb">exit</span> <span class="p">}</span>
-</span><span class='line'>    <span class="nb">puts</span> <span class="s2">&quot;=&gt; Ctrl-C to shutdown server&quot;</span> <span class="k">unless</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="c1">#Create required tmp directories if not found</span>
-</span><span class='line'>    <span class="sx">%w(cache pids sessions sockets)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">dir_to_make</span><span class="o">|</span>
-</span><span class='line'>        <span class="no">FileUtils</span><span class="o">.</span><span class="n">mkdir_p</span><span class="p">(</span><span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;tmp&#39;</span><span class="p">,</span> <span class="n">dir_to_make</span><span class="p">))</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">unless</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
-</span><span class='line'>        <span class="n">wrapped_app</span> <span class="c1"># touch the app so the logger is set up</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">console</span> <span class="o">=</span> <span class="ss">ActiveSupport</span><span class="p">:</span><span class="ss">:Logger</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="vg">$stdout</span><span class="p">)</span>
-</span><span class='line'>        <span class="n">console</span><span class="o">.</span><span class="n">formatter</span> <span class="o">=</span> <span class="no">Rails</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">formatter</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="no">Rails</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="ss">ActiveSupport</span><span class="p">:</span><span class="ss">:Logger</span><span class="o">.</span><span class="n">broadcast</span><span class="p">(</span><span class="n">console</span><span class="p">))</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">super</span>
-</span><span class='line'><span class="k">ensure</span>
-</span><span class='line'>    <span class="c1"># The &#39;-h&#39; option calls exit before @options is set.</span>
-</span><span class='line'>    <span class="c1"># If we call &#39;options&#39; with it unset, we get double help banners.</span>
-</span><span class='line'>    <span class="nb">puts</span> <span class="s1">&#39;Exiting&#39;</span> <span class="k">unless</span> <span class="vi">@options</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:daemonize</span><span class="o">]</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<blockquote><ul>
-<li><p>这个方法非常重要，我们可以看到前面有一堆提示，而后面<strong>创建了tmp/cache,tmp/pids,tmp/sessions和tmp/sockets文件夹</strong>,</p></li>
-<li><p>在调用<strong>wrapped_app方法创建Rack应用</strong>。</p></li>
-<li><p>并且<strong>定了ActiveSupport::Logger</strong>。</p></li>
-</ul>
-</blockquote>
-
-<p>还记得<strong>options[:config]默认指向config.ru</strong>吗？这个文件中包含了：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># This file is used by Rack-based servers to start the application.</span>
-</span><span class='line'>
-</span><span class='line'><span class="nb">require</span> <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">expand_path</span><span class="p">(</span><span class="s1">&#39;../config/environment&#39;</span><span class="p">,</span>  <span class="bp">__FILE__</span><span class="p">)</span>
-</span><span class='line'><span class="n">run</span> <span class="o">&lt;%=</span> <span class="n">app_const</span> <span class="o">%&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>它<strong>引进了config/environment.rb</strong>文件，而<strong>environment.rb这个文件引入了config/application.rb</strong>文件</p>
-
-<hr />
-
-<h3>actionpack/lib/action_dispatch.rb</h3>
-
-<p>Action Dispatch是rails框架的一个路由组件，提供routing,session和middlewares</p>
-
-<p>也就是，你启动了服务前才帮你加载程序的应用文件application.rb。</p>
-
-<hr />
-
-<h4>总结：(自己所画的rails初始化过程图片)</h4>
-
-<p><img src="https://TsaiKoga.github.com/images/posts/2013-10-23/rails_initialize.png" title="rails初始化过程" alt="图片无法显示" /></p>
 ]]></content>
   </entry>
   
