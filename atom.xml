@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-03-28T11:37:49+08:00</updated>
+  <updated>2019-04-14T15:30:29+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,209 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[前后端分离]]></title>
+    <link href="https://TsaiKoga.github.com/blog/2019/04/14/qian-hou-duan-fen-chi/"/>
+    <updated>2019-04-14T12:00:00+08:00</updated>
+    <id>https://TsaiKoga.github.com/blog/2019/04/14/qian-hou-duan-fen-chi</id>
+    <content type="html"><![CDATA[<h3>目录</h3>
+
+<h4><a href="#1">一、模板引擎</a></h4>
+
+<h4><a href="#2">二、单页面应用 或 API</a></h4>
+
+<h4><a href="#3">三、前端 MVC 模式</a></h4>
+
+<h4><a href="#4">四、前端 MVVM 模式</a></h4>
+
+<h4><a href="#5">五、Nodejs 前后端分离</a></h4>
+
+<h2 id="1"> 一、模板引擎</h2>
+
+
+<ul>
+<li>ERB: 前端渲染引擎，可以将后端传来的数据渲染注入到前端 HTML 中，也可以帮它叫做 ModelAndView（与 MVVM 的View-Model有区别，View-Model 是简化 Controller，有逻辑，负责 View 和 Model 的交互，而这里只是 Model 数据与 View 强绑定而已）；</li>
+<li>JS: 除了实现一些前端效果，还需要用 ajax 发起对后台的请求；</li>
+</ul>
+
+
+<br>
+
+
+<p>我还记得大三的时候，接触 Rails 框架，那时候 Rails 已经推出了 Assets 功能，
+所有 CSS / JS 放在 assets/ 目录中，
+html.erb 放在 views/ 目录；</p>
+
+<p>然后通过编译，前端样式 assets/*.css 文件最终生成 application.css 放在了 public/ 目录中；
+前端 JS assets/*.coffee 文件最终生成 application.js 也放在 public/ 目录下；
+而 views/*.html.erb 文件编译后变成纯 html 调用；
+目前 PHP 的 Laravel 框架也是如此；</p>
+
+<br>
+
+
+<p><strong>优点：</strong></p>
+
+<p>形成的是带有动态数据的html，比较有利于SEO</p>
+
+<p><strong>缺点：</strong></p>
+
+<p>前后端内容实际上没有隔离；所以一般做 Rails 的人既要会前端，又要会后端；</p>
+
+<p>前端需要搭建整个 Rails 或者 Laravel 环境；</p>
+
+<br>
+
+
+
+
+<h2 id="2"> 二、单页面应用 或 APP</h2>
+
+
+<ul>
+<li>单页面应用，其实就是所有请求都是 Ajax，这样解决了前面提到的模板引擎问题；</li>
+<li>开发 APP，前端开发 H5、IOS、Android 等，后端只需要开发 API 返回前端需要的 json 数据；</li>
+</ul>
+
+
+<br>
+
+
+<p>记得刚进入公司做后端 API 开发的时候，发现很多 vue 页面还是通过上诉模板方式与 Laravel 糅合在一起；
+然后前端文件会存放在后端 Laravel 项目仓库中；
+后来我们把他分割开，前端单独起一个项目仓库，然后服务器编译完再复制到后端 Laravel 项目下的 Public/目录中；
+虽然还是没有完全分离开，但是前端已经不需要后端语法，直接就是访问后端 API 接口即可；</p>
+
+<br>
+
+
+<p><strong>优点：</strong></p>
+
+<p>前端不需要懂后端的语法，不用学习像 ERB 这样的模板引擎语法，</p>
+
+<p>只需要通过 ajax 请求后端，后端返回后对返回的 json 数据做处理；</p>
+
+<p><strong>缺点：</strong></p>
+
+<p>前端逻辑越来越重，越来越复杂，浏览器端 和 客户端 逻辑复杂；</p>
+
+<p>不利于 SEO；</p>
+
+<br>
+
+
+
+
+<h2 id="3"> 三、前端 MVC 模式</h2>
+
+
+<p>当初在大三的时候，在实验室使用 Extjs，那时候 Extjs 开始走 MVC 架构，
+然后毕业答辩时提到前端 MVC，而老师竟然说前端没有 MVC ，后端才有 MVC，
+这里就来讲讲什么是前端 MVC，</p>
+
+<p>前端 MVC 和后端 MVC 类似，</p>
+
+<ul>
+<li>Model 用来存放数据对象；</li>
+<li>View 用来呈现给用户，一般由 HTML/CSS/JS 组成；</li>
+<li>Controller 用来从 View 获取事件和输入，并进行处理，相应更新后更新视图；</li>
+</ul>
+
+
+<br>
+
+
+<p><strong>优点：</strong></p>
+
+<p>分工明确，可以开发并行；</p>
+
+<p><strong>缺点：</strong></p>
+
+<p>Controller 要自己写，大量操作 DOM，页面渲染速度降低；
+操作冗余，代码难以维护；</p>
+
+<br>
+
+
+
+
+<h2 id="4"> 四、前端 MVVM 模式：</h2>
+
+
+<p>ViewModel 代替了 Controller；</p>
+
+<ul>
+<li>Model 用来存放数据对象；</li>
+<li>View 用来呈现给用户，一般由 HTML/CSS/JS 组成；</li>
+<li>View-Model：简化的 Controller，为 View 提供处理好的数据，view 绑定 view-model，视图与数据模型强耦合。数据的变化实时反映在 view 上，不需要手动处理；</li>
+</ul>
+
+
+<br>
+
+
+<p>解决了 MVC 模式的痛点，Controller 大量逻辑被简化，不需要大量操作 DOM 了；
+View 和 Model 没有直接联系，是通过 View-Model 进行交互的；</p>
+
+<br>
+
+
+<p><strong>优点：</strong></p>
+
+<p>不需大量 DOM 操作，前端工作减少，逻辑清晰；</p>
+
+<p><strong>缺点：</strong></p>
+
+<p>不利于 SEO；</p>
+
+<br>
+
+
+
+
+<h2 id="5"> 五、Nodejs 前后端分离：</h2>
+
+
+<p>我们公司已经使用了 Vue 作为前端，一个 MVVM 模式的框架，
+但是，我们还是会经常遇到各种问题；</p>
+
+<br>
+
+
+<p><strong>例如：</strong></p>
+
+<ol>
+<li><p>页面设计逻辑例如循环构造呈现的 JSON 数据，要么得前端处理，要么后端处理，一般都是前端处理，前端所需的排序功能、筛选功能，
+以及到了视图层的页面展现，也许都需要对接口所提供的数据进行二次处理。数据量一大便会浪费浏览器性能，也造成代码难以维护，很多时候无法通用；</p></li>
+<li><p>多端产品 APP 会遇到接受格式不一致，像是 H5 可以接受 BOOLEAN 字段，而 IOS 端只能通过 1 或 0 改变；</p></li>
+</ol>
+
+
+<br>
+
+
+<p>我们把原先的 MMVM 模式作为前端的 UI 层；
+然后将 Nodejs 起的服务作为前端服务层，这个前端 Server 层需要部署在服务器上；</p>
+
+<p>前端 UI 层：用来处理浏览器层的展现逻辑。通过 CSS 渲染样式，通过 JavaScript 添加交互功能；
+前端 Server 层：处理路由、模板、数据获取、cookie 等，路由完全前端控制，所以无论是 单页面 还是 多页面，前端都可以自由调控；</p>
+
+<br>
+
+
+<p><strong>优点：</strong></p>
+
+<p>解决第 1 点问题：后端可以只做自己的事情，数据直接成为 json 发送给前端，前端 Nodejs 处理 json 逻辑，
+Node Server 层放在服务器上，不会造成浏览器资源浪费；</p>
+
+<p>解决第 2 点问题：使用 Node Server 层可以支持多端开发需要的内容不一致问题，H5 能处理 BOOLEAN 值，IOS 无法处理的情况；</p>
+
+<p><strong>缺点：</strong></p>
+
+<p>前端所需要了解服务端编程，所学内容增加，是基于 Nodejs 的全栈开发；</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[服务器日志空间解决方案-外挂磁盘]]></title>
@@ -7869,226 +8072,6 @@ assets pipeline会**自动解析erb**，你可以在CSS增加扩展名.erb，这
 
 
 <hr />
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[加载Rails]]></title>
-    <link href="https://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails/"/>
-    <updated>2013-10-25T22:58:00+08:00</updated>
-    <id>https://TsaiKoga.github.com/blog/2013/10/25/jia-zai-rails</id>
-    <content type="html"><![CDATA[<p>在上一篇文章<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">Rails服务启动过程</a>,最后加载的config/application.rb文件中显示：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s1">&#39;rails/all&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这个文件在railties/lib/rails/all.rb。</p>
-
-<hr />
-
-<h3>railties/lib/rails/all.rb</h3>
-
-<p>这个文件非常重要，它加载了rails的所有个体框架，从中可以知道这些<strong>框架的加载顺序</strong>：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="s2">&quot;rails&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sx">%{</span>
-</span><span class='line'><span class="sx">    active_record</span>
-</span><span class='line'><span class="sx">    action_controller</span>
-</span><span class='line'><span class="sx">    action_mail</span>
-</span><span class='line'><span class="sx">    rails/test_unit</span>
-</span><span class='line'><span class="sx">    sprockets</span>
-</span><span class='line'><span class="sx">}</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">framework</span><span class="o">|</span>
-</span><span class='line'>    <span class="k">begin</span>
-</span><span class='line'>        <span class="nb">require</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">framework</span><span class="si">}</span><span class="s2">/railtie&quot;</span>           <span class="c1"># 文件active_record/railtie等</span>
-</span><span class='line'>  <span class="k">rescue</span> <span class="no">LoadError</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<blockquote><p><strong>railtie 是Rails的核心框架</strong>，并且提供hooks来修改启动时的载入流程，
-如果需要在启动过程或之后与rails框架进行交互，就需要加载Railtie。</p></blockquote>
-
-<hr />
-
-<h3>config/environment.rb</h3>
-
-<p>当config/application.rb已经将rails加载完成,并且<strong>定义了应用的命名空间</strong>（在一个module中mixin一个Application类）。</p>
-
-<p>而在config/environment.rb文件中，你的<strong>项目被初始化</strong>，如：<strong>Examples::Application.initialize!(在application.rb中已经定义了)</strong>。</p>
-
-<p>想知道初始化做了写什么吗？</p>
-
-<hr />
-
-<h3>railties/lib/rails/application.rb</h3>
-
-<p>以下为初始化代码：(你的Application类继承Rails::Application类，而这个类就在railties/lib/rails/application.rb文件中)</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">initialize!</span><span class="p">(</span><span class="n">group</span><span class="o">=</span><span class="ss">:default</span><span class="p">)</span> <span class="c1">#:nodoc:</span>
-</span><span class='line'>    <span class="k">raise</span> <span class="s2">&quot;Application has been already initialized.&quot;</span> <span class="k">if</span> <span class="vi">@initialized</span>
-</span><span class='line'>    <span class="n">run_initializers</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="nb">self</span><span class="p">)</span>
-</span><span class='line'>    <span class="vi">@initialized</span> <span class="o">=</span> <span class="kp">true</span>
-</span><span class='line'>    <span class="nb">self</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Rails会贯穿这整个Rails::Application祖先类，重新排序和运行他们。</p>
-
-<h3>Rack: lib/rack/server.rb</h3>
-
-<p>在<a href="http://tsaikoga.github.io/blog/2013/10/24/railschu-shi-hua-he-qi-dong-guo-cheng/">上一篇</a>时,有提到Rack::Server类，它里面有一个app方法是这么定义的：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">app</span>
-</span><span class='line'>    <span class="vi">@app</span> <span class="o">||=</span> <span class="k">begin</span>
-</span><span class='line'>        <span class="k">if</span> <span class="o">!::</span><span class="no">File</span><span class="o">.</span><span class="n">exist?</span> <span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span>
-</span><span class='line'>            <span class="nb">abort</span> <span class="s2">&quot;configuration </span><span class="si">#{</span><span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span><span class="si">}</span><span class="s2"> not found&quot;</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="n">app</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Builder</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="nb">self</span><span class="o">.</span><span class="n">options</span><span class="o">[</span><span class="ss">:config</span><span class="o">]</span><span class="p">,</span> <span class="n">opt_parser</span><span class="p">)</span>
-</span><span class='line'>        <span class="nb">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">merge!</span> <span class="n">options</span>
-</span><span class='line'>        <span class="n">app</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>这里所指的app就是Rails的app（一种中间件），Rack将会调用所有提供的中间件。</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nf">build_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
-</span><span class='line'>    <span class="n">middleware</span><span class="o">[</span><span class="n">options</span><span class="o">[</span><span class="ss">:environment</span><span class="o">]].</span><span class="n">reverse_each</span> <span class="k">do</span> <span class="o">|</span><span class="n">middleware</span><span class="o">|</span>
-</span><span class='line'>        <span class="n">middleware</span> <span class="o">=</span> <span class="n">middleware</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">middleware</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:call</span><span class="p">)</span>
-</span><span class='line'>        <span class="k">next</span> <span class="k">unless</span> <span class="n">middleware</span>
-</span><span class='line'>        <span class="n">klass</span> <span class="o">=</span> <span class="n">middleware</span><span class="o">.</span><span class="n">shift</span>
-</span><span class='line'>        <span class="n">app</span> <span class="o">=</span> <span class="n">klass</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="o">*</span><span class="n">middleware</span><span class="p">)</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="n">app</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>以上代码build_app是被Server#start方法调用的，通过这个代码调用：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">server</span><span class="o">.</span><span class="n">run</span> <span class="n">wrapped_app</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">blk</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>所以，server.run将会依赖于你所使用的server程序(以上代码有传入一个程序块&amp;blk,他将关系到你运行的服务),
-像是如果你是用的是Mongrel数据库，将会通过传入如下程序块运行：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
-</span><span class='line'>    <span class="n">server</span> <span class="o">=</span> <span class="o">::</span><span class="ss">Mongrel</span><span class="p">:</span><span class="ss">:HttpServer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
-</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span>           <span class="o">||</span> <span class="s1">&#39;0.0.0.0&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:Port</span><span class="o">]</span>           <span class="o">||</span> <span class="mi">8080</span><span class="p">,</span>
-</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:num_processors</span><span class="o">]</span> <span class="o">||</span> <span class="mi">950</span><span class="p">,</span>
-</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:throttle</span><span class="o">]</span>       <span class="o">||</span> <span class="mi">0</span><span class="p">,</span>
-</span><span class='line'>        <span class="n">options</span><span class="o">[</span><span class="ss">:timeout</span><span class="o">]</span>        <span class="o">||</span> <span class="mi">60</span><span class="p">)</span>
-</span><span class='line'>    <span class="c1"># Acts like Rack::URLMap, utilizing Mongrel&#39;s own path finding methods.</span>
-</span><span class='line'>    <span class="c1"># Use is similar to #run, replacing the app argument with a hash of</span>
-</span><span class='line'>    <span class="c1"># { path=&gt;app, ... } or an instance of Rack::URLMap.</span>
-</span><span class='line'>    <span class="k">if</span> <span class="n">options</span><span class="o">[</span><span class="ss">:map</span><span class="o">]</span>
-</span><span class='line'>        <span class="k">if</span> <span class="n">app</span><span class="o">.</span><span class="n">is_a?</span> <span class="no">Hash</span>
-</span><span class='line'>            <span class="n">app</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">path</span><span class="p">,</span> <span class="n">appl</span><span class="o">|</span>
-</span><span class='line'>                <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">path</span> <span class="k">unless</span> <span class="n">path</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="sc">?/</span>
-</span><span class='line'>                <span class="n">server</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">appl</span><span class="p">))</span>
-</span><span class='line'>            <span class="k">end</span>
-</span><span class='line'>        <span class="k">elsif</span> <span class="n">app</span><span class="o">.</span><span class="n">is_a?</span> <span class="no">URLMap</span>
-</span><span class='line'>            <span class="n">app</span><span class="o">.</span><span class="n">instance_variable_get</span><span class="p">(</span><span class="ss">:@mapping</span><span class="p">)</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">appl</span><span class="p">)</span><span class="o">|</span>
-</span><span class='line'>             <span class="k">next</span> <span class="k">if</span> <span class="o">!</span><span class="n">host</span><span class="o">.</span><span class="n">nil?</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">].</span><span class="n">nil?</span> <span class="o">&amp;&amp;</span> <span class="n">options</span><span class="o">[</span><span class="ss">:Host</span><span class="o">]</span> <span class="o">!=</span> <span class="n">host</span>
-</span><span class='line'>             <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">path</span> <span class="k">unless</span> <span class="n">path</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">==</span> <span class="sc">?/</span>
-</span><span class='line'>             <span class="n">server</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">appl</span><span class="p">))</span>
-</span><span class='line'>            <span class="k">end</span>
-</span><span class='line'>        <span class="k">else</span>
-</span><span class='line'>            <span class="k">raise</span> <span class="no">ArgumentError</span><span class="p">,</span> <span class="s2">&quot;first argument should be a Hash or URLMap&quot;</span>
-</span><span class='line'>        <span class="k">end</span>
-</span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>        <span class="n">server</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="ss">Rack</span><span class="p">:</span><span class="ss">:Handler</span><span class="o">::</span><span class="no">Mongrel</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">app</span><span class="p">))</span>
-</span><span class='line'>    <span class="k">end</span>
-</span><span class='line'>    <span class="k">yield</span> <span class="n">server</span>  <span class="k">if</span> <span class="nb">block_given?</span>
-</span><span class='line'>    <span class="n">server</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">join</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>以上代码使用Mongrel::HttpServer定义了server实例，然后使用server.run运行.</p>
 ]]></content>
   </entry>
   
