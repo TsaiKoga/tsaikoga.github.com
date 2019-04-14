@@ -310,7 +310,7 @@ npm install redux
 
 然后前台app.js渲染之前，必须先通过<Provide>传入store；
 
-即：订阅了 reducers 树，触发 reducers 中某个 action，action 请求后台数据，返回 state 对象给添加订阅的 Provider store
+即：通过 connect() 方法订阅了 reducers 树，触发 reducers 中某个 action，action 请求后台数据，返回 state 对象给添加订阅的 Provider store
 
 <br/>
 
