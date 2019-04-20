@@ -1,0 +1,572 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>宕机后的架构思考 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="背景 上个月公司服务器频繁宕机，第一次是因为日志撑爆了服务器，已经在[服务器日志空间解决方案-外挂磁盘]中解决了； 后面又有两次宕机，都是数据库 RDS 使用率太高导致的； 由于阿里云监控 RDS 报警不及时，所以比较难及时进行处理； 后来我使用了 processlist 查看： 1
+2
+3
+4 &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='https://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->
+    <script src="/javascripts/ajaxify.js"></script>
+
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  <!-- GitHub -->
+  <li>
+  <a href="https://github.com/tsaikoga" class="github" title="Github"></a>
+  </li>
+  
+  
+  
+  
+  <!-- Twitter -->
+  <li>
+  <a href="http://www.twitter.com/tsaikoga" class="twitter" title="Twitter"></a>
+  </li>
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+	<li><a href="/MyResume">My Resume</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+    
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (3)</a></li><li><a href='/blog/categories/linux'>Linux (5)</a></li><li><a href='/blog/categories/mysql'>Mysql (4)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (6)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">宕机后的架构思考</h2>
+	<div class="entry-content"><h1>背景</h1>
+
+<p>上个月公司服务器频繁宕机，第一次是因为日志撑爆了服务器，已经在[服务器日志空间解决方案-外挂磁盘]中解决了；</p>
+
+<p>后面又有两次宕机，都是数据库 RDS 使用率太高导致的；</p>
+
+<p>由于阿里云监控 RDS 报警不及时，所以比较难及时进行处理；</p>
+
+<p>后来我使用了 processlist 查看：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="n">id</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="k">user</span><span class="p">,</span> <span class="k">host</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="k">state</span><span class="p">,</span> <span class="n">info</span>
+</span><span class='line'><span class="k">from</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">processlist</span>
+</span><span class='line'><span class="k">where</span> <span class="n">command</span> <span class="o">!=</span> <span class="s1">&#39;Sleep&#39;</span>
+</span><span class='line'><span class="k">order</span> <span class="k">by</span> <span class="n">time</span> <span class="k">desc</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以实时的观测到是哪些 sql 现在执行慢，当然这些 sql 可能本身不慢，而是因为被慢 sql 阻塞了，导致执行时间太久；</p>
+
+<p>我们可以通过 kill 命令将进程号杀掉（需要用有权限的账号登录）；</p>
+
+<p>这些慢 sql 是 java 的新项目部署上去没有增加有效索引导致的，而新项目 和 已经稳定并且拥有大部分用户的 PHP 项目放在同一个 ECS，数据库也是同一台 RDS；
+一个库占用了大部分 CPU 牵连另一个库执行 sql，造成部分 PHP 项目的用户开始投诉；</p>
+
+<p>不过该问题已经得到解决，目前已经为不同项目拆分不同 ECS 和 不同的 RDS；</p>
+
+<br>
+
+
+<p>当前的 PHP 项目一些表的数据也都到达 2，3k万，现在 java 的项目有数据仓，有中台；
+数据增长速度会比 PHP 项目快；</p>
+
+<p>虽然已经稳定运行，但是这件事让我思考一个问题，如果以后用户级上去了，该怎么办？</p>
+
+<br>
+
+
+<h1>每秒请求数 qps</h1>
+
+<p>前阵子看过一篇关于架构设计的文章，这里借用他的方法来设计为当前项目的架构做分析；</p>
+
+<p>架构设计一般通过估量 qps，然后来设计架构；</p>
+
+<p>首先我去查看项目的 qps，因为目前项目已经在线上，可以通过动态截取每秒日志请求数来估算 QPS：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>tail -f laravel-2019-04-01.log | cut -d <span class="s1">&#39; &#39;</span> f2 | uniq -c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>得出结论，大概 qps 为 100 左右；</p>
+
+<p>目前 100 个请求每秒对于 8 核的 ECS 已经足够；</p>
+
+<p>如果按照每个请求一秒要处理 3 个 sql 请求，那么对于 RDS 就是 300 请求每秒，也是足够的；</p>
+
+<p>所以，就目前位置，服务器 ECS 和 数据库 RDS 都能够承载当前用户量访问。</p>
+
+<br>
+
+
+<br>
+
+
+<h1>集群化部署</h1>
+
+<h2>系统集群化部署</h2>
+
+<p>那么以后销售人员推广力度变大，qps 将逐渐变大，那么一台 ECS 可能承载不了；</p>
+
+<p>这时候我们可以加多一台 ECS 来拆分 qps；</p>
+
+<p>假设 qps 为 500，我们使用“负载均衡”策略，将 qps 平分到两台 ECS 服务器上：</p>
+
+<br>
+
+
+<h3>架构</h3>
+
+<pre><code>          |
+        500/s
+          |
+          ↓
+   { nginx 负载均衡 }
+      |        |
+   250/s     250/s
+      |        |
+      ↓        ↓
+  { ECS1 }  { ECS2 }
+      |        |
+    750/s     750/s
+      |        |
+      +————————+
+         |  |
+         ↓  ↓
+     { 数据库 RDS }
+</code></pre>
+
+<h3>简单实现：</h3>
+
+<p>Nginx 通过 upstream 来给两台 ECS 分配权重，
+以下是 tomcat + nginx 配置，PHP + nginx 也类似，只是换一下 tomcat_server 和 端口 即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># 负载均衡到 2 台 ECS 上，一个 130 的权重为 1/3，129 的权重为 2/3;</span>
+</span><span class='line'>upstream tomcat_server <span class="o">{</span>
+</span><span class='line'>  server 192.168.200.130:8080 <span class="nv">weight</span><span class="o">=</span>10
+</span><span class='line'>  server 192.168.200.129:8080 <span class="nv">weight</span><span class="o">=</span>20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># 监听 80 端口，并转发到 tomcat_server 这个 upstream</span>
+</span><span class='line'>server <span class="o">{</span>
+</span><span class='line'>  listen 80
+</span><span class='line'>  location / <span class="o">{</span>
+</span><span class='line'>    proxy_pass http://tomcat_server;
+</span><span class='line'>    root html;
+</span><span class='line'>    index index.html, index.htm;
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br>
+
+
+<br>
+
+
+<h2>数据库分库分表 + 读写分离</h2>
+
+<p>但是现在有一个问题，就是数据量庞大，例如开单表已经到达了 26,934,626 条，虽然都有效的利用了索引，但是明显开单已经变慢；</p>
+
+<p>再加上每天店铺小妹都在同一个高峰时段不停开单，若有卡顿，则可能会拖累其他 sql 执行，并且造成 CPU 使用率上升，从而宕机；</p>
+
+<p>所以面临的问题主要是两个：</p>
+
+<p>1：数据量太大，导致查询缓慢：</p>
+
+<p>2：面对较大的 qps，例如前面 500 qps 已经分成两个请求 750/s 到 RDS 上；</p>
+
+<p>当 qps 不断增加，ECS 都可以用负载均衡增加机器解决，但是系统层面上解决了，数据库层面上并发量到达 3000/s 就有问题了；</p>
+
+<br>
+
+
+<h3>解决方案：</h3>
+
+<ol>
+<li><p>通过将经常查询并且数据量大的表进行 “水平分割”；</p></li>
+<li><p>分库分表 + 读写分离；
+也就是把一个库拆分为多个库，部署在多个数据库服务上，这是作为主库承载写入请求的；然后每个主库都挂载至少一个从库，由从库来承载读请求。
+此时假设对数据库层面的读写并发是 3000/s，其中写并发占到了 1000/s，读并发占到了 2000/s。
+那么一旦分库分表之后，采用两台数据库服务器上部署主库来支撑写请求，每台服务器承载的写并发就是 500/s。每台主库挂载一个服务器部署从库，那么 2 个从库每个从库支撑的读并发就是 1000/s。</p></li>
+</ol>
+
+
+<br>
+
+
+<h3>架构</h3>
+
+<pre><code>                   |
+              高峰 1000/s
+                   ↓
+           {  nginx 负载均衡  }
+            |       |       |
+          300/s   300/s   300/s
+            ↓       ↓       ↓
+   +———→ { ECS1 } { ECS2 } { ECS3 } ←————+
+   |        |                 |          |
+   |     500/s             500/s         |
+ 1000/s     ↓                 ↓       1000/s
+   |    { 主库1 }          { 主库2 }       |
+   |        ↓                 ↓           |
+   +———— { 从库1 }         { 从库2 } ——————+
+</code></pre>
+
+<h3>简单实现</h3>
+
+<h4>主从数据库：</h4>
+
+<p>如果数据库是 ECS 自己创建的，需要通过开启 my.cnf 的 Binary log 功能实现 ；</p>
+
+<p>如果是直接购买 RDS，可以购买两台，一台做主库，一台做从库，通过阿里云自带服务 DTS 同步数据；</p>
+
+<h4>分库分表：</h4>
+
+<p>最好的做法，是服务在 <strong>搭建之初</strong> 就设计为分库分表的存储模式，从根本上杜绝中后期的风险。
+不过，会牺牲一些便利性，例如列表式的查询，同时，也增加了维护的复杂度。</p>
+
+<p><strong>如何分表：</strong>
+像 Laravel，我们可以事先写一个 model，对应这个 model 的所有分表，然后为这个 model 添加一个方法；</p>
+
+<p>这个方法 通过传入查询条件，对每个表进行查询，然后 union 起来返回；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cm">/* 传入查询的开始日期和结束日期用于计算跨越的表和达到约束表数据的目的。</span>
+</span><span class='line'><span class="cm">   外部可以调整查询的列，还可以添加where条件</span>
+</span><span class='line'><span class="cm">*/</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">setUnionAllTable</span><span class="p">(</span><span class="nv">$startTime</span> <span class="o">=</span> <span class="nx">LARAVEL_START</span><span class="p">,</span> <span class="nv">$endTime</span> <span class="o">=</span> <span class="nx">LARAVEL_START</span><span class="p">,</span> <span class="nv">$attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="nv">$wheres</span> <span class="o">=</span> <span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//约束条件</span>
+</span><span class='line'>    <span class="nv">$whereConditions</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="nv">$wheres</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">([[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="nv">$startTime</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="nv">$endTime</span><span class="p">]],</span> <span class="nv">$wheres</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//时间戳转日期</span>
+</span><span class='line'>    <span class="nv">$startDate</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m&#39;</span><span class="p">,</span> <span class="nv">$startTime</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$endDate</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m&#39;</span><span class="p">,</span> <span class="nv">$endTime</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//涉及的表数组</span>
+</span><span class='line'>    <span class="nv">$tables</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="c1">//循环where数组，格式是[[&#39;字段&#39;,&#39;表达式&#39;,&#39;值&#39;,&#39; and|or &#39;],[&#39;字段&#39;,&#39;表达式&#39;,&#39;值&#39;,&#39; and|or &#39;]]</span>
+</span><span class='line'>    <span class="c1">//例子[[&#39;beauty_uid&#39;, &#39;=&#39;, &#39;2011654&#39;, &#39;and&#39;]]</span>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$wheres</span> <span class="k">as</span> <span class="nv">$val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//组装每个where条件</span>
+</span><span class='line'>        <span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">?</span> <span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$val</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$whereConditions</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$whereConditions</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot; and </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">//循环开始日期和结束日期计算跨越的表</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="nv">$startDate</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;=</span> <span class="nv">$endDate</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m&#39;</span><span class="p">,</span> <span class="nb">strtotime</span><span class="p">(</span><span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;+1month&#39;</span><span class="p">)))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$tables</span><span class="p">[]</span> <span class="o">=</span> <span class="s1">&#39;select &#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39; from cdb_honey_log_&#39;</span> <span class="o">.</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Yn&#39;</span><span class="p">,</span> <span class="nb">strtotime</span><span class="p">(</span><span class="nv">$i</span><span class="p">))</span> <span class="o">.</span> <span class="s1">&#39; where 1&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$whereConditions</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">//会得到每一个表的子查询，因为都有约束条件，所以每一个子查询得结果集都不会很多</span>
+</span><span class='line'>    <span class="c1">//用setTable的方法把这个子查询union all 后 as一个表名作为model的table属性</span>
+</span><span class='line'>    <span class="c1">//sql大概会是:(select xxx,xxx from honey_log_20177 where time &gt;= 开始日期 and time &lt; 结束日期 and xxx union all select xxx,xxx from honey_log_20178 where time &gt;= 开始日期 and time &lt; 结束日期 and xxx) as cdb_honey_log</span>
+</span><span class='line'>    <span class="c1">//核心是看你输入的开始日期和结束日期和约束条件，组装成一个union all的子查询然后作为table赋予model</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setTable</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; union all &#39;</span><span class="p">,</span> <span class="nv">$tables</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;) as cdb_honey_log&#39;</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不过，最好还是使用 <strong>数据库中间件</strong>，数据量再大的时候，放到 Elasticsearch 里面，自带分片处理，交给他底层实现。</p>
+
+<br>
+
+
+<br>
+
+
+<h2>缓存</h2>
+
+<p>当 qps 再次上升，系统层面可以加机器，但是数据库其实本身不是用来承载高并发请求的，</p>
+
+<p>所以通常来说，<strong>数据库单机每秒承载的并发就在几千的数量级</strong>，而且数据库使用的机器都是比较高配置，比较昂贵的机器，成本很高。；</p>
+
+<p>或者原先没有分库分表，想分库加机器又觉得贵；</p>
+
+<p>对于这两个问题，可以通过引入缓存解决；</p>
+
+<p>根据 <strong>“二八定律”</strong>，80%的请求只关注在20%的热点数据上。因此，我们应该建立 服务器 和 数据库 之间的缓存机制。</p>
+
+<p>这种机制，可以用磁盘作为缓存，也可以用内存缓存的方式。通过它们，将大部分的 <strong>热点数据查询</strong>，阻挡在数据库之前;</p>
+
+<p>可以根据系统的业务特性，对那种写少读多的请求，引入缓存集群。</p>
+
+<p>写数据库的时候同时写一份数据到缓存集群里，然后用缓存集群来承载大部分的读请求，这里可以使用 Memcached 或是 Redis 实现；</p>
+
+<p>像前面架构图，读请求目前是每秒 2000/s，两个从库各自抗了 1000/s 读请求，但是其中可能每秒 1800 次的读请求都是可以直接读缓存里的不怎么变化的数据的，</p>
+
+<p>剩下落到数据库的只有 200 次；</p>
+
+<br>
+
+
+<h3>架构</h3>
+
+<pre><code>                       |
+                  高峰 1000/s
+                       |
+                       ↓
+             {  nginx 负载均衡  }
+               |       |       |
+             300/s   300/s   300/s
+               ↓       ↓       ↓
++——————+——→ { ECS1 } { ECS2 } { ECS3 } ←————+———————+
+|      |        |                 |         |       |
+|      |     500/s             500/s        |       |
+|    100/s      ↓                 ↓        100/s    |
+|      |    { 主库1 }          { 主库2 }      |      |
+|      |        |                 |          |      |
+|      |       同步              同步         |      |
+900/s  |        ↓                 ↓          |    900/s
+|      +——  { 从库1 }         { 从库2 } ——————+      |
+|                                                   |
++——————————————————— { 缓存集群 } ———————————————————+
+</code></pre>
+
+<p>参考：<a href="http://www.php.cn/linux-417207.html">http://www.php.cn/linux-417207.html</a></p>
+
+<br>
+
+
+<br>
+
+
+<h2>消息中间件集群</h2>
+
+<p>上面对读的数据做了缓存，那么如果 写操作 比较多，那该怎么办，不可能一直加机器吧？</p>
+
+<p>这里我们要引入 消息中间件集群，例如 RabbitMQ，他是非常好的做写请求异步化处理，实现 <strong>削峰填谷</strong> 的效果。</p>
+
+<h3>架构</h3>
+
+<pre><code>                       |
+                  高峰 1000/s
+                       |
+                       ↓
+             {  nginx 负载均衡  }
+               |       |       |
+             300/s   300/s   300/s
+               |       |       |   +————————————————————————————+
+               ↓       ↓       ↓   |                            |
++——————+——→ { ECS1 } { ECS2 } { ECS3 } ←————+———————+           |
+|      |        |                 |         |       |     { 消息中间件 MQ }
+|      |     500/s             500/s        |       |           |
+|      |        |                 |         |       |    削峰填谷 100/s 请求慢慢写
+|    100/s      ↓                 ↓        100/s    |           |
+|      |    { 主库1 }          { 主库2 } ←————+——————+———————————+
+|      |        |                 |          |      |
+900/s  |        ↓                 ↓          |    900/s
+|      +——  { 从库1 }         { 从库2 } ——————+      |
+|                                                   |
++——————————————————— { 缓存集群 } ———————————————————+
+</code></pre>
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2019
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://TsaiKoga.github.com/blog/2019/04/18/dang-ji-hou-de-jia-gou-si-kao/';
+        var disqus_url = 'https://TsaiKoga.github.com/blog/2019/04/18/dang-ji-hou-de-jia-gou-si-kao/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>

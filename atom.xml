@@ -4,7 +4,7 @@
   <title><![CDATA[TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-04-14T20:51:31+08:00</updated>
+  <updated>2019-04-20T16:52:19+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -12,6 +12,393 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[宕机后的架构思考]]></title>
+    <link href="https://TsaiKoga.github.com/blog/2019/04/18/dang-ji-hou-de-jia-gou-si-kao/"/>
+    <updated>2019-04-18T10:24:00+08:00</updated>
+    <id>https://TsaiKoga.github.com/blog/2019/04/18/dang-ji-hou-de-jia-gou-si-kao</id>
+    <content type="html"><![CDATA[<h1>背景</h1>
+
+<p>上个月公司服务器频繁宕机，第一次是因为日志撑爆了服务器，已经在[服务器日志空间解决方案-外挂磁盘]中解决了；</p>
+
+<p>后面又有两次宕机，都是数据库 RDS 使用率太高导致的；</p>
+
+<p>由于阿里云监控 RDS 报警不及时，所以比较难及时进行处理；</p>
+
+<p>后来我使用了 processlist 查看：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="n">id</span><span class="p">,</span> <span class="n">db</span><span class="p">,</span> <span class="k">user</span><span class="p">,</span> <span class="k">host</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="k">state</span><span class="p">,</span> <span class="n">info</span>
+</span><span class='line'><span class="k">from</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">processlist</span>
+</span><span class='line'><span class="k">where</span> <span class="n">command</span> <span class="o">!=</span> <span class="s1">&#39;Sleep&#39;</span>
+</span><span class='line'><span class="k">order</span> <span class="k">by</span> <span class="n">time</span> <span class="k">desc</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以实时的观测到是哪些 sql 现在执行慢，当然这些 sql 可能本身不慢，而是因为被慢 sql 阻塞了，导致执行时间太久；</p>
+
+<p>我们可以通过 kill 命令将进程号杀掉（需要用有权限的账号登录）；</p>
+
+<p>这些慢 sql 是 java 的新项目部署上去没有增加有效索引导致的，而新项目 和 已经稳定并且拥有大部分用户的 PHP 项目放在同一个 ECS，数据库也是同一台 RDS；
+一个库占用了大部分 CPU 牵连另一个库执行 sql，造成部分 PHP 项目的用户开始投诉；</p>
+
+<p>不过该问题已经得到解决，目前已经为不同项目拆分不同 ECS 和 不同的 RDS；</p>
+
+<br>
+
+
+<p>当前的 PHP 项目一些表的数据也都到达 2，3k万，现在 java 的项目有数据仓，有中台；
+数据增长速度会比 PHP 项目快；</p>
+
+<p>虽然已经稳定运行，但是这件事让我思考一个问题，如果以后用户级上去了，该怎么办？</p>
+
+<br>
+
+
+<h1>每秒请求数 qps</h1>
+
+<p>前阵子看过一篇关于架构设计的文章，这里借用他的方法来设计为当前项目的架构做分析；</p>
+
+<p>架构设计一般通过估量 qps，然后来设计架构；</p>
+
+<p>首先我去查看项目的 qps，因为目前项目已经在线上，可以通过动态截取每秒日志请求数来估算 QPS：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'>tail -f laravel-2019-04-01.log | cut -d <span class="s1">&#39; &#39;</span> f2 | uniq -c
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>得出结论，大概 qps 为 100 左右；</p>
+
+<p>目前 100 个请求每秒对于 8 核的 ECS 已经足够；</p>
+
+<p>如果按照每个请求一秒要处理 3 个 sql 请求，那么对于 RDS 就是 300 请求每秒，也是足够的；</p>
+
+<p>所以，就目前位置，服务器 ECS 和 数据库 RDS 都能够承载当前用户量访问。</p>
+
+<br>
+
+
+<br>
+
+
+<h1>集群化部署</h1>
+
+<h2>系统集群化部署</h2>
+
+<p>那么以后销售人员推广力度变大，qps 将逐渐变大，那么一台 ECS 可能承载不了；</p>
+
+<p>这时候我们可以加多一台 ECS 来拆分 qps；</p>
+
+<p>假设 qps 为 500，我们使用“负载均衡”策略，将 qps 平分到两台 ECS 服务器上：</p>
+
+<br>
+
+
+<h3>架构</h3>
+
+<pre><code>          |
+        500/s
+          |
+          ↓
+   { nginx 负载均衡 }
+      |        |
+   250/s     250/s
+      |        |
+      ↓        ↓
+  { ECS1 }  { ECS2 }
+      |        |
+    750/s     750/s
+      |        |
+      +————————+
+         |  |
+         ↓  ↓
+     { 数据库 RDS }
+</code></pre>
+
+<h3>简单实现：</h3>
+
+<p>Nginx 通过 upstream 来给两台 ECS 分配权重，
+以下是 tomcat + nginx 配置，PHP + nginx 也类似，只是换一下 tomcat_server 和 端口 即可</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='sh'><span class='line'><span class="c"># 负载均衡到 2 台 ECS 上，一个 130 的权重为 1/3，129 的权重为 2/3;</span>
+</span><span class='line'>upstream tomcat_server <span class="o">{</span>
+</span><span class='line'>  server 192.168.200.130:8080 <span class="nv">weight</span><span class="o">=</span>10
+</span><span class='line'>  server 192.168.200.129:8080 <span class="nv">weight</span><span class="o">=</span>20
+</span><span class='line'><span class="o">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># 监听 80 端口，并转发到 tomcat_server 这个 upstream</span>
+</span><span class='line'>server <span class="o">{</span>
+</span><span class='line'>  listen 80
+</span><span class='line'>  location / <span class="o">{</span>
+</span><span class='line'>    proxy_pass http://tomcat_server;
+</span><span class='line'>    root html;
+</span><span class='line'>    index index.html, index.htm;
+</span><span class='line'>  <span class="o">}</span>
+</span><span class='line'><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<br>
+
+
+<br>
+
+
+<h2>数据库分库分表 + 读写分离</h2>
+
+<p>但是现在有一个问题，就是数据量庞大，例如开单表已经到达了 26,934,626 条，虽然都有效的利用了索引，但是明显开单已经变慢；</p>
+
+<p>再加上每天店铺小妹都在同一个高峰时段不停开单，若有卡顿，则可能会拖累其他 sql 执行，并且造成 CPU 使用率上升，从而宕机；</p>
+
+<p>所以面临的问题主要是两个：</p>
+
+<p>1：数据量太大，导致查询缓慢：</p>
+
+<p>2：面对较大的 qps，例如前面 500 qps 已经分成两个请求 750/s 到 RDS 上；</p>
+
+<p>当 qps 不断增加，ECS 都可以用负载均衡增加机器解决，但是系统层面上解决了，数据库层面上并发量到达 3000/s 就有问题了；</p>
+
+<br>
+
+
+<h3>解决方案：</h3>
+
+<ol>
+<li><p>通过将经常查询并且数据量大的表进行 “水平分割”；</p></li>
+<li><p>分库分表 + 读写分离；
+也就是把一个库拆分为多个库，部署在多个数据库服务上，这是作为主库承载写入请求的；然后每个主库都挂载至少一个从库，由从库来承载读请求。
+此时假设对数据库层面的读写并发是 3000/s，其中写并发占到了 1000/s，读并发占到了 2000/s。
+那么一旦分库分表之后，采用两台数据库服务器上部署主库来支撑写请求，每台服务器承载的写并发就是 500/s。每台主库挂载一个服务器部署从库，那么 2 个从库每个从库支撑的读并发就是 1000/s。</p></li>
+</ol>
+
+
+<br>
+
+
+<h3>架构</h3>
+
+<pre><code>                   |
+              高峰 1000/s
+                   ↓
+           {  nginx 负载均衡  }
+            |       |       |
+          300/s   300/s   300/s
+            ↓       ↓       ↓
+   +———→ { ECS1 } { ECS2 } { ECS3 } ←————+
+   |        |                 |          |
+   |     500/s             500/s         |
+ 1000/s     ↓                 ↓       1000/s
+   |    { 主库1 }          { 主库2 }       |
+   |        ↓                 ↓           |
+   +———— { 从库1 }         { 从库2 } ——————+
+</code></pre>
+
+<h3>简单实现</h3>
+
+<h4>主从数据库：</h4>
+
+<p>如果数据库是 ECS 自己创建的，需要通过开启 my.cnf 的 Binary log 功能实现 ；</p>
+
+<p>如果是直接购买 RDS，可以购买两台，一台做主库，一台做从库，通过阿里云自带服务 DTS 同步数据；</p>
+
+<h4>分库分表：</h4>
+
+<p>最好的做法，是服务在 <strong>搭建之初</strong> 就设计为分库分表的存储模式，从根本上杜绝中后期的风险。
+不过，会牺牲一些便利性，例如列表式的查询，同时，也增加了维护的复杂度。</p>
+
+<p><strong>如何分表：</strong>
+像 Laravel，我们可以事先写一个 model，对应这个 model 的所有分表，然后为这个 model 添加一个方法；</p>
+
+<p>这个方法 通过传入查询条件，对每个表进行查询，然后 union 起来返回；</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cm">/* 传入查询的开始日期和结束日期用于计算跨越的表和达到约束表数据的目的。</span>
+</span><span class='line'><span class="cm">   外部可以调整查询的列，还可以添加where条件</span>
+</span><span class='line'><span class="cm">*/</span>
+</span><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">setUnionAllTable</span><span class="p">(</span><span class="nv">$startTime</span> <span class="o">=</span> <span class="nx">LARAVEL_START</span><span class="p">,</span> <span class="nv">$endTime</span> <span class="o">=</span> <span class="nx">LARAVEL_START</span><span class="p">,</span> <span class="nv">$attributes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">],</span> <span class="nv">$wheres</span> <span class="o">=</span> <span class="p">[])</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="c1">//约束条件</span>
+</span><span class='line'>    <span class="nv">$whereConditions</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="nv">$wheres</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">([[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;&gt;=&#39;</span><span class="p">,</span> <span class="nv">$startTime</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="nv">$endTime</span><span class="p">]],</span> <span class="nv">$wheres</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//时间戳转日期</span>
+</span><span class='line'>    <span class="nv">$startDate</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m&#39;</span><span class="p">,</span> <span class="nv">$startTime</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$endDate</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m&#39;</span><span class="p">,</span> <span class="nv">$endTime</span><span class="p">);</span>
+</span><span class='line'>    <span class="c1">//涉及的表数组</span>
+</span><span class='line'>    <span class="nv">$tables</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'>    <span class="c1">//循环where数组，格式是[[&#39;字段&#39;,&#39;表达式&#39;,&#39;值&#39;,&#39; and|or &#39;],[&#39;字段&#39;,&#39;表达式&#39;,&#39;值&#39;,&#39; and|or &#39;]]</span>
+</span><span class='line'>    <span class="c1">//例子[[&#39;beauty_uid&#39;, &#39;=&#39;, &#39;2011654&#39;, &#39;and&#39;]]</span>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$wheres</span> <span class="k">as</span> <span class="nv">$val</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//组装每个where条件</span>
+</span><span class='line'>        <span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">?</span> <span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">:</span> <span class="s2">&quot;&#39;&#39;&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$val</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$whereConditions</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot; </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$whereConditions</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot; and </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="nv">$val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">//循环开始日期和结束日期计算跨越的表</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="nv">$startDate</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;=</span> <span class="nv">$endDate</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">=</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Y-m&#39;</span><span class="p">,</span> <span class="nb">strtotime</span><span class="p">(</span><span class="nv">$i</span> <span class="o">.</span> <span class="s1">&#39;+1month&#39;</span><span class="p">)))</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$tables</span><span class="p">[]</span> <span class="o">=</span> <span class="s1">&#39;select &#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nv">$attributes</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39; from cdb_honey_log_&#39;</span> <span class="o">.</span> <span class="nb">date</span><span class="p">(</span><span class="s1">&#39;Yn&#39;</span><span class="p">,</span> <span class="nb">strtotime</span><span class="p">(</span><span class="nv">$i</span><span class="p">))</span> <span class="o">.</span> <span class="s1">&#39; where 1&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$whereConditions</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">//会得到每一个表的子查询，因为都有约束条件，所以每一个子查询得结果集都不会很多</span>
+</span><span class='line'>    <span class="c1">//用setTable的方法把这个子查询union all 后 as一个表名作为model的table属性</span>
+</span><span class='line'>    <span class="c1">//sql大概会是:(select xxx,xxx from honey_log_20177 where time &gt;= 开始日期 and time &lt; 结束日期 and xxx union all select xxx,xxx from honey_log_20178 where time &gt;= 开始日期 and time &lt; 结束日期 and xxx) as cdb_honey_log</span>
+</span><span class='line'>    <span class="c1">//核心是看你输入的开始日期和结束日期和约束条件，组装成一个union all的子查询然后作为table赋予model</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setTable</span><span class="p">(</span><span class="nx">DB</span><span class="o">::</span><span class="na">raw</span><span class="p">(</span><span class="s1">&#39;(&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; union all &#39;</span><span class="p">,</span> <span class="nv">$tables</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;) as cdb_honey_log&#39;</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>不过，最好还是使用 <strong>数据库中间件</strong>，数据量再大的时候，放到 Elasticsearch 里面，自带分片处理，交给他底层实现。</p>
+
+<br>
+
+
+<br>
+
+
+<h2>缓存</h2>
+
+<p>当 qps 再次上升，系统层面可以加机器，但是数据库其实本身不是用来承载高并发请求的，</p>
+
+<p>所以通常来说，<strong>数据库单机每秒承载的并发就在几千的数量级</strong>，而且数据库使用的机器都是比较高配置，比较昂贵的机器，成本很高。；</p>
+
+<p>或者原先没有分库分表，想分库加机器又觉得贵；</p>
+
+<p>对于这两个问题，可以通过引入缓存解决；</p>
+
+<p>根据 <strong>“二八定律”</strong>，80%的请求只关注在20%的热点数据上。因此，我们应该建立 服务器 和 数据库 之间的缓存机制。</p>
+
+<p>这种机制，可以用磁盘作为缓存，也可以用内存缓存的方式。通过它们，将大部分的 <strong>热点数据查询</strong>，阻挡在数据库之前;</p>
+
+<p>可以根据系统的业务特性，对那种写少读多的请求，引入缓存集群。</p>
+
+<p>写数据库的时候同时写一份数据到缓存集群里，然后用缓存集群来承载大部分的读请求，这里可以使用 Memcached 或是 Redis 实现；</p>
+
+<p>像前面架构图，读请求目前是每秒 2000/s，两个从库各自抗了 1000/s 读请求，但是其中可能每秒 1800 次的读请求都是可以直接读缓存里的不怎么变化的数据的，</p>
+
+<p>剩下落到数据库的只有 200 次；</p>
+
+<br>
+
+
+<h3>架构</h3>
+
+<pre><code>                       |
+                  高峰 1000/s
+                       |
+                       ↓
+             {  nginx 负载均衡  }
+               |       |       |
+             300/s   300/s   300/s
+               ↓       ↓       ↓
++——————+——→ { ECS1 } { ECS2 } { ECS3 } ←————+———————+
+|      |        |                 |         |       |
+|      |     500/s             500/s        |       |
+|    100/s      ↓                 ↓        100/s    |
+|      |    { 主库1 }          { 主库2 }      |      |
+|      |        |                 |          |      |
+|      |       同步              同步         |      |
+900/s  |        ↓                 ↓          |    900/s
+|      +——  { 从库1 }         { 从库2 } ——————+      |
+|                                                   |
++——————————————————— { 缓存集群 } ———————————————————+
+</code></pre>
+
+<p>参考：<a href="http://www.php.cn/linux-417207.html">http://www.php.cn/linux-417207.html</a></p>
+
+<br>
+
+
+<br>
+
+
+<h2>消息中间件集群</h2>
+
+<p>上面对读的数据做了缓存，那么如果 写操作 比较多，那该怎么办，不可能一直加机器吧？</p>
+
+<p>这里我们要引入 消息中间件集群，例如 RabbitMQ，他是非常好的做写请求异步化处理，实现 <strong>削峰填谷</strong> 的效果。</p>
+
+<h3>架构</h3>
+
+<pre><code>                       |
+                  高峰 1000/s
+                       |
+                       ↓
+             {  nginx 负载均衡  }
+               |       |       |
+             300/s   300/s   300/s
+               |       |       |   +————————————————————————————+
+               ↓       ↓       ↓   |                            |
++——————+——→ { ECS1 } { ECS2 } { ECS3 } ←————+———————+           |
+|      |        |                 |         |       |     { 消息中间件 MQ }
+|      |     500/s             500/s        |       |           |
+|      |        |                 |         |       |    削峰填谷 100/s 请求慢慢写
+|    100/s      ↓                 ↓        100/s    |           |
+|      |    { 主库1 }          { 主库2 } ←————+——————+———————————+
+|      |        |                 |          |      |
+900/s  |        ↓                 ↓          |    900/s
+|      +——  { 从库1 }         { 从库2 } ——————+      |
+|                                                   |
++——————————————————— { 缓存集群 } ———————————————————+
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[前后端分离]]></title>
@@ -7826,252 +8213,6 @@ Jamis也完整地写了关于这个的技术博文：<a href="http://weblog.jami
 <p>2.先简单后复杂（复杂局部实现）：找出前台要显示的基本信息，编写后台实现基本的显示信息，再用一个功能一个功能实现;</p>
 
 <p>3.先局部后整体：在此期间的不断地测试。</p></blockquote>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Rails Assets Pipeline]]></title>
-    <link href="https://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline/"/>
-    <updated>2013-10-26T10:10:00+08:00</updated>
-    <id>https://TsaiKoga.github.com/blog/2013/10/26/rails-assets-pipeline</id>
-    <content type="html"><![CDATA[<p>本章我将从三个方面介绍Assets Pipeline:</p>
-
-<ol>
-<li>Assets Pipeline的产生背景</li>
-<li>Assets Pipeline的定义</li>
-<li>Assets Pipeline的主要功能</li>
-<li>Assets Pipeline的使用方法</li>
-<li>生产环境下的Assets Pipeline</li>
-</ol>
-
-
-<hr />
-
-<h3>背景：</h3>
-
-<p>在Rails项目中，只用<strong>public/文件夹是公开读取</strong>的，所以我们通常会把<strong>javascript,css等静态资源放入</strong>其中，好让浏览器直接读取。但是随着这些静态文件越来越多，如何管理他们成为一个问题，为了加快浏览器下载速度，我们要合并javascript和stylesheet文件，来减少浏览器请求次数，更进一步还会压缩文件来加速下载时间。</p>
-
-<p>  后来,Rails3引进了Assets Pipeline的新功能，它可以让静态资源存放在不同目录下，rails帮你组合压缩，特别是一些javascript插件。没有Assets Pipeline之前，我们必须将javascript复制到public/中浏览器才可以读取。</p>
-
-<blockquote><p>Yahoo!和google都有自己开源的压缩工具<a href="http://yui.github.io/yuicompressor/">YUI Compressor</a>和<a href="https://developers.google.com/closure/compiler">Closure Compile</a>。</p></blockquote>
-
-<hr />
-
-<h3>什么是Assets Pipeline：</h3>
-
-<p>Assets Pipeline是能<strong>使Javascript,CSS的assets（包括自己在assets文件夹中写的erb,sass和coffescript文件）连接、缩小和压缩的一个框架</strong>。这个框架通过它的<strong>中心库Sprokets(将资源预处理，压缩和缩小)</strong>使所有rails开发者从中受益。</p>
-
-<p>assets pipeline是默认启动的，如果想关闭也可以到config/application.rb文件中将如下代码放入：</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">config</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">enable</span> <span class="o">=</span> <span class="kp">false</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>当然，我们也可以在创建项目时，就不产生assets:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">rails</span> <span class="kp">new</span> <span class="n">appname</span> <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">sprockets</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr />
-
-<h3>主要功能:</h3>
-
-<ul>
-<li><p><strong>连接：(减少浏览器请求数)</strong></p>
-
-<p>  它可以避免浏览器为了渲染页面而不得不发送过多的请求。网页浏览器限制了并行请求的数量， 所以更少的请求能让你的应用程序加载更快。</p>
-
-<p>  Rails 默认将所有的 JavaScript 文件连结成一个主要的 .js 文件，和将所有的 CSS 文件连结成一个主要的 .css 文件。在生产环境中， Rails 给<strong>每个文件名插入一个 MD5 指纹</strong>,以便<strong>文件被网页浏览器缓存</strong>。你可以通过修改指纹使缓存无效，这在你修改文件后会自动发生。</p></li>
-<li><p><strong>缩小/压缩：(加快js,css及图片等静态资源下载速度)</strong></p>
-
-<p>  对于 CSS 文件，是通过去除空格和注释来实现的。</p>
-
-<p>  对于 JavsScript, 会有更多的复杂过程。你可以从选项中选择一套构件或者指定你自己的。</p></li>
-<li><p><strong>使用索引文件：(建立索引文件提高访问速度)</strong></p>
-
-<p>  Sprockets 对一些特殊的用途会使用名为 index (使用相关扩展) 的文件，作为一系列相关文件的索引。</p></li>
-<li><p><strong>高级语言预编译(coffeescript &ndash;> javascript / scss &ndash;> css等)：</strong></p>
-
-<p>  它能你使用更高级的语言来编写资源，然后预编译成实质的资源。默认支持的语言包括 CSS 的 Sass，JavaScript 的 CoffeeScript 和可用于所有资源的 ERB.</p></li>
-</ul>
-
-
-<hr />
-
-<h3>使用方法：</h3>
-
-<p>在 Rails 之前的版本里，所有的资源都放置在 public 的子目录下比如 images, javascript 和 stylesheets. 对于 asset pipeline, 这些资源现在被指定到 <strong>app/assets 目录</strong>。这个<strong>目录下的所有文件都通过 Sprockets 中间件供应</strong>，这个中间件通过引入 sprockets gem 使用。</p>
-
-<h4>资源组织：</h4>
-
-<p>Pipeline assets 可以被放置到一个应用程序中这三个位置中的一个:</p>
-
-<ul>
-<li>app/assets 放置属于<strong>应用程序的资源</strong>，比如自选图像，JavaScript 文件和样式文件。</li>
-<li>lib/assets 用于不在应用程序<strong>范围内的自有函式库</strong>，或者那些<strong>跨应用程序共通的函式</strong>。</li>
-<li>vendor/assets 用于属于<strong>外部实体的资源</strong>，比如 JavaScript 插件和 CSS 框架的代码。</li>
-</ul>
-
-
-<hr />
-
-<ol type="a">
-<li><p>搜索路径：</p>
-
-<p>介绍搜索路径时，先来介绍<strong>资源清单</strong>：</p>
-
-<blockquote><ul>
-<li><p>资源清单一般是app/assets/stylesheets/application.css和app/assets/javascripts/application.js</p></li>
-<li><p>assets pipeline<strong>默认搜索路径将会在app/assets/images和三个资源路径app/assets/、lib/assets/、 vendor/assets下的所有javascripts, stylesheets子目录</strong>，而索引的<strong>文件将由文件清单给出</strong>,如：//= require home 将是 app/assets/javascripts/home.js。</p></li>
-<li><p>下图就是一份JS资源清单：</p></li>
-</ul>
-</blockquote>
-
-<p><img src="https://TsaiKoga.github.com/images/posts/2013-10-26/resource_list.png" title="JS资源清单" alt="无法显示图片" /></p>
-
-<p>刚才已经提到，那是默认的搜索路径，你也可以附加路径：在config/application.rb里添加路径到pipeline。例如：</p></li>
-</ol>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'> <span class="n">config</span><span class="o">.</span><span class="n">assets</span><span class="o">.</span><span class="n">paths</span> <span class="o">&lt;&lt;</span> <span class="no">Rails</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;app&quot;</span><span class="p">,</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="s2">&quot;flash&quot;</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>_注意：想在**资源清单外引用**的文件必须加载到**预编译列表**里，否则它们在**生产环境**将不可以用。_
-</code></pre>
-
-<ol type="a">
-<li><p>使用索引文件:</p>
-
-<p>如果你了解数据库，就应该对索引很熟悉。如果一个字段<strong>经常被查找</strong>，你可以将它<strong>建立索引</strong>从而提高访问速度。</p>
-
-<p>Sprockets也采取类似方法，对一些<strong>特殊的用途</strong>会使用名为 index (使用相关扩展) 的文件。</p>
-
-<blockquote><p>例如，如果你的<strong>许多模块都要使用某个 jQuery 函式库</strong>，这个函式库存放在 lib/assets/library_name。 lib/assets/library_name/index.js 会作为<strong>这个库的所有文件的 manifest</strong>. 这个文件可以按顺序包含一组需要使用的文件，或者一个简单的 require_tree 指令。</p></blockquote></li>
-<li><p>连接资源代码：</p>
-
-<p><strong>使用标签：</strong></p>
-
-<p>pipeline(在当前的环境上下文中没有被关闭)提供标签访问你的资源,这些文件通过Sprockets获得。</p>
-
-<p>Sprockets 也会搜寻在 config.assets.paths 指定的所有路径，这些路径包括常规的应用程序路径和任何被 Rails engines 添加进来的路径。</p></li>
-</ol>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sx">%= stylesheet_link_tag &quot;application&quot; %&gt;</span>
-</span><span class='line'><span class="sx">&lt;%=</span> <span class="n">javascript_include_tag</span> <span class="s2">&quot;application&quot;</span> <span class="sx">%&gt;</span>
-</span><span class='line'><span class="sx">&lt;%= image_tag &quot;rails.png&quot; %&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>**CSS:**
-
-assets pipeline会**自动解析erb**，你可以在CSS增加扩展名.erb，这样资源中就可以**使用helpers**方法(如：asset\_path)。
-
-使用assets pipeline，**资源路径必须重写**并且sass-rails提供两个helpers方法：-url和-path。
-
-**JS:**
-
-使用erb扩展名可以使用asset\_path的helpers方法。你也可以在coffeescript增加扩展名erb。
-</code></pre>
-
-<ol type="a">
-<li><p>资源清单和指令：</p>
-
-<p><strong>作用：</strong>Sprockets 使用资源清单文件去<strong>确认哪些资源要引入并供应</strong>的。</p>
-
-<p>这些资源清单文件包含一些 <strong>指令</strong> — 告诉 Sprockets 哪些文件要被<strong>按顺序引入</strong>，然后将它们<strong>连结成单个 CSS 或者 JavaScript 文件的指示</strong>。根据这些指令， Sprockets 加载这些被指定的文件，如果有必要就对它们<strong>进行加工</strong>，接着将它们<strong>连结成单个文件然后压缩</strong>它们 ( 如果 <strong>Rails.application.config.assets.compress</strong> 为 true ).</p>
-
-<p>由于只处理单个文件而不是多个， 浏览器可以发起更少的请求所以页面的加载时间将会大大的缩减。</p>
-
-<p>还记得清单内容吗？之前提到的资源清单。</p>
-
-<p><strong>构成：</strong></p>
-
-<ul>
-<li>JS资源清单:</li>
-</ul>
-
-
-<p>那些<strong>以//=开头的注释就是指令</strong>，而 <strong>require 指令</strong>是用于告诉 Sprockets <strong>需要加入</strong>的文件,也不用加扩展名，当资源清单是js文件，Sprockets会假设你加入的是一个.js文件。</p>
-
-<p>  <strong>require_tree</strong> 指令告诉 Sprockets <strong>递归</strong>地去包含在<strong>指定目录下<em>所有</em></strong> 的 JavaScript 文件到<strong>输出里</strong>。 这些<strong>路径必须在资源清单文件中有相关的指定</strong>。 有也可以使用 require_directory 指令，它会将在某个特定目录下所有的 JavaScript 文件包含进去，但不递归。</p></li>
-</ol>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'>  <span class="o">//=</span> <span class="nt">require</span> <span class="nt">jquery</span>
-</span><span class='line'>  <span class="o">//=</span> <span class="nt">require</span> <span class="nt">jquery_ujs</span>
-</span><span class='line'>  <span class="o">//=</span> <span class="nt">require_tree</span> <span class="o">.</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>  - CSS资源清单：
-
-  用css的注释开头，同样用require引入文件，指令**require_tree**和JS中的一样（**加入当前目录所有stylesheets文件**），require_self将文件中的 CSS (如果有) 放置到 require_self 调用的准确位置。
-</code></pre>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-</pre></td><td class='code'><pre><code class='javascript'><span class='line'>   <span class="cm">/* ...</span>
-</span><span class='line'><span class="cm"> *= require_self</span>
-</span><span class='line'><span class="cm"> *= require_tree .</span>
-</span><span class='line'><span class="cm"> */</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<pre><code>_注意：用到多个sass文件时，用**@import rule**替代Sprockets_指令，Sprockets 指令在 Sass 文件中定义的**变量和 mixins** 都只能在其**被定义的文档**中可用。_
-</code></pre>
-
-<ol type="a">
-<li><p>预处理：</p>
-
-<p>文件的<strong>扩展名</strong>被用于判断某个资源文件要进入<strong>哪个预处理过程</strong>。</p>
-
-<p><strong>预处理</strong>可以通过<strong>添加其它的扩展</strong>被加入，扩展的<strong>处理顺序</strong>按是<strong>从右到左</strong>。这应该用于需要按顺序处理的过程。编译好的 JavaScript 和 CSS 文件送回给浏览。</p>
-
-<blockquote><p>例如：</p>
-
-<p>app/assets/javascripts/projects.js.erb.coffee，那么现由 CoffeeScript 拦截器先处理。它不能解析 ERB 所以你会碰到问题。</p></blockquote></li>
-</ol>
-
-
-<hr />
-
-<h4>生产环境：</h4>
-
-<ul>
-<li><p>预编译资源</p>
-
-<p>Rails 本身绑定了一个 <strong>rake</strong> 任何去编译资源资源清单和 pipeline 中的其它文件到<strong>磁盘</strong>里。</p>
-
-<p><strong>编译后的资源</strong>都被写入到了在 config.assets.prefix 指定的位置里。默认情况下，是 <strong>pulibc/assets 目录</strong>。</p>
-
-<p>为了更<strong>快速的预编译资源</strong>，你可以在 config/application.rb 里将 <strong>config.assets.initialize_on_precompile 设置为 false</strong> 去<strong>部分加载</strong>你的应用程序。</p>
-
-<blockquote><p>如果你设置 config.assets.initialize_on_precomile 为 false,在<strong>开发模式</strong>范围内会<strong>忽略这个标记的值</strong>. 改变这个标记也会影响到 engines. Engines 也可以<strong>指定预编译资源.</strong> 因为完整的环境还没有加载完, <strong>engines (或者其他的 gems) 将不会被加载</strong>, 这会引起<strong>资源丢失</strong>.</p></blockquote>
-
-<p>所以，你可以通过以下命令生成已编译版本的资源文件:</p></li>
-</ul>
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">bundle</span> <span class="nb">exec</span> <span class="n">rake</span> <span class="ss">assets</span><span class="p">:</span><span class="n">precompile</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<hr />
 ]]></content>
   </entry>
   
