@@ -15,11 +15,20 @@ categories: [Mysql]
 
 然后，数据库中有三个单据表：开单OrderCreate，改单OrderModification，退货单ReturnGoods；
 这三张表各有三个子表 开单子表OrderCreateGoodsSku，改单子表OrderModificationGoodsSku，退货子表ReturnGoodsSku；
-这些子表都有对应的goods_count和goods_price，分别代表着交易数量和单价；
+这些子表都有对应的goods_count和goods_price，分别代表着交易数量和单价；他们都对应这一张交易单表 transaction；
 
 所以，销售量是（开单+改单-退货）的goods_count，
 交易额是（开单goods_count * 开单goods_price + 改单goods_count * 改单goods_price - 退货goods_count * 退货goods_price)
 当然，由于还要显示颜色尺码以及款号，我们还需要去join 有这些字段的表才行。
+
+一开始入职时，觉得这三张表其实字段基本相同，可以将它放在一张表中，使用 type 字段做区分，类似于 ruby on rails 中的单表继承；
+这样，算销量 和 销售价 就从这张表出发 join sku 就可以了，这样可比分三张要快；
+
+后来数据量比较大时，也会想，这样也许是为了分表，减少数据在单张表的数量；
+transaction 做为主表，分别被 create_order 开单、modification_order 改单 和 return_goods 退货关联；
+不过分表可能要根据业务逻辑，如果是页面中有对单独类型显示，可以用这种分法，不过一般还是对时间的依赖性比较强；
+
+回过头来，我们继续看看这三张主要单据：
 
 由于全部时间单据实在太多，一次性找出来构造成所需要的形式也很耗时；再者，随着时间推移，单据越来越多，这查询速度就更加不能接受了。
 
@@ -61,7 +70,7 @@ union all
 
 你也可以先建立这个视图的Model，然后就可以通过ORM来获取结果集。
 
-最后，说说效果，其实效果还是不能接受，因为三张表的数据 union all 后数据量太庞大，导致加载速度还是非常非常慢，union all时间实在太长了；
+最后，说说效果，其实效果不能接受，因为三张表的数据 union all 后数据量太庞大，导致加载速度还是非常非常慢，union all时间实在太长了；
 mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。
 
 ### 使用 select union join as 解决排序与分页的矛盾
@@ -69,6 +78,9 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。
 那么该怎么办呢，我是可以试图把union all的数据减少，也就是先用 where 进行筛选然后再 union all；
 然后对这些已经筛选并且合并的数据进行 join 关联操作（这样可以 **大大减少 join 关联的内容**）；
 最后再次将他们 select 出来：
+
+其实分表后也是这样来汇集所有分表的数据到一张表的，算是分表的一种查询操作吧：
+
 
 ``` sql
 SELECT
