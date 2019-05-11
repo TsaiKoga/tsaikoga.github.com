@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: PHP | TsaiKoga Blog]]></title>
+  <link href="https://TsaiKoga.github.com/blog/categories/php/atom.xml" rel="self"/>
+  <link href="https://TsaiKoga.github.com/"/>
+  <updated>2019-05-11T16:04:40+08:00</updated>
+  <id>https://TsaiKoga.github.com/</id>
+  <author>
+    <name><![CDATA[TsaiKoga]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Laravel 的数据库事务源码分析]]></title>
+    <link href="https://TsaiKoga.github.com/blog/2019/05/09/laravel-de-shu-ju-ku-shi-wu-yuan-ma-fen-xi/"/>
+    <updated>2019-05-09T17:54:00+08:00</updated>
+    <id>https://TsaiKoga.github.com/blog/2019/05/09/laravel-de-shu-ju-ku-shi-wu-yuan-ma-fen-xi</id>
+    <content type="html"><![CDATA[<p>在批发档口记账 app 中，由于用户数量越来越多，有几个老客户了反馈单据丢失的问题；</p>
+
+<p><strong>打个比方：</strong></p>
+
+<p>我们开单会去创建开单表 <code>order_create</code>，开单表会生成详情 <code>order_create_goods_sku</code>，然后生成欠货表 <code>order_owe_goods_sku</code>；</p>
+
+<p>然后接着是发货请求，会生成发货主表 <code>order_delivery</code> 和 发货详情 <code>order_delivery_goods_sku</code>；发货会生成库存变动记录；</p>
+
+<br>
+
+
+<p>这时候已经有了开单和开单详情，证明已经开单请求成功；</p>
+
+<p>但是库存变动记录有，发货单却找不到；这时候我去查找了日志，发现也有发货请求；
+然而通过库存变动记录找不到相应的发货单了，这是怎么回事，难道是被人撤销了吗？</p>
+
+<br>
+
+
+<p>全局查找了整个项目，没有强删除的接口，难道是代码有问题？</p>
+
+<p>那么我开始定位代码，因为事务包裹着整个"发货的创建流程" 和 &ldquo;库存变动记录的生成"；
+所以要么就全部回滚，那么不太可能是回滚问题？</p>
+
+<br>
+
+
+<h1>跟踪数据库操作：</h1>
+
+<hr />
+
+<p>那是不是有人从数据库删除了？</p>
+
+<p>我写了个触发器，只要有人强删记录就会记录到一张跟踪表：</p>
+
+<p>1.首先创建跟踪表：
+<code>sql
+CREATE TABLE `juniu_track_delivery` (
+  `track_delivery_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '订单ID',
+  `order_delivery_id` int(11) NOT NULL DEFAULT 0 COMMENT  '发货单ID',
+  `order_id` int(11) NOT NULL DEFAULT 0 COMMENT '订单ID',
+  `deliver_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '发货时间',
+  `deleted_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '被删除时间',
+  `deleted_by` varchar(50) DEFAULT '' COMMENT '删除的用户ip',
+  PRIMARY KEY (`track_delivery_id`)
+  ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+</code></p>
+
+<br>
+
+
+<p>2.建立触发器 <code>track_delete_delivery</code> 跟踪：
+``` sql
+DELIMITER //
+CREATE TRIGGER track_delete_delivery
+AFTER DELETE
+   ON juniu_order_delivery FOR EACH ROW
+BEGIN
+   DECLARE vUser varchar(50);
+   &mdash; Find username of person performing the DELETE into table
+   SELECT USER() INTO vUser;
+   &mdash; Insert record into audit table
+   INSERT INTO juniu_track_delivery
+   ( order_delivery_id,</p>
+
+<pre><code> order_id,
+ deliver_timestamp,
+ deleted_at,
+ deleted_by)
+</code></pre>
+
+<p>   VALUES
+   ( OLD.order_delivery_id,</p>
+
+<pre><code> OLD.order_id,
+ OLD.deliver_timestamp,
+ SYSDATE(),
+ vUser );
+</code></pre>
+
+<p>END; //
+DELIMITER ;
+```
+观察一段时间，仍有数据丢失，但是并没有跟踪到，初步判断不是人为删除；</p>
+
+<br>
+
+
+<h1>Mysql 事务特性：</h1>
+
+<hr />
+
+<p>Mysql 事务具有四大特性：A（原子性）C（一致性）I（隔离性）D（持久性）；</p>
+
+<p>事务有五个级别：</p>
+
+<blockquote><ol>
+<li><p>TRANSACTION_NONE  不使用事务。</p></li>
+<li><p>TRANSACTION_READ_UNCOMMITTED  未提交读，允许脏读。</p></li>
+<li><p>TRANSACTION_READ_COMMITTED  提交读，防止脏读，最常用的隔离级别,并且是大多数数据库的默认隔离级别</p></li>
+<li><p>TRANSACTION_REPEATABLE_READ  重复读，可以防止脏读和不可重复读，</p></li>
+<li><p>TRANSACTION_SERIALIZABLE  序列化，可以防止脏读，不可重复读取和幻读，（事务串行化）会降低数据库的效率</p></li>
+</ol>
+</blockquote>
+
+<p>1、<strong>脏读：</strong> 事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</p>
+
+<p>2、<strong>不可重复读：</strong> 事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果不一致。</p>
+
+<p>3、<strong>幻读：</strong> 事务 A 修改了表中所有数据，但是事务 B 插入了一条数据，当事务 A 查询数据发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</p>
+
+<p><strong>小结：</strong> 不可重复读的和幻读很容易混淆，不可重复读侧重于修改，幻读侧重于新增或删除。解决不可重复读的问题只需锁住满足条件的行，解决幻读需要锁表</p>
+
+<br>
+
+
+<p>最后我们来查看一下 Mysql 数据库事务配置，看是不是事务配置错误：</p>
+
+<p>``` sql
+select @@tx_isolation;</p>
+
+<p>select @@session.tx_isolation;</p>
+
+<p>select @@global.tx_isolation;
+```</p>
+
+<p>显示结果都是 <code>READ-COMMITTED</code></p>
+
+<br>
+
+
+<h1>查看事务源码：</h1>
+
+<hr />
+
+<p>重新回到回滚代码，既然都被包裹起来，但是又回滚不成功，我开始查阅 Laravel API，因为我怕会是框架有问题，</p>
+
+<p>找到相应的 laravel 版本 5.1: <a href="https://laravel.com/api/5.1/">https://laravel.com/api/5.1/</a></p>
+
+<p>寻找 <code>transaction</code>，显示有</p>
+
+<blockquote><p>Illuminate\Database\ConnectionInterface::transaction</p>
+
+<p>Illuminate\Database\Connection::transaction</p></blockquote>
+
+<p>接口定义的是规则，所以我看数据库的连接类 <code>Illuminate\Database\Connection::transaction</code></p>
+
+<p>这里有几个我们要看的方法：
+``` php
+mixed transaction(Closure $callback)</p>
+
+<p>void beginTransaction()</p>
+
+<p>void commit()</p>
+
+<p>void rollBack()
+```
+点击右边行号，可以跳转到 5.1 源代码文件：</p>
+
+<p>先查看 <code>transaction</code> 方法，此处参数是一个闭包，我们项目中使用的不是这种写法：
+```php</p>
+
+<pre><code>public function transaction(Closure $callback)
+{
+    $this-&gt;beginTransaction();
+    // We'll simply execute the given callback within a try / catch block
+    // and if we catch any exception we can rollback the transaction
+    // so that none of the changes are persisted to the database.
+    try {
+        $result = $callback($this);
+        $this-&gt;commit();
+    }
+    // If we catch an exception, we will roll back so nothing gets messed
+    // up in the database. Then we'll re-throw the exception so it can
+    // be handled how the developer sees fit for their applications.
+    catch (Exception $e) {
+        $this-&gt;rollBack();
+        throw $e;
+    } catch (Throwable $e) {
+        $this-&gt;rollBack();
+        throw $e;
+    }
+    return $result;
+}
+</code></pre>
+
+<p><code>
+整个事务用</code>try catch<code>包裹住，如果失败，直接抛出异常，并且回滚，</code>transactions``` 自然减为 0；</p>
+
+<p>然后我看看我们项目中所使用的方法，通过<code>DB::beginTransaction();</code>
+开始，然后中途出错，直接写 <code>DB::rollback()</code> ，
+然后 <code>return</code> 返回，最后成功提交 <code>DB::commit()</code>。</p>
+
+<p>先看看 <code>beginTransaction()</code> 的源码:
+``` php</p>
+
+<pre><code>public function beginTransaction()
+{
+    if ($this-&gt;transactions == 0) {
+        try {
+            $this-&gt;pdo-&gt;beginTransaction();
+        } catch (Exception $e) {
+            if ($this-&gt;causedByLostConnection($e)) {
+                $this-&gt;reconnect();
+                $this-&gt;pdo-&gt;beginTransaction();
+            } else {
+                throw $e;
+            }
+        }
+    } elseif ($this-&gt;transactions &gt;= 1 &amp;&amp; $this-&gt;queryGrammar-&gt;supportsSavepoints()) {
+        $this-&gt;pdo-&gt;exec(
+            $this-&gt;queryGrammar-&gt;compileSavepoint('trans'.($this-&gt;transactions + 1))
+        );
+    }
+    $this-&gt;transactions++;
+    $this-&gt;fireConnectionEvent('beganTransaction');
+}
+</code></pre>
+
+<p>```</p>
+
+<p>可以看到，这里的 <code>transactions</code> 属性记录多少层事务，通过 <code>try catch</code> 包裹一个事务开始，如果失败，重新尝试连接，并将<code>transaction + 1</code>；</p>
+
+<br>
+
+
+<p>再看 <code>rollback()</code>
+``` php</p>
+
+<pre><code>public function rollBack()
+{
+    if ($this-&gt;transactions == 1) {
+        $this-&gt;pdo-&gt;rollBack();
+    } elseif ($this-&gt;transactions &gt; 1 &amp;&amp; $this-&gt;queryGrammar-&gt;supportsSavepoints()) {
+        $this-&gt;pdo-&gt;exec(
+            $this-&gt;queryGrammar-&gt;compileSavepointRollBack('trans'.$this-&gt;transactions)
+        );
+    }
+    $this-&gt;transactions = max(0, $this-&gt;transactions - 1);
+    $this-&gt;fireConnectionEvent('rollingBack');
+}
+</code></pre>
+
+<p>```
+这里 <strong>只有在 transactions 为 1 的时候，才去 rollback 整个事务</strong>；</p>
+
+<br>
+
+
+<p>再来看看 <code>commit()</code></p>
+
+<p>``` php</p>
+
+<pre><code>public function commit()
+{
+    if ($this-&gt;transactions == 1) {
+        $this-&gt;pdo-&gt;commit();
+    }
+    $this-&gt;transactions--;
+    $this-&gt;fireConnectionEvent('committed');
+}
+</code></pre>
+
+<p><code>
+也是只有当</code>transactions == 1<code>的时候才会</code>commit``` 整个事务；</p>
+
+<p>不像 <code>transaction</code> 闭包那样，有整个 <code>try catch</code> 包裹，这里每一个步骤都要自己控制，</p>
+
+<p>项目中事务的写法经常是：
+``` php
+DB::beginTransaction();</p>
+
+<p>$res = OrderDelivery::insert([&hellip;]);
+if (!$res) {</p>
+
+<pre><code>DB::rollback();
+return $this-&gt;fail(-1, '创建失败');
+</code></pre>
+
+<p>}
+$delivery_skus = json_decode($color_size_matrix, true);
+OrderDeliveryGoodsSku::insert($delivery_skus);
+&hellip;
+&hellip;
+DB::commit();</p>
+
+<p>```</p>
+
+<p>那么就有问题了，如果某个步骤出错，但是因为没有抛出异常，因为查看 API 像 <code>insert</code> 失败会返回 <code>false</code>；</p>
+
+<p>需要人工判断返回值去 <code>rollback</code>，如果没有判断，也没有 <code>rollback</code>，这样 <code>transactions</code> 就没有减到 1；
+这就有可能跑到 <code>commit</code> 那里去给 <code>transactions - 1</code> 了；</p>
+
+<h1>结论：</h1>
+
+<hr />
+
+<p>所以较好的方法还是，</p>
+
+<ol>
+<li><code>transaction</code> 带闭包参数；</li>
+<li><code>beginTransaction + try catch</code></li>
+</ol>
+
+
+<p>用 <code>beginTransaction + try catch</code>，只要有问题，直接到 <code>catch</code> 那做一次回滚即可，不用担心哪里忘了 <code>rollback</code>；</p>
+
+<p>示例：
+``` php
+DB::beginTrasaction();
+try {</p>
+
+<pre><code>OrderModificationGoodsSku::insertGetId();
+OrderOweGoodsSku::where()-&gt;update();
+DB::commit();
+</code></pre>
+
+<p>} catch (\Throwable $e) {
+    // For php 7</p>
+
+<pre><code>DB::rollback();
+//throw $e;
+Log::error($e-&gt;getMessage());
+return $this-&gt;fail(-1, "创建失败");
+</code></pre>
+
+<p>} catch(\Exception $e) {</p>
+
+<pre><code>// For php5
+DB::rollback();
+//throw $e;
+Log::error($e-&gt;getMessage());
+return $this-&gt;fail(-1, "创建失败");
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+</feed>

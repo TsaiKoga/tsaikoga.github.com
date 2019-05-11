@@ -1,0 +1,646 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Laravel 的数据库事务源码分析 - TsaiKoga Blog</title>
+    <meta name="author" content="TsaiKoga">
+    
+	<meta name="description" content="在批发档口记账 app 中，由于用户数量越来越多，有几个老客户了反馈单据丢失的问题； 打个比方： 我们开单会去创建开单表 order_create，开单表会生成详情 order_create_goods_sku，然后生成欠货表 order_owe_goods_sku； 然后接着是发货请求， &hellip;">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="/atom.xml" rel="alternate" title="TsaiKoga Blog" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.ico" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <link href='https://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Amethysta' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script type="text/javascript" src="/javascripts/jquery-tapir.js"></script>
+
+    <!-- remove or comment it to disable ajaxification -->
+    <script src="/javascripts/ajaxify.js"></script>
+
+    
+    
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-42786505-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+    <div id="wrapper">
+    <header id="header" class="inner"><!-- for more effects see _animate.scss -->
+<h1 class="animated bounceInDown">
+    <div id="headerbg">
+        TsaiKoga
+    </div>
+</h1>
+<br>
+
+<ul id="social-links" style="text-align:center">
+  
+  <!-- GitHub -->
+  <li>
+  <a href="https://github.com/tsaikoga" class="github" title="Github"></a>
+  </li>
+  
+  
+  
+  
+  <!-- Twitter -->
+  <li>
+  <a href="http://www.twitter.com/tsaikoga" class="twitter" title="Twitter"></a>
+  </li>
+  
+  
+  
+  
+  
+</ul>
+
+
+<!-- use full url including 'index.html' for navigation bar if you are using ajax -->
+<ul id="nav">
+	<li id="ajax"><a href="/index.html">Home</a></li>
+	<li id="ajax"><a href="/blog/archives/index.html">Archives</a></li>
+	<li><a href="/MyResume">My Resume</a></li>
+    <li><a href="/atom.xml">RSS</a></li>
+    
+    <li>
+    <div id="dark">
+        <form method="get" action="/search.html" id="search">
+            <input name="query" type="text" placeholder="Search..." x-webkit-speech />
+        </form>
+    </div>
+    </li>
+    
+</ul>
+
+
+
+
+</header>
+
+    <section id="sidebar">
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/css'>CSS (1)</a></li><li><a href='/blog/categories/editor'>Editor (2)</a></li><li><a href='/blog/categories/git'>Git (1)</a></li><li><a href='/blog/categories/javascript'>Javascript (3)</a></li><li><a href='/blog/categories/linux'>Linux (5)</a></li><li><a href='/blog/categories/mysql'>Mysql (5)</a></li><li><a href='/blog/categories/net'>Net (1)</a></li><li><a href='/blog/categories/nosql'>Nosql (2)</a></li><li><a href='/blog/categories/php'>PHP (1)</a></li><li><a href='/blog/categories/projectmanagement'>ProjectManagement (6)</a></li><li><a href='/blog/categories/rails'>Rails (9)</a></li><li><a href='/blog/categories/security'>Security (1)</a></li><li><a href='/blog/categories/seo'>SEO (1)</a></li></ul>
+</section>
+
+
+<div id="toload">
+<!-- begin toload --> 
+    <div id="content" class="inner">
+        <article class="post">
+	<h2 class="title">Laravel 的数据库事务源码分析</h2>
+	<div class="entry-content"><p>在批发档口记账 app 中，由于用户数量越来越多，有几个老客户了反馈单据丢失的问题；</p>
+
+<p><strong>打个比方：</strong></p>
+
+<p>我们开单会去创建开单表 <code>order_create</code>，开单表会生成详情 <code>order_create_goods_sku</code>，然后生成欠货表 <code>order_owe_goods_sku</code>；</p>
+
+<p>然后接着是发货请求，会生成发货主表 <code>order_delivery</code> 和 发货详情 <code>order_delivery_goods_sku</code>；发货会生成库存变动记录；</p>
+
+<br>
+
+
+<p>这时候已经有了开单和开单详情，证明已经开单请求成功；</p>
+
+<p>但是库存变动记录有，发货单却找不到；这时候我去查找了日志，发现也有发货请求；
+然而通过库存变动记录找不到相应的发货单了，这是怎么回事，难道是被人撤销了吗？</p>
+
+<br>
+
+
+<p>全局查找了整个项目，没有强删除的接口，难道是代码有问题？</p>
+
+<p>那么我开始定位代码，因为事务包裹着整个&#8221;发货的创建流程&#8221; 和 &ldquo;库存变动记录的生成&#8221;；
+所以要么就全部回滚，那么不太可能是回滚问题？</p>
+
+<br>
+
+
+<h1>跟踪数据库操作：</h1>
+
+<hr />
+
+<p>那是不是有人从数据库删除了？</p>
+
+<p>我写了个触发器，只要有人强删记录就会记录到一张跟踪表：</p>
+
+<p>1.首先创建跟踪表：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="o">`</span><span class="n">juniu_track_delivery</span><span class="o">`</span> <span class="p">(</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">track_delivery_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">AUTO_INCREMENT</span> <span class="k">COMMENT</span> <span class="s1">&#39;订单ID&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">order_delivery_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="mi">0</span> <span class="k">COMMENT</span>  <span class="s1">&#39;发货单ID&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">order_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="mi">0</span> <span class="k">COMMENT</span> <span class="s1">&#39;订单ID&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">deliver_timestamp</span><span class="o">`</span> <span class="k">timestamp</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">COMMENT</span> <span class="s1">&#39;发货时间&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">deleted_at</span><span class="o">`</span> <span class="k">timestamp</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="k">CURRENT_TIMESTAMP</span> <span class="k">COMMENT</span> <span class="s1">&#39;被删除时间&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">deleted_by</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="k">DEFAULT</span> <span class="s1">&#39;&#39;</span> <span class="k">COMMENT</span> <span class="s1">&#39;删除的用户ip&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">track_delivery_id</span><span class="o">`</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="n">AUTO_INCREMENT</span><span class="o">=</span><span class="mi">0</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">utf8</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<br>
+
+
+<p>2.建立触发器 <code>track_delete_delivery</code> 跟踪：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">DELIMITER</span> <span class="o">//</span>
+</span><span class='line'><span class="k">CREATE</span> <span class="k">TRIGGER</span> <span class="n">track_delete_delivery</span>
+</span><span class='line'><span class="k">AFTER</span> <span class="k">DELETE</span>
+</span><span class='line'>   <span class="k">ON</span> <span class="n">juniu_order_delivery</span> <span class="k">FOR</span> <span class="k">EACH</span> <span class="k">ROW</span>
+</span><span class='line'><span class="k">BEGIN</span>
+</span><span class='line'>   <span class="k">DECLARE</span> <span class="n">vUser</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">);</span>
+</span><span class='line'>   <span class="c1">-- Find username of person performing the DELETE into table</span>
+</span><span class='line'>   <span class="k">SELECT</span> <span class="k">USER</span><span class="p">()</span> <span class="k">INTO</span> <span class="n">vUser</span><span class="p">;</span>
+</span><span class='line'>   <span class="c1">-- Insert record into audit table</span>
+</span><span class='line'>   <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">juniu_track_delivery</span>
+</span><span class='line'>   <span class="p">(</span> <span class="n">order_delivery_id</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">order_id</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">deliver_timestamp</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">deleted_at</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">deleted_by</span><span class="p">)</span>
+</span><span class='line'>   <span class="k">VALUES</span>
+</span><span class='line'>   <span class="p">(</span> <span class="k">OLD</span><span class="p">.</span><span class="n">order_delivery_id</span><span class="p">,</span>
+</span><span class='line'>     <span class="k">OLD</span><span class="p">.</span><span class="n">order_id</span><span class="p">,</span>
+</span><span class='line'>     <span class="k">OLD</span><span class="p">.</span><span class="n">deliver_timestamp</span><span class="p">,</span>
+</span><span class='line'>     <span class="n">SYSDATE</span><span class="p">(),</span>
+</span><span class='line'>     <span class="n">vUser</span> <span class="p">);</span>
+</span><span class='line'><span class="k">END</span><span class="p">;</span> <span class="o">//</span>
+</span><span class='line'><span class="k">DELIMITER</span> <span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>观察一段时间，仍有数据丢失，但是并没有跟踪到，初步判断不是人为删除；</p>
+
+<br>
+
+
+<h1>Mysql 事务特性：</h1>
+
+<hr />
+
+<p>Mysql 事务具有四大特性：A（原子性）C（一致性）I（隔离性）D（持久性）；</p>
+
+<p>事务有五个级别：</p>
+
+<blockquote><ol>
+<li><p>TRANSACTION_NONE  不使用事务。</p></li>
+<li><p>TRANSACTION_READ_UNCOMMITTED  未提交读，允许脏读。</p></li>
+<li><p>TRANSACTION_READ_COMMITTED  提交读，防止脏读，最常用的隔离级别,并且是大多数数据库的默认隔离级别</p></li>
+<li><p>TRANSACTION_REPEATABLE_READ  重复读，可以防止脏读和不可重复读，</p></li>
+<li><p>TRANSACTION_SERIALIZABLE  序列化，可以防止脏读，不可重复读取和幻读，（事务串行化）会降低数据库的效率</p></li>
+</ol>
+</blockquote>
+
+<p>1、<strong>脏读：</strong> 事务A读取了事务B更新的数据，然后B回滚操作，那么A读取到的数据是脏数据</p>
+
+<p>2、<strong>不可重复读：</strong> 事务 A 多次读取同一数据，事务 B 在事务A多次读取的过程中，对数据作了更新并提交，导致事务A多次读取同一数据时，结果不一致。</p>
+
+<p>3、<strong>幻读：</strong> 事务 A 修改了表中所有数据，但是事务 B 插入了一条数据，当事务 A 查询数据发现还有一条记录没有改过来，就好像发生了幻觉一样，这就叫幻读。</p>
+
+<p><strong>小结：</strong> 不可重复读的和幻读很容易混淆，不可重复读侧重于修改，幻读侧重于新增或删除。解决不可重复读的问题只需锁住满足条件的行，解决幻读需要锁表</p>
+
+<br>
+
+
+<p>最后我们来查看一下 Mysql 数据库事务配置，看是不是事务配置错误：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">select</span> <span class="o">@@</span><span class="n">tx_isolation</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">select</span> <span class="o">@@</span><span class="k">session</span><span class="p">.</span><span class="n">tx_isolation</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">select</span> <span class="o">@@</span><span class="k">global</span><span class="p">.</span><span class="n">tx_isolation</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>显示结果都是 <code>READ-COMMITTED</code></p>
+
+<br>
+
+
+<h1>查看事务源码：</h1>
+
+<hr />
+
+<p>重新回到回滚代码，既然都被包裹起来，但是又回滚不成功，我开始查阅 Laravel API，因为我怕会是框架有问题，</p>
+
+<p>找到相应的 laravel 版本 5.1: <a href="https://laravel.com/api/5.1/">https://laravel.com/api/5.1/</a></p>
+
+<p>寻找 <code>transaction</code>，显示有</p>
+
+<blockquote><p>Illuminate\Database\ConnectionInterface::transaction</p>
+
+<p>Illuminate\Database\Connection::transaction</p></blockquote>
+
+<p>接口定义的是规则，所以我看数据库的连接类 <code>Illuminate\Database\Connection::transaction</code></p>
+
+<p>这里有几个我们要看的方法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">mixed</span> <span class="nx">transaction</span><span class="p">(</span><span class="nx">Closure</span> <span class="nv">$callback</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">void</span> <span class="nx">beginTransaction</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">void</span> <span class="nx">commit</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">void</span> <span class="nx">rollBack</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>点击右边行号，可以跳转到 5.1 源代码文件：</p>
+
+<p>先查看 <code>transaction</code> 方法，此处参数是一个闭包，我们项目中使用的不是这种写法：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">transaction</span><span class="p">(</span><span class="nx">Closure</span> <span class="nv">$callback</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">beginTransaction</span><span class="p">();</span>
+</span><span class='line'>    <span class="c1">// We&#39;ll simply execute the given callback within a try / catch block</span>
+</span><span class='line'>    <span class="c1">// and if we catch any exception we can rollback the transaction</span>
+</span><span class='line'>    <span class="c1">// so that none of the changes are persisted to the database.</span>
+</span><span class='line'>    <span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$result</span> <span class="o">=</span> <span class="nv">$callback</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">commit</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="c1">// If we catch an exception, we will roll back so nothing gets messed</span>
+</span><span class='line'>    <span class="c1">// up in the database. Then we&#39;ll re-throw the exception so it can</span>
+</span><span class='line'>    <span class="c1">// be handled how the developer sees fit for their applications.</span>
+</span><span class='line'>    <span class="k">catch</span> <span class="p">(</span><span class="nx">Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">rollBack</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="nv">$e</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Throwable</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">rollBack</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">throw</span> <span class="nv">$e</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>整个事务用 <code>try catch</code> 包裹住，如果失败，直接抛出异常，并且回滚，<code>transactions</code> 自然减为 0；</p>
+
+<p>然后我看看我们项目中所使用的方法，通过<code>DB::beginTransaction();</code>
+开始，然后中途出错，直接写 <code>DB::rollback()</code> ，
+然后 <code>return</code> 返回，最后成功提交 <code>DB::commit()</code>。</p>
+
+<p>先看看 <code>beginTransaction()</code> 的源码:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">beginTransaction</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdo</span><span class="o">-&gt;</span><span class="na">beginTransaction</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">causedByLostConnection</span><span class="p">(</span><span class="nv">$e</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">reconnect</span><span class="p">();</span>
+</span><span class='line'>                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdo</span><span class="o">-&gt;</span><span class="na">beginTransaction</span><span class="p">();</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="k">throw</span> <span class="nv">$e</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">queryGrammar</span><span class="o">-&gt;</span><span class="na">supportsSavepoints</span><span class="p">())</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdo</span><span class="o">-&gt;</span><span class="na">exec</span><span class="p">(</span>
+</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">queryGrammar</span><span class="o">-&gt;</span><span class="na">compileSavepoint</span><span class="p">(</span><span class="s1">&#39;trans&#39;</span><span class="o">.</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+</span><span class='line'>        <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span><span class="o">++</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fireConnectionEvent</span><span class="p">(</span><span class="s1">&#39;beganTransaction&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看到，这里的 <code>transactions</code> 属性记录多少层事务，通过 <code>try catch</code> 包裹一个事务开始，如果失败，重新尝试连接，并将<code>transaction + 1</code>；</p>
+
+<br>
+
+
+<p>再看 <code>rollback()</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">rollBack</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdo</span><span class="o">-&gt;</span><span class="na">rollBack</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">elseif</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">queryGrammar</span><span class="o">-&gt;</span><span class="na">supportsSavepoints</span><span class="p">())</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdo</span><span class="o">-&gt;</span><span class="na">exec</span><span class="p">(</span>
+</span><span class='line'>            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">queryGrammar</span><span class="o">-&gt;</span><span class="na">compileSavepointRollBack</span><span class="p">(</span><span class="s1">&#39;trans&#39;</span><span class="o">.</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span><span class="p">)</span>
+</span><span class='line'>        <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">=</span> <span class="nx">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fireConnectionEvent</span><span class="p">(</span><span class="s1">&#39;rollingBack&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>这里 <strong>只有在 transactions 为 1 的时候，才去 rollback 整个事务</strong>；</p>
+
+<br>
+
+
+<p>再来看看 <code>commit()</code></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">public</span> <span class="k">function</span> <span class="nf">commit</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">pdo</span><span class="o">-&gt;</span><span class="na">commit</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">transactions</span><span class="o">--</span><span class="p">;</span>
+</span><span class='line'>    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fireConnectionEvent</span><span class="p">(</span><span class="s1">&#39;committed&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>也是只有当 <code>transactions == 1</code> 的时候才会 <code>commit</code> 整个事务；</p>
+
+<p>不像 <code>transaction</code> 闭包那样，有整个 <code>try catch</code> 包裹，这里每一个步骤都要自己控制，</p>
+
+<p>项目中事务的写法经常是：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">DB</span><span class="o">::</span><span class="na">beginTransaction</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$res</span> <span class="o">=</span> <span class="nx">OrderDelivery</span><span class="o">::</span><span class="na">insert</span><span class="p">([</span><span class="o">...</span><span class="p">]);</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$res</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">DB</span><span class="o">::</span><span class="na">rollback</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fail</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;创建失败&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nv">$delivery_skus</span> <span class="o">=</span> <span class="nb">json_decode</span><span class="p">(</span><span class="nv">$color_size_matrix</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'><span class="nx">OrderDeliveryGoodsSku</span><span class="o">::</span><span class="na">insert</span><span class="p">(</span><span class="nv">$delivery_skus</span><span class="p">);</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="o">...</span>
+</span><span class='line'><span class="nx">DB</span><span class="o">::</span><span class="na">commit</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>那么就有问题了，如果某个步骤出错，但是因为没有抛出异常，因为查看 API 像 <code>insert</code> 失败会返回 <code>false</code>；</p>
+
+<p>需要人工判断返回值去 <code>rollback</code>，如果没有判断，也没有 <code>rollback</code>，这样 <code>transactions</code> 就没有减到 1；
+这就有可能跑到 <code>commit</code> 那里去给 <code>transactions - 1</code> 了；</p>
+
+<h1>结论：</h1>
+
+<hr />
+
+<p>所以较好的方法还是，</p>
+
+<ol>
+<li><code>transaction</code> 带闭包参数；</li>
+<li><code>beginTransaction + try catch</code></li>
+</ol>
+
+
+<p>用 <code>beginTransaction + try catch</code>，只要有问题，直接到 <code>catch</code> 那做一次回滚即可，不用担心哪里忘了 <code>rollback</code>；</p>
+
+<p>示例：</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">DB</span><span class="o">::</span><span class="na">beginTrasaction</span><span class="p">();</span>
+</span><span class='line'><span class="k">try</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">OrderModificationGoodsSku</span><span class="o">::</span><span class="na">insertGetId</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">OrderOweGoodsSku</span><span class="o">::</span><span class="na">where</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">update</span><span class="p">();</span>
+</span><span class='line'>    <span class="nx">DB</span><span class="o">::</span><span class="na">commit</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">\Throwable</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'><span class="err">   </span> <span class="c1">// For php 7</span>
+</span><span class='line'>    <span class="nx">DB</span><span class="o">::</span><span class="na">rollback</span><span class="p">();</span>
+</span><span class='line'>    <span class="c1">//throw $e;</span>
+</span><span class='line'>    <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">());</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fail</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;创建失败&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span> <span class="k">catch</span><span class="p">(</span><span class="nx">\Exception</span> <span class="nv">$e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// For php5</span>
+</span><span class='line'>    <span class="nx">DB</span><span class="o">::</span><span class="na">rollback</span><span class="p">();</span>
+</span><span class='line'>    <span class="c1">//throw $e;</span>
+</span><span class='line'>    <span class="nx">Log</span><span class="o">::</span><span class="na">error</span><span class="p">(</span><span class="nv">$e</span><span class="o">-&gt;</span><span class="na">getMessage</span><span class="p">());</span>
+</span><span class='line'>    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fail</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;创建失败&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+
+<div class="meta">
+	
+</div>
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+
+    </div>
+    <footer id="footer">
+    <div style="display:inline">
+    Copyright &copy; 2019
+
+    TsaiKoga
+. Powered by <a href="http://octopress.org">Octopress</a> | 
+    Theme <a href="http://github.com/panks/fabric">fabric</a> by <a href="http://panks.me">Pankaj Kumar</a>
+</div>
+
+
+    </footer>
+    <script src="/javascripts/fabric.js"></script>
+<script src="/javascripts/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+	$('.fancybox').fancybox();
+})(jQuery);
+</script> <!-- Delete or comment this line to disable Fancybox -->
+
+
+<script type="text/javascript">
+      var disqus_shortname = 'tsaikogablog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://TsaiKoga.github.com/blog/2019/05/09/laravel-de-shu-ju-ku-shi-wu-yuan-ma-fen-xi/';
+        var disqus_url = 'https://TsaiKoga.github.com/blog/2019/05/09/laravel-de-shu-ju-ku-shi-wu-yuan-ma-fen-xi/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'https://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+<!-- end toload --> 
+</div>
+</div>
+<script src="/javascripts/jquery.ui.totop.js" type="text/javascript"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+;(function($){$().UItoTop({easingType:'easeOutCirc'});})(jQuery); 
+/*]]>*/
+</script><!-- remove it to remove the scroll to top button -->
+</body>
+</html>
