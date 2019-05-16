@@ -188,7 +188,7 @@ mysql 视图又无法使用索引；所以鱼与熊掌不可得兼。</p>
 
 <h3>使用 select union join as 解决排序与分页的矛盾</h3>
 
-<p>那么该怎么办呢，我是可以试图把union all的数据减少，也就是先用 where 进行筛选然后再 union all；
+<p>那么该怎么办呢，架构师提议尽量利用索引，可以试图把union all的数据减少，也就是先用 where 进行筛选然后再 union all；
 然后对这些已经筛选并且合并的数据进行 join 关联操作（这样可以 <strong>大大减少 join 关联的内容</strong>）；
 最后再次将他们 select 出来：</p>
 

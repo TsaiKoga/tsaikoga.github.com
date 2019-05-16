@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Linux | TsaiKoga Blog]]></title>
   <link href="https://TsaiKoga.github.com/blog/categories/linux/atom.xml" rel="self"/>
   <link href="https://TsaiKoga.github.com/"/>
-  <updated>2019-05-11T16:04:40+08:00</updated>
+  <updated>2019-05-16T17:34:26+08:00</updated>
   <id>https://TsaiKoga.github.com/</id>
   <author>
     <name><![CDATA[TsaiKoga]]></name>
@@ -26,7 +26,7 @@ PHP 项目用户数量比较大，每天早上用户6点准时开单，这个时
 
 <h2>方案：</h2>
 
-<p>在删除日志之后，考虑到的解决方案有两个：</p>
+<p>在删除日志之后，进过商量考虑到的解决方案有两个：</p>
 
 <ol>
 <li><p>使用 logrotate 对日志进行压缩限制；
